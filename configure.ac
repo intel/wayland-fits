@@ -19,7 +19,10 @@ AC_PROG_CC
 LT_PREREQ([2.2])
 LT_INIT
 
+PKG_CHECK_MODULES(CAIRO, [cairo >= 1.10.0])
+PKG_CHECK_MODULES(WAYLAND, [wayland-client wayland-egl])
+
 AC_CONFIG_FILES([Makefile
 		 src/Makefile
-		 src/weston-tests/Makefile])
+		 src/weston/Makefile])
 AC_OUTPUT
