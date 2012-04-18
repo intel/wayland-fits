@@ -20,5 +20,6 @@ LT_PREREQ([2.2])
 LT_INIT
 
 AC_CONFIG_FILES([Makefile
-		 src/Makefile])
+		 src/Makefile
+		 src/weston-tests/Makefile])
 AC_OUTPUT

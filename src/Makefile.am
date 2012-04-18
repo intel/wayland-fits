@@ -1,0 +1,2 @@
+SUBDIRS = weston-test
+
