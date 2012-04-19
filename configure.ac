@@ -23,6 +23,5 @@ PKG_CHECK_MODULES(CAIRO, [cairo >= 1.10.0])
 PKG_CHECK_MODULES(WAYLAND, [wayland-client wayland-egl])
 
 AC_CONFIG_FILES([Makefile
-		 src/Makefile
-		 src/weston/Makefile])
+		 src/Makefile])
 AC_OUTPUT
