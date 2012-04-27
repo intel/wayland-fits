@@ -34,6 +34,9 @@ public:
 
 	wl_compositor*	compositor() { return compositor_; }
 	wl_display*	display() { return display_; }
+	wl_shell*	shell() { return shell_; }
+	EGLConfig&	config() { return argbConfig_; }
+	EGLContext&	context() { return argbContext_; }
 	
 private:
 	wl_display*	display_;

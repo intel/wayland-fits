@@ -1,3 +1,7 @@
+#include <cassert>
+#include <wayland-client.h>
+#include <wayland-egl.h>
+
 #include "window.h"
 
 namespace wayland {
@@ -15,7 +19,7 @@ Window::Window(Display& display)
 	wl_shell_surface_set_toplevel(shellSurface_);
 
 	assert(
-		eglMakeCurrent(display_.display(), eglSurface_, eglSurface_, display_.context()
+		eglMakeCurrent(display_.display(), eglSurface_, eglSurface_, &display_.context())
 		== EGL_TRUE
 	);
 }
