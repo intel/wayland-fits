@@ -1,29 +1,14 @@
 #ifndef __WAYLAND_DISPLAY_H__
 #define __WAYLAND_DISPLAY_H__
 
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-
-#ifdef USE_CAIRO_GLESV2
-	#include <GLES2/gl2.h>
-	#include <GLES2/gl2ext.h>
-
-	#define GL_BIT EGL_OPENGL_ES2_BIT
-#else
-	#include <GL/gl.h>
-	#define GL_BIT EGL_OPENGL_BIT
-#endif
-
-#ifdef HAVE_CAIRO_EGL
-	#include <cairo-gl.h>
-#endif
-
-
 #include <cstdint>
 
 struct wl_display;
 struct wl_compositor;
 struct wl_shell;
+struct wl_shm;
+struct wl_buffer;
+struct wl_shm_listener;
 
 namespace wayland {
 
@@ -32,28 +17,27 @@ class Display {
 public:
 	Display();
 
+	virtual ~Display();
+
 	wl_compositor*	compositor() { return compositor_; }
 	wl_display*	display() { return display_; }
 	wl_shell*	shell() { return shell_; }
-	EGLConfig&	config() { return argbConfig_; }
-	EGLContext&	context() { return argbContext_; }
+
+	wl_buffer*	createShmBuffer(int, int, uint32_t, void**);
 	
 private:
 	wl_display*	display_;
-	uint32_t	mask_;
+	uint32_t	formats_;
 	wl_compositor*	compositor_;
 	wl_shell*	shell_;
-
-	bool		running_;
-
-	EGLDisplay	eglDisplay_;
-	EGLConfig	argbConfig_;
-	EGLContext	argbContext_;
+	wl_shm*		shm_;
+	uint32_t	mask_;
 
 	static int evtMaskUpdate(uint32_t, void*);
+	static void handleShmFormat(void*, wl_shm*, uint32_t);
 	static void handleGlobal(wl_display*, uint32_t, const char*, uint32_t, void*);
 
-	bool initEGL();
+	static wl_shm_listener shmListener_;
 };
 
 } // namespace wayland

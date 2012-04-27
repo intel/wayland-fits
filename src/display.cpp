@@ -1,6 +1,7 @@
-// #include <sys/epoll.h>
 #include <iostream>
 #include <cstdlib>
+#include <string>
+#include <sys/mman.h>
 
 #include <wayland-client.h>
 
@@ -9,125 +10,143 @@
 namespace wayland {
 
 /*static*/
-int Display::evtMaskUpdate(uint32_t mask, void *data)
+int Display::evtMaskUpdate(uint32_t mask, void* data)
 {
 	Display* display = static_cast<Display*>(data);
 	display->mask_ = mask;
-
 	return 0;
 }
+
+/*static*/
+void Display::handleShmFormat(void* data, wl_shm* shm, uint32_t format)
+{
+	Display* display = static_cast<Display*>(data);
+	display->formats_ |= (1 << format);
+}
+
+/*static*/
+wl_shm_listener Display::shmListener_ = {
+	Display::handleShmFormat
+};
 
 /*static*/
 void Display::handleGlobal(wl_display* wldisplay, uint32_t id, const char* interface, uint32_t version, void* data)
 {
 	Display* display = static_cast<Display*>(data);
-	if ("wl_compositor" == interface)
-	{
+	const std::string intfc(interface);
+
+	if ("wl_compositor" == intfc) {
 		display->compositor_ = static_cast<wl_compositor*>(
 			wl_display_bind(
 				wldisplay, id, &wl_compositor_interface
 			)
 		);
 	}
-	else if ("wl_shell" == interface)
-	{
+	else if ("wl_shell" == intfc) {
 		display->shell_ = static_cast<wl_shell*>(
 			wl_display_bind(
 				wldisplay, id, &wl_shell_interface
 			)
 		);
 	}
+	else if ("wl_shm" == intfc) {
+		display->shm_ = static_cast<wl_shm*>(
+			wl_display_bind(
+				wldisplay, id, &wl_shm_interface
+			)
+		);
+		wl_shm_add_listener(display->shm_, &shmListener_, display);
+	}
 }
 
 Display::Display()
 	: display_(wl_display_connect(0))
+	, formats_(0)
+	, compositor_(0)
+	, shell_(0)
+	, shm_(0)
+	, mask_(0)
 {
-	if (not display_)
-	{
+	if (not display_) {
 		std::cerr << "Failed to create display!" << std::endl;
 		exit(1);
 	}
 
 	wl_display_add_global_listener(display_, handleGlobal, this);
 	wl_display_iterate(display_, WL_DISPLAY_READABLE);
-	if (initEGL() < 0)
-	{
-		std::cerr << "Failed to initialize egl!" << std::endl;
+	wl_display_roundtrip(display_);
+
+	if (not (formats_ & (1 << WL_SHM_FORMAT_XRGB8888))) {
+		std::cerr << "WL_SHM_FORMAT_XRGB32 not available!" << std::endl;
 		exit(1);
 	}
+
+	wl_display_get_fd(display_, evtMaskUpdate, this);
 }
 
-bool Display::initEGL()
+Display::~Display()
 {
-	EGLint major, minor, n;
-
-	static const EGLint argb_cfg_attribs[] = {
-		EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PIXMAP_BIT,
-		EGL_RED_SIZE, 1,
-		EGL_GREEN_SIZE, 1,
-		EGL_BLUE_SIZE, 1,
-		EGL_ALPHA_SIZE, 1,
-		EGL_DEPTH_SIZE, 1,
-		EGL_RENDERABLE_TYPE, GL_BIT,
-		EGL_NONE
-	};
-
-#ifdef USE_CAIRO_GLESV2
-	static const EGLint context_attribs[] = {
-		EGL_CONTEXT_CLIENT_VERSION, 2,
-		EGL_NONE
-	};
-	EGLint api = EGL_OPENGL_ES_API;
-#else
-	EGLint *context_attribs = NULL;
-	EGLint api = EGL_OPENGL_API;
-#endif
-
-	eglDisplay_ = eglGetDisplay( (EGLNativeDisplayType)display_);
-	if (not eglInitialize(eglDisplay_, &major, &minor))
-	{
-// 		fprintf(stderr, "failed to initialize display\n");
-		return false;
+	if (shm_) {
+		wl_shm_destroy(shm_);
 	}
 
-	if (not eglBindAPI(api))
-	{
-// 		fprintf(stderr, "failed to bind api EGL_OPENGL_API\n");
-		return false;
+	if (shell_) {
+		wl_shell_destroy(shell_);
 	}
 
-	if (not eglChooseConfig(eglDisplay_, argb_cfg_attribs,
-			     &argbConfig_, 1, &n) || n != 1)
-	{
-// 		fprintf(stderr, "failed to choose argb config\n");
-		return false;
+	if (compositor_) {
+		wl_compositor_destroy(compositor_);
 	}
 
-	argbContext_ = eglCreateContext(eglDisplay_, argbConfig_,
-				       EGL_NO_CONTEXT, context_attribs);
-	if (not argbContext_)
-	{
-// 		fprintf(stderr, "failed to create context\n");
-		return false;
-	}
-
-	if (not eglMakeCurrent(eglDisplay_, NULL, NULL, argbContext_))
-	{
-// 		fprintf(stderr, "failed to make context current\n");
-		return false;
-	}
-
-#ifdef HAVE_CAIRO_EGL
-	argbDevice_ = cairo_egl_device_create(eglDisplay_, argbContext_);
-	if (cairo_device_status(argbDevice_) != CAIRO_STATUS_SUCCESS)
-	{
-// 		fprintf(stderr, "failed to get cairo egl argb device\n");
-		return false;
-	}
-#endif
-
-	return true;
+	wl_display_flush(display_);
+	wl_display_disconnect(display_);
 }
 
+wl_buffer* Display::createShmBuffer(int w, int h, uint32_t format, void** dout)
+{
+	char	filename[] = "/tmp/wayland-shm-XXXXXX";
+	int	fd(mkstemp(filename));
+
+	if (fd < 0) {
+		std::cerr << "open " << filename << " failed: %m" << std::endl;
+		return NULL;
+	}
+
+	int stride(w * 4);
+	int size(stride * h);
+
+	if (ftruncate(fd, size) < 0) {
+		std::cerr << "ftruncate failed: %m" << std::endl;
+		close(fd);
+		return NULL;
+	}
+
+	void* data(
+		mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0)
+	);
+	unlink(filename);
+
+	if (data == MAP_FAILED) {
+		std::cerr << "mmap failed: %m" << std::endl;
+		close(fd);
+		return NULL;
+	}
+
+	wl_shm_pool* pool(
+		wl_shm_create_pool(shm_, fd, size)
+	);
+
+	wl_buffer* buffer(
+		wl_shm_pool_create_buffer(pool, 0, w, h, stride, format)
+	);
+
+	wl_shm_pool_destroy(pool);
+
+	close(fd);
+
+	*dout = data;
+
+	return buffer;
+}
 
 } // namespace wayland

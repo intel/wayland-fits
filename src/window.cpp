@@ -1,27 +1,39 @@
 #include <cassert>
 #include <wayland-client.h>
-#include <wayland-egl.h>
 
 #include "window.h"
 
 namespace wayland {
 
-Window::Window(Display& display)
+Window::Window(Display& display, int width, int height)
 	: display_(display)
+	, width_(width)
+	, height_(height)
+	, surface_(wl_compositor_create_surface(display_.compositor()))
+	, shellSurface_(wl_shell_get_shell_surface(display_.shell(), surface_))
+	, shmData_(0)
+	, buffer_(
+		display_.createShmBuffer(
+			  width_
+			, height_
+			, WL_SHM_FORMAT_XRGB8888
+			, &shmData_
+		)
+	  )
+	, callback_(0)
 {
-	EGLBoolean result;
-
-	surface_ = wl_compositor_create_surface(display_.compositor());
-	shellSurface_ = wl_shell_get_shell_surface(display_.shell(), surface_);
-	native_ = wl_egl_window_create(surface_, width_, height_);
-	eglSurface_ = eglCreateWindowSurface(display_.display(), display_.config(), native_, NULL);
-
 	wl_shell_surface_set_toplevel(shellSurface_);
+}
 
-	assert(
-		eglMakeCurrent(display_.display(), eglSurface_, eglSurface_, &display_.context())
-		== EGL_TRUE
-	);
+Window::~Window()
+{
+	if (callback_) {
+		wl_callback_destroy(callback_);
+	}
+
+	wl_buffer_destroy(buffer_);
+	wl_shell_surface_destroy(shellSurface_);
+	wl_surface_destroy(surface_);
 }
 
 } // namespace wayland
