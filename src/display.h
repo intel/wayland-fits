@@ -24,7 +24,9 @@ public:
 	wl_shell*	shell() { return shell_; }
 
 	wl_buffer*	createShmBuffer(int, int, uint32_t, void**);
-	
+
+	void		run();
+
 private:
 	wl_display*	display_;
 	uint32_t	formats_;
@@ -37,7 +39,7 @@ private:
 	static void handleShmFormat(void*, wl_shm*, uint32_t);
 	static void handleGlobal(wl_display*, uint32_t, const char*, uint32_t, void*);
 
-	static wl_shm_listener shmListener_;
+	static const wl_shm_listener shmListener_;
 };
 
 } // namespace wayland

@@ -25,7 +25,7 @@ void Display::handleShmFormat(void* data, wl_shm* shm, uint32_t format)
 }
 
 /*static*/
-wl_shm_listener Display::shmListener_ = {
+const wl_shm_listener Display::shmListener_ = {
 	Display::handleShmFormat
 };
 
@@ -100,6 +100,12 @@ Display::~Display()
 
 	wl_display_flush(display_);
 	wl_display_disconnect(display_);
+}
+
+void Display::run()
+{
+	while (1)
+		wl_display_iterate(display_, mask_);
 }
 
 wl_buffer* Display::createShmBuffer(int w, int h, uint32_t format, void** dout)

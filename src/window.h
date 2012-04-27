@@ -22,6 +22,11 @@ private:
 	void*				shmData_;
 	struct wl_buffer*		buffer_;
 	struct wl_callback*		callback_;
+
+	void redraw(uint32_t);
+
+	static void redrawcb(void*, wl_callback*, uint32_t);
+	static const struct wl_callback_listener frameListener_;
 };
 
 } // namespace wayland
