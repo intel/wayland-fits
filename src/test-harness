@@ -1,0 +1,12 @@
+#!/bin/sh
+
+$WLD/install/bin/weston &
+
+sleep 2
+
+${1} --log_level=all --log_format=xml > ${1}.xml
+xmllint ${1}.xml --format -o ${1}.xml
+cat ${1}.xml
+
+kill -15 %1
+

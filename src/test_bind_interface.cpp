@@ -10,7 +10,7 @@ struct BindInterface {
 	{
 		BOOST_REQUIRE(display);
 	}
-	
+
 	void bind()
 	{
 		wl_display_add_global_listener(display, &BindInterface::callback, this);
@@ -33,26 +33,20 @@ struct BindInterface {
 	O*		object;
 };
 
-std::string str_iface_wl_compositor	= "wl_compositor";
-std::string str_iface_wl_display	= "wl_display";
-std::string str_iface_wl_shm		= "wl_shm";
-std::string str_iface_wl_output		= "wl_output";
-std::string str_iface_wl_input_device	= "wl_input_device";
-std::string str_iface_wl_shell		= "wl_shell";
-
-typedef boost::mpl::list<
-	BindInterface<wl_compositor, wl_compositor_interface, str_iface_wl_compositor>,
-	BindInterface<wl_display, wl_display_interface, str_iface_wl_display>,
-	BindInterface<wl_shm, wl_shm_interface, str_iface_wl_shm>,
-	BindInterface<wl_output, wl_output_interface, str_iface_wl_output>,
-	BindInterface<wl_input_device, wl_input_device_interface, str_iface_wl_input_device>,
-	BindInterface<wl_shell, wl_shell_interface, str_iface_wl_shell>
-> test_types;
-
-BOOST_AUTO_TEST_CASE_TEMPLATE( bind_interface, T, test_types )
-{
-	T t;
-	BOOST_REQUIRE(t.object == NULL);
-	t.bind();
-	BOOST_CHECK(t.object != NULL);
+#define BIND_TEST(name) \
+\
+std::string str_iface_##name = #name; \
+typedef BindInterface<name, name##_interface, str_iface_##name> bind_##name##_interface; \
+BOOST_FIXTURE_TEST_CASE(bind_##name, bind_##name##_interface) \
+{ \
+	BOOST_REQUIRE(object == NULL); \
+	bind(); \
+	BOOST_CHECK(object != NULL); \
 }
+
+BIND_TEST(wl_compositor)
+BIND_TEST(wl_display)
+BIND_TEST(wl_shm)
+BIND_TEST(wl_output)
+BIND_TEST(wl_input_device)
+BIND_TEST(wl_shell)
