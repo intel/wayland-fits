@@ -1,7 +1,9 @@
+#include <stdexcept>
 #include <iostream>
 #include <cstdlib>
 #include <string>
 #include <sys/mman.h>
+#include <boost/timer.hpp>
 
 #include <wayland-client.h>
 
@@ -68,8 +70,7 @@ Display::Display()
 	, mask_(0)
 {
 	if (not display_) {
-		std::cerr << "Failed to create display!" << std::endl;
-		exit(1);
+		throw std::runtime_error("Failed to create display!");
 	}
 
 	wl_display_add_global_listener(display_, handleGlobal, this);
@@ -77,8 +78,7 @@ Display::Display()
 	wl_display_roundtrip(display_);
 
 	if (not (formats_ & (1 << WL_SHM_FORMAT_XRGB8888))) {
-		std::cerr << "WL_SHM_FORMAT_XRGB32 not available!" << std::endl;
-		exit(1);
+		throw std::runtime_error("WL_SHM_FORMAT_XRGB32 not available!");
 	}
 
 	wl_display_get_fd(display_, evtMaskUpdate, this);
@@ -102,9 +102,10 @@ Display::~Display()
 	wl_display_disconnect(display_);
 }
 
-void Display::run()
+void Display::run(double time)
 {
-	while (1)
+	boost::timer t;
+	while (t.elapsed() < time)
 		wl_display_iterate(display_, mask_);
 }
 

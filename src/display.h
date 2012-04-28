@@ -25,7 +25,7 @@ public:
 
 	wl_buffer*	createShmBuffer(int, int, uint32_t, void**);
 
-	void		run();
+	void		run(double);
 
 private:
 	wl_display*	display_;
