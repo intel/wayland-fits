@@ -10,7 +10,7 @@ struct BindInterface {
 	{
 		BOOST_REQUIRE(display);
 	}
-
+	
 	void bind()
 	{
 		wl_display_add_global_listener(display, &BindInterface::callback, this);
@@ -43,10 +43,11 @@ BOOST_FIXTURE_TEST_CASE(bind_##name, bind_##name##_interface) \
 	bind(); \
 	BOOST_CHECK(object != NULL); \
 }
-
-BIND_TEST(wl_compositor)
-BIND_TEST(wl_display)
-BIND_TEST(wl_shm)
-BIND_TEST(wl_output)
-BIND_TEST(wl_input_device)
-BIND_TEST(wl_shell)
+BOOST_AUTO_TEST_SUITE(Bind_Interface_Suite)
+	BIND_TEST(wl_compositor)
+	BIND_TEST(wl_display)
+	BIND_TEST(wl_shm)
+	BIND_TEST(wl_output)
+	BIND_TEST(wl_input_device)
+	BIND_TEST(wl_shell)
+BOOST_AUTO_TEST_SUITE_END()

@@ -2,15 +2,20 @@
 
 RESULT_LOG=${1}.xml
 
-$WLD/install/bin/weston &
+rm -rf ${RESULT_LOG}
 
-sleep 2 # allow time for weston to initialize
+$WLD/install/bin/weston & sleep 2 # allow time for weston to initialize
 
 ${1} --log_level=all --log_format=xml --report_level=detailed > ${RESULT_LOG}
 
+RESULT=$?
+
 kill -15 %1
 
-xmllint ${RESULT_LOG} --format -o ${RESULT_LOG}
+if [ -f ${RESULT_LOG} ]
+then
+	xmllint ${RESULT_LOG} --format -o ${RESULT_LOG}
+	echo "See full results in `readlink -f ${RESULT_LOG}`"
+fi
 
-echo "See full results in `readlink -f ${RESULT_LOG}`"
-
+exit ${RESULT}
