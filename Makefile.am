@@ -1,3 +1,3 @@
-SUBDIRS = src
+SUBDIRS = src src/efl
 
 ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}

@@ -1,21 +1,11 @@
 #!/bin/sh
 
-RESULT_LOG=${1}.xml
-
-rm -rf ${RESULT_LOG}
-
 $WLD/install/bin/weston & sleep 2 # allow time for weston to initialize
 
-${1} --log_level=all --log_format=xml --report_level=detailed > ${RESULT_LOG}
+${1} --log_level=all --log_format=xml --report_level=detailed
 
 RESULT=$?
 
 kill -15 %1
-
-if [ -f ${RESULT_LOG} ]
-then
-	xmllint ${RESULT_LOG} --format -o ${RESULT_LOG}
-	echo "See full results in `readlink -f ${RESULT_LOG}`"
-fi
 
 exit ${RESULT}
