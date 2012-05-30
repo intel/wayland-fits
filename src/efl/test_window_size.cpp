@@ -11,11 +11,11 @@ BOOST_AUTO_TEST_CASE(efl_window_size_shm)
 	app.setEngine(Application::ENGINE_SHM);
 	Window win("shm-size", "SHM Size");
 	win.setSize(400, 400);
-	win.setPosition(0, 0);
+	win.setPosition(100, 100);
 	win.show();
 
 	app.yield();
-
+// 	app.mainLoop();
 	BOOST_CHECK_EQUAL(win.getWidth(), 400);
 	BOOST_CHECK_EQUAL(win.getHeight(), 400);
 }

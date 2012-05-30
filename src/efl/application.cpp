@@ -21,7 +21,7 @@ Application::~Application()
 
 void Application::setEngine(const Engine& engine)
 {
-	std::string strEngine = "software_x11";
+	std::string strEngine;
 	switch (engine) {
 		case ENGINE_EGL:
 			strEngine = "wayland_egl";

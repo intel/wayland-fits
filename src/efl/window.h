@@ -3,8 +3,6 @@
 
 #include <string>
 
-// typename Evas_Object;
-
 class Window
 {
 public:
@@ -17,7 +15,13 @@ public:
 
 	int getWidth();
 	int getHeight();
+	int getX();
+	int getY();
 private:
+	operator Evas*();
+	operator Ecore_Evas*();
+	operator Evas_Object*();
+
 	Evas_Object*	win_;
 };
 
