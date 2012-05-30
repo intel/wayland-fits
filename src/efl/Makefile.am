@@ -20,8 +20,9 @@ bin_PROGRAMS = $(TESTS)
 
 wayland_efl_test_SOURCES =	\
 	application.cpp		\
+	evasobject.cpp		\
 	window.cpp		\
-	test_window_size.cpp	\
+	test_evas_object.cpp	\
 	test_engine_set.cpp	\
 	../testmain.cpp
 

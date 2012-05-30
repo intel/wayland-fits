@@ -3,26 +3,12 @@
 
 #include <string>
 
-class Window
+#include "evasobject.h"
+
+class Window : public EvasObject
 {
 public:
-	Window(const std::string&, const std::string&);
-	virtual ~Window();
-
-	void setSize(int w, int h);
-	void setPosition(int x, int y);
-	void show();
-
-	int getWidth();
-	int getHeight();
-	int getX();
-	int getY();
-private:
-	operator Evas*();
-	operator Ecore_Evas*();
-	operator Evas_Object*();
-
-	Evas_Object*	win_;
+	Window(const std::string& = "name", const std::string& = "title");
 };
 
 #endif
