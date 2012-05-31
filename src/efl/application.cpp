@@ -1,6 +1,5 @@
 #include <Elementary.h>
 
-#include "../test.h"
 #include "application.h"
 
 Application::Application()

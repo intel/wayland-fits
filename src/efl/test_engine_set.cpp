@@ -1,6 +1,8 @@
 #include <Elementary.h>
 #include "../test.h"
 
+BOOST_AUTO_TEST_SUITE(Wayland_EFL_Misc_Suite)
+
 BOOST_AUTO_TEST_CASE(elm_engine_set_wayland_shm)
 {
 	const std::string engine("wayland_shm");
@@ -34,3 +36,5 @@ BOOST_AUTO_TEST_CASE(elm_engine_set_wayland_egl)
 	BOOST_CHECK_EQUAL(engine, std::string(elm_config_preferred_engine_get()));
 	BOOST_CHECK_EQUAL(engine, std::string(elm_config_engine_get()));
 }
+
+BOOST_AUTO_TEST_SUITE_END()

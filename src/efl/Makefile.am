@@ -22,7 +22,8 @@ wayland_efl_test_SOURCES =	\
 	application.cpp		\
 	evasobject.cpp		\
 	window.cpp		\
-	test_evas_object.cpp	\
+	test_window.cpp		\
+	test_button.cpp		\
 	test_engine_set.cpp	\
 	../testmain.cpp
 
