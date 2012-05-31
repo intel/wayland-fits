@@ -9,7 +9,6 @@ BOOST_AUTO_TEST_SUITE(Wayland_EFL_Button_Suite)
 WAYLAND_EFL_AUTO_TEST_CASE(efl_button_resize)
 {
 	Window win;
-	win.setSize(400, 400);
 	win.show();
 
 	EvasObject btn(elm_button_add(win));
@@ -33,7 +32,6 @@ WAYLAND_EFL_AUTO_TEST_CASE(efl_button_resize)
 WAYLAND_EFL_AUTO_TEST_CASE(efl_button_move)
 {
 	Window win;
-	win.setSize(400, 400);
 	win.show();
 
 	EvasObject btn(elm_button_add(win));

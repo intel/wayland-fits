@@ -7,6 +7,6 @@ Window::Window(const std::string& name, const std::string& title)
 		elm_win_util_standard_add(name.c_str(), title.c_str())
 	)
 {
-	return;
+	setSize(10, 10);
 }
 
