@@ -5,27 +5,23 @@
 #include "window.h"
 #include "../test.h"
 
-//TODO: The application should be a singleton
-//TODO: We could probably iterate over each engine in a global fixture.
 #define TEST_ALL_ENGINES(name) \
 \
-void name##_test_run(Application&); \
+void name##_test_run(); \
 \
 BOOST_AUTO_TEST_CASE(name##_shm_engine) \
 { \
-	Application app; \
-	app.setEngine(Application::ENGINE_SHM); \
-	name##_test_run(app); \
+	Application::setEngine(Application::ENGINE_SHM); \
+	name##_test_run(); \
 } \
 \
 BOOST_AUTO_TEST_CASE(name##_egl_engine) \
 { \
-	Application app; \
-	app.setEngine(Application::ENGINE_EGL); \
-	name##_test_run(app); \
+	Application::setEngine(Application::ENGINE_EGL); \
+	name##_test_run(); \
 } \
 \
-void name##_test_run(Application& app)
+void name##_test_run()
 
 
 TEST_ALL_ENGINES(efl_window_resize_move)
@@ -37,7 +33,7 @@ TEST_ALL_ENGINES(efl_window_resize_move)
 	win.setSize(400, 200);
 	win.setPosition(10, 20);
 
-	app.yield();
+	Application::yield();
 
 	BOOST_CHECK_EQUAL(win.getWidth(), 400);
 	BOOST_CHECK_EQUAL(win.getHeight(), 200);
@@ -47,7 +43,7 @@ TEST_ALL_ENGINES(efl_window_resize_move)
 	win.setSize(100, 120);
 	win.setPosition(15, 25);
 
-	app.yield();
+	Application::yield();
 
 	BOOST_CHECK_EQUAL(win.getWidth(), 100);
 	BOOST_CHECK_EQUAL(win.getHeight(), 120);
@@ -67,7 +63,7 @@ TEST_ALL_ENGINES(efl_button_resize_move)
 	btn.setSize(120, 30);
 	btn.setPosition(60, 15);
 
-	app.yield();
+	Application::yield();
 
 	BOOST_CHECK_EQUAL(btn.getWidth(), 120);
 	BOOST_CHECK_EQUAL(btn.getHeight(), 30);
@@ -77,7 +73,7 @@ TEST_ALL_ENGINES(efl_button_resize_move)
 	btn.setSize(75, 75);
 	btn.setPosition(10, 10);
 
-	app.yield();
+	Application::yield();
 
 	BOOST_CHECK_EQUAL(btn.getWidth(), 75);
 	BOOST_CHECK_EQUAL(btn.getHeight(), 75);

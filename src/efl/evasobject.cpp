@@ -10,6 +10,10 @@ EvasObject::EvasObject(Evas_Object* o)
 
 EvasObject::~EvasObject()
 {
+	if (obj_)
+	{
+		evas_object_del(obj_);
+	}
 	obj_ = NULL;
 }
 

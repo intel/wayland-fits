@@ -15,10 +15,10 @@ Application::Application()
 /* virtual */
 Application::~Application()
 {
-	// FIXME: hmmm... doesn't behave nicely across muliple boost test instances
 	elm_shutdown();
 }
 
+/* static */
 void Application::setEngine(const Engine& engine)
 {
 	std::string strEngine;
@@ -37,18 +37,24 @@ void Application::setEngine(const Engine& engine)
 	BOOST_ASSERT(strEngine == std::string(elm_config_engine_get()));
 }
 
+/* static */
 void Application::mainLoop()
 {
 	elm_run();
 }
 
+/* static */
 void Application::yield()
 {
 	ecore_main_loop_iterate();
-	sleep(1);
+	usleep(0.1 * 1e6);
 }
 
+/* static */
 void Application::exit()
 {
 	elm_exit();
 }
+
+// only one instance per test binary
+BOOST_GLOBAL_FIXTURE(Application);
