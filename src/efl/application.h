@@ -3,50 +3,37 @@
 
 #include "../test.h"
 
-// namespace boost {
-// 	namespace unit_test {
-// 		namespace ut_detail {
-// 			template<class F> class global_fixture_impl;
-// 		}
-// 	}
-// }
-
 class Application
 {
 public:
 	enum Engine {
-		ENGINE_SHM,
-		ENGINE_EGL
+		engineBegin = 0,
+		ENGINE_SHM = engineBegin,	/// wayland_shm
+		ENGINE_EGL,			/// wayland_egl
+		engineLast
 	};
 
 	virtual ~Application();
 
+	/**
+	 * This will have an effect on objects created after
+	 * calling this.
+	 **/
 	static void setEngine(const Engine&);
-	static void mainLoop();
-	static void yield();
-	static void exit();
+
+	/**
+	 * Process pending events and sleep for specified
+	 * microseconds.
+	 **/
+	static void yield(const unsigned time = 0.01 * 1e6);
 
 private:
 	friend class ::boost::unit_test::ut_detail::global_fixture_impl<Application>;
+
+	/**
+	 * Initialize's Elm and set's the default engine to ENGINE_SHM
+	 **/
 	Application();
 };
-
-#define WAYLAND_EFL_AUTO_TEST_CASE(name) \
-\
-void name##_test_run(); \
-\
-BOOST_AUTO_TEST_CASE(name##_shm_engine) \
-{ \
-	Application::setEngine(Application::ENGINE_SHM); \
-	name##_test_run(); \
-} \
-\
-BOOST_AUTO_TEST_CASE(name##_egl_engine) \
-{ \
-	Application::setEngine(Application::ENGINE_EGL); \
-	name##_test_run(); \
-} \
-\
-void name##_test_run()
 
 #endif //__WAYLAND_EFL_APPLICATION_H__

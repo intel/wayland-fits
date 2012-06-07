@@ -31,29 +31,19 @@ void Application::setEngine(const Engine& engine)
 	}
 
 	elm_config_preferred_engine_set(strEngine.c_str()); // override's ELM_ENGINE user environment setting
-	elm_config_engine_set(strEngine.c_str());
 	BOOST_ASSERT(strEngine == std::string(elm_config_preferred_engine_get()));
+
+	elm_config_engine_set(strEngine.c_str());
 	BOOST_ASSERT(strEngine == std::string(elm_config_engine_get()));
 }
 
-/* static */
-void Application::mainLoop()
-{
-	elm_run();
-}
-
-/* static */
-void Application::yield()
+/*static*/
+void Application::yield(const unsigned time)
 {
 	ecore_main_loop_iterate();
-	usleep(0.1 * 1e6);
+	usleep(time);
 }
 
-/* static */
-void Application::exit()
-{
-	elm_exit();
-}
 
 // only one instance per test binary
 BOOST_GLOBAL_FIXTURE(Application);

@@ -8,7 +8,7 @@
 class Window : public EvasObject
 {
 public:
-	Window(const std::string& = "name", const std::string& = "title");
+	Window(const std::string& = "name", const std::string& = "title", const unsigned = 50, const unsigned = 50);
 };
 
 #endif

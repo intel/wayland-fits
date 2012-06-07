@@ -19,14 +19,13 @@ LDFLAGS += 			\
 bin_PROGRAMS = $(TESTS)
 
 wayland_efl_test_SOURCES =	\
-	application.cpp		\
 	evasobject.cpp		\
 	window.cpp		\
-	test_window.cpp		\
+	application.cpp		\
+	elmtestharness.cpp	\
 	test_button.cpp		\
+	test_window.cpp		\
 	test_engine_set.cpp	\
 	../testmain.cpp
-
-wayland_efl_test_CXXFLAGS = -DTESTLOG='"@abs_builddir@/wayland-efl-test.log"'
 
 endif

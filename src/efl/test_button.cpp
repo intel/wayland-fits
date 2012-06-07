@@ -1,55 +1,98 @@
 #include <Elementary.h>
-#include <Ecore.h>
+#include <boost/bind.hpp>
 
-#include "application.h"
 #include "window.h"
+#include "evasobject.h"
+#include "elmtestharness.h"
+
+class ButtonResizeTest : public ElmTestHarness
+{
+public:
+
+	ButtonResizeTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("ButtonResizeTest", "Button Resize Test")
+		, button_(elm_button_add(window_))
+	{
+		return;
+	}
+
+	void setup()
+	{
+		window_.show();
+		button_.show();
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(&EvasObject::setSize, boost::ref(button_), 75, 75),
+				boost::bind(&ButtonResizeTest::checkSize, boost::ref(*this), 75, 75)
+			)
+		);
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(&EvasObject::setSize, boost::ref(button_), 120, 30),
+				boost::bind(&ButtonResizeTest::checkSize, boost::ref(*this), 120, 30)
+			)
+		);
+	}
+
+	void checkSize(unsigned w, unsigned h)
+	{
+		BOOST_CHECK_EQUAL(button_.getWidth(), w);
+		BOOST_CHECK_EQUAL(button_.getHeight(), h);
+	}
+
+private:
+	Window		window_;
+	EvasObject	button_;
+};
+
+class ButtonMoveTest : public ElmTestHarness
+{
+public:
+	ButtonMoveTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("ButtonMoveTest", "Button Move Test")
+		, button_(elm_button_add(window_))
+	{
+		return;
+	}
+
+	void setup()
+	{
+		window_.show();
+		button_.show();
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(&EvasObject::setPosition, boost::ref(button_), 60, 15),
+				boost::bind(&ButtonMoveTest::checkPosition, boost::ref(*this), 60, 15)
+			)
+		);
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(&EvasObject::setPosition, boost::ref(button_), 10, 10),
+				boost::bind(&ButtonMoveTest::checkPosition, boost::ref(*this), 10, 10)
+			)
+		);
+	}
+
+	void checkPosition(unsigned x, unsigned y)
+	{
+		BOOST_CHECK_EQUAL(button_.getX(), x);
+		BOOST_CHECK_EQUAL(button_.getY(), y);
+	}
+
+private:
+	Window		window_;
+	EvasObject	button_;
+};
 
 BOOST_AUTO_TEST_SUITE(Wayland_EFL_Button_Suite)
 
-WAYLAND_EFL_AUTO_TEST_CASE(efl_button_resize)
-{
-	Window win;
-	win.show();
-
-	EvasObject btn(elm_button_add(win));
-	btn.show();
-
-	btn.setSize(120, 30);
-
-	Application::yield();
-
-	BOOST_CHECK_EQUAL(btn.getWidth(), 120);
-	BOOST_CHECK_EQUAL(btn.getHeight(), 30);
-
-	btn.setSize(75, 75);
-
-	Application::yield();
-
-	BOOST_CHECK_EQUAL(btn.getWidth(), 75);
-	BOOST_CHECK_EQUAL(btn.getHeight(), 75);
-}
-
-WAYLAND_EFL_AUTO_TEST_CASE(efl_button_move)
-{
-	Window win;
-	win.show();
-
-	EvasObject btn(elm_button_add(win));
-	btn.show();
-
-	btn.setPosition(60, 15);
-
-	Application::yield();
-
-	BOOST_CHECK_EQUAL(btn.getX(), 60);
-	BOOST_CHECK_EQUAL(btn.getY(), 15);
-
-	btn.setPosition(10, 10);
-
-	Application::yield();
-
-	BOOST_CHECK_EQUAL(btn.getX(), 10);
-	BOOST_CHECK_EQUAL(btn.getY(), 10);
-}
+	WAYLAND_ELM_HARNESS_TEST_CASE(ButtonResizeTest)
+	WAYLAND_ELM_HARNESS_TEST_CASE(ButtonMoveTest)
 
 BOOST_AUTO_TEST_SUITE_END()

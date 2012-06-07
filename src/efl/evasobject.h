@@ -4,7 +4,7 @@
 class EvasObject
 {
 public:
-	EvasObject(Evas_Object* o);
+	EvasObject(Evas_Object* = NULL);
 
 	virtual ~EvasObject();
 
