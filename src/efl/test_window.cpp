@@ -159,6 +159,43 @@ private:
 	Window		window_;
 };
 
+class WindowFullscreenTest : public ElmTestHarness
+{
+public:
+	WindowFullscreenTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("WindowFullscreenTest", "Window Fullscreen Test")
+	{
+		return;
+	}
+
+	void setup()
+	{
+		window_.show();
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(&Window::fullscreen, boost::ref(window_), EINA_TRUE),
+				boost::bind(&WindowFullscreenTest::checkFullscreen, boost::ref(*this), EINA_TRUE)
+			)
+		);
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(&Window::fullscreen, boost::ref(window_), EINA_FALSE),
+				boost::bind(&WindowFullscreenTest::checkFullscreen, boost::ref(*this), EINA_FALSE)
+			)
+		);
+	}
+
+	void checkFullscreen(Eina_Bool isFullscreen)
+	{
+		BOOST_CHECK_EQUAL(window_.isFullscreen(), isFullscreen);
+	}
+
+private:
+	Window		window_;
+};
 
 BOOST_AUTO_TEST_SUITE(Wayland_EFL_Window_Suite)
 
@@ -166,5 +203,6 @@ BOOST_AUTO_TEST_SUITE(Wayland_EFL_Window_Suite)
 	WAYLAND_ELM_HARNESS_TEST_CASE(WindowMoveTest)
 	WAYLAND_ELM_HARNESS_TEST_CASE(WindowIconifyTest)
 	WAYLAND_ELM_HARNESS_TEST_CASE(WindowMaximizeTest)
+	WAYLAND_ELM_HARNESS_TEST_CASE(WindowFullscreenTest)
 
 BOOST_AUTO_TEST_SUITE_END()

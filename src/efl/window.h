@@ -12,9 +12,11 @@ public:
 	
 	void iconify(Eina_Bool iconify);
 	void maximize(Eina_Bool maximize);
+	void fullscreen(Eina_Bool fullscreen);
 
 	Eina_Bool isIconified();
 	Eina_Bool isMaximized();
+	Eina_Bool isFullscreen();
 };
 
 #endif

@@ -30,3 +30,13 @@ Eina_Bool Window::isMaximized()
 {
 	return elm_win_maximized_get(*this);
 }
+
+void Window::fullscreen(Eina_Bool fullscreen)
+{
+	elm_win_fullscreen_set(*this, fullscreen);
+}
+
+Eina_Bool Window::isFullscreen()
+{
+	return elm_win_fullscreen_get(*this);
+}
