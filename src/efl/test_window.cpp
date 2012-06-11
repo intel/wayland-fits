@@ -83,9 +83,88 @@ private:
 	Window		window_;
 };
 
+class WindowIconifyTest : public ElmTestHarness
+{
+public:
+	WindowIconifyTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("WindowIconifyTest", "Window Iconify/Minimize Test")
+	{
+		return;
+	}
+
+	void setup()
+	{
+		window_.show();
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(&Window::iconify, boost::ref(window_), EINA_TRUE),
+				boost::bind(&WindowIconifyTest::checkIconified, boost::ref(*this), EINA_TRUE)
+			)
+		);
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(&Window::iconify, boost::ref(window_), EINA_FALSE),
+				boost::bind(&WindowIconifyTest::checkIconified, boost::ref(*this), EINA_FALSE)
+			)
+		);
+	}
+
+	void checkIconified(Eina_Bool isIconified)
+	{
+		BOOST_CHECK_EQUAL(window_.isIconified(), isIconified);
+	}
+
+private:
+	Window		window_;
+};
+
+class WindowMaximizeTest : public ElmTestHarness
+{
+public:
+	WindowMaximizeTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("WindowMaximizeTest", "Window Maximize Test")
+	{
+		return;
+	}
+
+	void setup()
+	{
+		window_.show();
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(&Window::maximize, boost::ref(window_), EINA_TRUE),
+				boost::bind(&WindowMaximizeTest::checkMaximized, boost::ref(*this), EINA_TRUE)
+			)
+		);
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(&Window::maximize, boost::ref(window_), EINA_FALSE),
+				boost::bind(&WindowMaximizeTest::checkMaximized, boost::ref(*this), EINA_FALSE)
+			)
+		);
+	}
+
+	void checkMaximized(Eina_Bool isMaximized)
+	{
+		BOOST_CHECK_EQUAL(window_.isMaximized(), isMaximized);
+	}
+
+private:
+	Window		window_;
+};
+
+
 BOOST_AUTO_TEST_SUITE(Wayland_EFL_Window_Suite)
 
 	WAYLAND_ELM_HARNESS_TEST_CASE(WindowResizeTest)
 	WAYLAND_ELM_HARNESS_TEST_CASE(WindowMoveTest)
+	WAYLAND_ELM_HARNESS_TEST_CASE(WindowIconifyTest)
+	WAYLAND_ELM_HARNESS_TEST_CASE(WindowMaximizeTest)
 
 BOOST_AUTO_TEST_SUITE_END()

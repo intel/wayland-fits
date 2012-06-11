@@ -10,3 +10,23 @@ Window::Window(const std::string& name, const std::string& title, const unsigned
 	setSize(width, height);
 }
 
+
+void Window::iconify(Eina_Bool iconify)
+{
+	elm_win_iconified_set(*this, iconify);
+}
+
+Eina_Bool Window::isIconified()
+{
+	return elm_win_iconified_get(*this);
+}
+
+void Window::maximize(Eina_Bool maximize)
+{
+	elm_win_maximized_set(*this, maximize);
+}
+
+Eina_Bool Window::isMaximized()
+{
+	return elm_win_maximized_get(*this);
+}
