@@ -235,6 +235,44 @@ private:
 	Window		window_;
 };
 
+class WindowWithdrawnTest : public ElmTestHarness
+{
+public:
+	WindowWithdrawnTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("WindowWithdrawnTest", "Window Withdrawn Test")
+	{
+		return;
+	}
+
+	void setup()
+	{
+		window_.show();
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(&Window::withdrawn, boost::ref(window_), EINA_TRUE),
+				boost::bind(&WindowWithdrawnTest::checkWithdrawn, boost::ref(*this), EINA_TRUE)
+			)
+		);
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(&Window::withdrawn, boost::ref(window_), EINA_FALSE),
+				boost::bind(&WindowWithdrawnTest::checkWithdrawn, boost::ref(*this), EINA_FALSE)
+			)
+		);
+	}
+
+	void checkWithdrawn(Eina_Bool isWithdrawn)
+	{
+		BOOST_CHECK_EQUAL(window_.isWithdrawn(), isWithdrawn);
+	}
+
+private:
+	Window		window_;
+};
+
 BOOST_AUTO_TEST_SUITE(Wayland_EFL_Window_Suite)
 
 	WAYLAND_ELM_HARNESS_TEST_CASE(WindowResizeTest)
@@ -243,5 +281,6 @@ BOOST_AUTO_TEST_SUITE(Wayland_EFL_Window_Suite)
 	WAYLAND_ELM_HARNESS_TEST_CASE(WindowMaximizeTest)
 	WAYLAND_ELM_HARNESS_TEST_CASE(WindowFullscreenTest)
 	WAYLAND_ELM_HARNESS_TEST_CASE(WindowStickyTest)
+	WAYLAND_ELM_HARNESS_TEST_CASE(WindowWithdrawnTest)
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -14,11 +14,13 @@ public:
 	void maximize(Eina_Bool maximize);
 	void fullscreen(Eina_Bool fullscreen);
 	void sticky(Eina_Bool sticky);
+	void withdrawn(Eina_Bool withdraw);
 
 	Eina_Bool isIconified();
 	Eina_Bool isMaximized();
 	Eina_Bool isFullscreen();
 	Eina_Bool isSticky();
+	Eina_Bool isWithdrawn();
 };
 
 #endif

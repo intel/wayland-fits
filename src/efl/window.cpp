@@ -51,3 +51,12 @@ Eina_Bool Window::isSticky()
 	return elm_win_sticky_get(*this);
 }
 
+void Window::withdrawn(Eina_Bool withdraw)
+{
+	elm_win_withdrawn_set(*this, withdraw);
+}
+
+Eina_Bool Window::isWithdrawn()
+{
+	return elm_win_withdrawn_get(*this);
+}
