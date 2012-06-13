@@ -197,6 +197,44 @@ private:
 	Window		window_;
 };
 
+class WindowStickyTest : public ElmTestHarness
+{
+public:
+	WindowStickyTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("WindowStickyTest", "Window Sticky Test")
+	{
+		return;
+	}
+
+	void setup()
+	{
+		window_.show();
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(&Window::sticky, boost::ref(window_), EINA_TRUE),
+				boost::bind(&WindowStickyTest::checkSticky, boost::ref(*this), EINA_TRUE)
+			)
+		);
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(&Window::sticky, boost::ref(window_), EINA_FALSE),
+				boost::bind(&WindowStickyTest::checkSticky, boost::ref(*this), EINA_FALSE)
+			)
+		);
+	}
+
+	void checkSticky(Eina_Bool isSticky)
+	{
+		BOOST_CHECK_EQUAL(window_.isSticky(), isSticky);
+	}
+
+private:
+	Window		window_;
+};
+
 BOOST_AUTO_TEST_SUITE(Wayland_EFL_Window_Suite)
 
 	WAYLAND_ELM_HARNESS_TEST_CASE(WindowResizeTest)
@@ -204,5 +242,6 @@ BOOST_AUTO_TEST_SUITE(Wayland_EFL_Window_Suite)
 	WAYLAND_ELM_HARNESS_TEST_CASE(WindowIconifyTest)
 	WAYLAND_ELM_HARNESS_TEST_CASE(WindowMaximizeTest)
 	WAYLAND_ELM_HARNESS_TEST_CASE(WindowFullscreenTest)
+	WAYLAND_ELM_HARNESS_TEST_CASE(WindowStickyTest)
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -40,3 +40,14 @@ Eina_Bool Window::isFullscreen()
 {
 	return elm_win_fullscreen_get(*this);
 }
+
+void Window::sticky(Eina_Bool sticky)
+{
+	elm_win_sticky_set(*this, sticky);
+}
+
+Eina_Bool Window::isSticky()
+{
+	return elm_win_sticky_get(*this);
+}
+
