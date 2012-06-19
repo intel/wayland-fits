@@ -15,6 +15,8 @@ public:
 		, window_("BackgroundColorTest", "Background Color Test")
 		, bg_(window_)
 	{
+		evas_object_size_hint_weight_set(bg_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+		elm_win_resize_object_add(window_, bg_);
 		return;
 	}
 
