@@ -20,6 +20,7 @@ bin_PROGRAMS = $(TESTS)
 
 wayland_efl_test_SOURCES =	\
 	evasobject.cpp		\
+	actionslider.cpp	\
 	window.cpp		\
 	application.cpp		\
 	elmtestharness.cpp	\
