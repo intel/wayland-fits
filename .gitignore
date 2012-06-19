@@ -19,3 +19,6 @@ autom4te.cache
 *~
 *.o
 *.so
+
+src/wayland-test
+src/efl/wayland-efl-test
