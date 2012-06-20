@@ -71,7 +71,6 @@ public:
 	{
 		bg_.show();
 		window_.show();
-		window_.maximize(EINA_TRUE);
 
 		path p(MEDIA_PATH"/crater_lake.png");
 
@@ -82,11 +81,15 @@ public:
 				)
 			);
 
-		Elm_Bg_Option option[] = { ELM_BG_OPTION_CENTER,
-					   ELM_BG_OPTION_SCALE,
+		Elm_Bg_Option option[] = { ELM_BG_OPTION_SCALE,
+					   ELM_BG_OPTION_CENTER,
 					   ELM_BG_OPTION_STRETCH,
-					   ELM_BG_OPTION_TILE
+					   ELM_BG_OPTION_CENTER,
+					   ELM_BG_OPTION_TILE,
+					   ELM_BG_OPTION_CENTER
 					 };
+
+		window_.maximize(EINA_TRUE);
 
 		unsigned int o;
 		for (o = 0; o < (sizeof(option) / sizeof(Elm_Bg_Option)); o++)
