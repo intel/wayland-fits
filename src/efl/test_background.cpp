@@ -71,6 +71,7 @@ public:
 	{
 		bg_.show();
 		window_.show();
+		window_.maximize(EINA_TRUE);
 
 		path p(MEDIA_PATH"/crater_lake.png");
 
@@ -80,6 +81,23 @@ public:
 				boost::bind(&BackgroundImageTest::checkImage, boost::ref(*this), p)
 				)
 			);
+
+		Elm_Bg_Option option[] = { ELM_BG_OPTION_CENTER,
+					   ELM_BG_OPTION_SCALE,
+					   ELM_BG_OPTION_STRETCH,
+					   ELM_BG_OPTION_TILE
+					 };
+
+		unsigned int o;
+		for (o = 0; o < (sizeof(option) / sizeof(Elm_Bg_Option)); o++)
+		{
+			queueCallback(
+				ModifyCheckCallback(
+					boost::bind(&Background::setImageOpt, boost::ref(bg_), option[o]),
+					boost::bind(&BackgroundImageTest::checkImageOpt, boost::ref(*this), option[o])
+				)
+			);
+		}
 	}
 
 	void checkImage(path& p)
@@ -88,6 +106,11 @@ public:
 		bg_.getImage(ret);
 
 		BOOST_CHECK_EQUAL(ret, p);
+	}
+
+	void checkImageOpt(Elm_Bg_Option option)
+	{
+		BOOST_CHECK_EQUAL(option, bg_.getImageOpt());
 	}
 
 private:

@@ -19,9 +19,11 @@ public:
 
 	void setColor(int, int, int);
 	void setImage(const path&);
+	void setImageOpt(Elm_Bg_Option);
 
 	void getColor(int*, int*, int*);
 	void getImage(path&);
+	Elm_Bg_Option getImageOpt();
 
 	operator Evas_Object*();
 
