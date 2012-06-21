@@ -15,8 +15,6 @@ public:
 
 	Elm_Actionslider_Pos getPos();
 
-	operator Evas_Object*();
-
 private:
 	Evas_Object *parent;
 };

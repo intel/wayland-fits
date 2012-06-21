@@ -25,8 +25,6 @@ public:
 	void getImage(path&);
 	Elm_Bg_Option getImageOpt();
 
-	operator Evas_Object*();
-
 private:
 	Evas_Object *parent;
 };

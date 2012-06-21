@@ -43,7 +43,3 @@ Elm_Bg_Option Background::getImageOpt()
 	return elm_bg_option_get(*this);
 }
 
-Background::operator Evas_Object*()
-{
-	return EvasObject::obj_;
-}

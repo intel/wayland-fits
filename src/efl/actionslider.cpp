@@ -36,7 +36,3 @@ Elm_Actionslider_Pos Actionslider::getPos()
 	return elm_actionslider_indicator_pos_get(*this);
 }
 
-Actionslider::operator Evas_Object*()
-{
-	return EvasObject::obj_;
-}

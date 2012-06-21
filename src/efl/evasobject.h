@@ -21,7 +21,7 @@ public:
 	operator Ecore_Evas*();
 	operator Evas_Object*();
 
-protected:
+private:
 	Evas_Object*	obj_;
 };
 
