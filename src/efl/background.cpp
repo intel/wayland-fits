@@ -1,5 +1,7 @@
 #include "background.h"
 
+using boost::filesystem::path;
+
 Background::Background(Evas_Object *parent)
 	: EvasObject::EvasObject(
 		elm_bg_add(parent)

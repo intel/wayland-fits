@@ -10,19 +10,17 @@
 #include <Elementary.h>
 #include "evasobject.h"
 
-using boost::filesystem::path;
-
 class Background : public EvasObject
 {
 public:
 	Background(Evas_Object *parent);
 
 	void setColor(int, int, int);
-	void setImage(const path&);
+	void setImage(const boost::filesystem::path&);
 	void setImageOpt(Elm_Bg_Option);
 
 	void getColor(int*, int*, int*);
-	void getImage(path&);
+	void getImage(boost::filesystem::path&);
 	Elm_Bg_Option getImageOpt();
 
 private:

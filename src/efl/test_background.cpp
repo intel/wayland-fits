@@ -7,6 +7,8 @@
 #include "evasobject.h"
 #include "elmtestharness.h"
 
+using boost::filesystem::path;
+
 class BackgroundColorTest : public ElmTestHarness
 {
 public:
