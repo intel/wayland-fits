@@ -74,7 +74,7 @@ public:
 		bg_.show();
 		window_.show();
 
-		path p(MEDIA_PATH"/crater_lake.png");
+		path p(MEDIA_PATH"/bridge_of_the_gods.png");
 
 		queueCallback(
 			ModifyCheckCallback(
