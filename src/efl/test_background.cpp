@@ -126,6 +126,6 @@ private:
 BOOST_AUTO_TEST_SUITE(Wayland_EFL_Background_Suite)
 
 	WAYLAND_ELM_HARNESS_TEST_CASE(BackgroundColorTest)
-	//WAYLAND_ELM_HARNESS_TEST_CASE(BackgroundImageTest)
+	WAYLAND_ELM_HARNESS_TEST_CASE(BackgroundImageTest)
 
 BOOST_AUTO_TEST_SUITE_END()
