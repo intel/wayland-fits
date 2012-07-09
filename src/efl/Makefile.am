@@ -35,6 +35,7 @@ wayland_efl_test_SOURCES =	\
 	test_engine_set.cpp	\
 	test_actionslider.cpp	\
 	test_background.cpp	\
+	test_bubble.cpp		\
 	../testmain.cpp
 
 endif
