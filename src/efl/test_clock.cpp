@@ -193,11 +193,16 @@ private:
 	Window		window_;
 	EvasObject	clock_;
 };
-BOOST_AUTO_TEST_SUITE(Wayland_EFL_Clock_Suite)
 
-	WAYLAND_ELM_HARNESS_TEST_CASE(ClockTimeTest)
-	WAYLAND_ELM_HARNESS_TEST_CASE(ClockEditionTest)
-	WAYLAND_ELM_HARNESS_TEST_CASE(ClockDigitEditionTest)
+BOOST_AUTO_TEST_SUITE(Wayland_EFL_Suite)
+
+	BOOST_AUTO_TEST_SUITE(Wayland_EFL_Clock_Suite)
+	
+		WAYLAND_ELM_HARNESS_TEST_CASE(ClockTimeTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(ClockEditionTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(ClockDigitEditionTest)
+	
+	BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE_END()
 

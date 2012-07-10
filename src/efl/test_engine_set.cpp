@@ -1,6 +1,9 @@
 #include <Elementary.h>
 #include "../test.h"
 
+
+BOOST_AUTO_TEST_SUITE(Wayland_EFL_Suite)
+
 BOOST_AUTO_TEST_SUITE(Wayland_EFL_Misc_Suite)
 
 BOOST_AUTO_TEST_CASE(elm_engine_set_wayland_shm)
@@ -38,3 +41,6 @@ BOOST_AUTO_TEST_CASE(elm_engine_set_wayland_egl)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE_END()
+

@@ -52,8 +52,12 @@ private:
 	Actionslider	as_;
 };
 
-BOOST_AUTO_TEST_SUITE(Wayland_EFL_Actionslider_Suite)
+BOOST_AUTO_TEST_SUITE(Wayland_EFL_Suite)
 
-	WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderPosTest)
+	BOOST_AUTO_TEST_SUITE(Wayland_EFL_Actionslider_Suite)
+	
+		WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderPosTest)
+	
+	BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE_END()
