@@ -38,6 +38,7 @@ wayland_efl_test_SOURCES =	\
 	test_bubble.cpp		\
 	test_check.cpp		\
 	test_clock.cpp		\
+	test_colorselector.cpp	\
 	../testmain.cpp
 
 endif
