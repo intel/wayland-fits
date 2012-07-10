@@ -24,21 +24,21 @@ LDFLAGS += 			\
 bin_PROGRAMS = $(TESTS)
 
 wayland_efl_test_SOURCES =	\
-	evasobject.cpp		\
 	actionslider.cpp	\
-	background.cpp		\
-	window.cpp		\
 	application.cpp		\
+	background.cpp		\
 	elmtestharness.cpp	\
-	test_button.cpp		\
-	test_window.cpp		\
-	test_engine_set.cpp	\
+	evasobject.cpp		\
+	window.cpp		\
 	test_actionslider.cpp	\
 	test_background.cpp	\
 	test_bubble.cpp		\
+	test_button.cpp		\
 	test_check.cpp		\
 	test_clock.cpp		\
 	test_colorselector.cpp	\
+	test_engine_set.cpp	\
+	test_window.cpp		\
 	../testmain.cpp
 
 endif
