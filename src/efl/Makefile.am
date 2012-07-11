@@ -37,6 +37,7 @@ wayland_efl_test_SOURCES =	\
 	test_check.cpp		\
 	test_clock.cpp		\
 	test_colorselector.cpp	\
+	test_dayselector.cpp	\
 	test_engine_set.cpp	\
 	test_window.cpp		\
 	../testmain.cpp
