@@ -94,9 +94,9 @@ private:
 	EvasObject	bubble_;
 };
 
-BOOST_AUTO_TEST_SUITE(Wayland_EFL_Suite)
+BOOST_AUTO_TEST_SUITE(EFL)
 
-	BOOST_AUTO_TEST_SUITE(Wayland_EFL_Bubble_Suite)
+	BOOST_AUTO_TEST_SUITE(Bubble)
 	
 		WAYLAND_ELM_HARNESS_TEST_CASE(BubblePosTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(BubbleTextTest)

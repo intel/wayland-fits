@@ -2,9 +2,9 @@
 #include "../test.h"
 
 
-BOOST_AUTO_TEST_SUITE(Wayland_EFL_Suite)
+BOOST_AUTO_TEST_SUITE(EFL)
 
-BOOST_AUTO_TEST_SUITE(Wayland_EFL_Misc_Suite)
+BOOST_AUTO_TEST_SUITE(Engine)
 
 BOOST_AUTO_TEST_CASE(elm_engine_set_wayland_shm)
 {

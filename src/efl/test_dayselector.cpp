@@ -143,9 +143,9 @@ private:
 	EvasObject	control_;
 };
 
-BOOST_AUTO_TEST_SUITE(Wayland_EFL_Suite)
+BOOST_AUTO_TEST_SUITE(EFL)
 
-	BOOST_AUTO_TEST_SUITE(Wayland_EFL_Dayselector_Suite)
+	BOOST_AUTO_TEST_SUITE(DaySelector)
 	
 		WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorDayTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorLocaleTest)

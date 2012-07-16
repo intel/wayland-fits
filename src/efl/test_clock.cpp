@@ -194,9 +194,9 @@ private:
 	EvasObject	clock_;
 };
 
-BOOST_AUTO_TEST_SUITE(Wayland_EFL_Suite)
+BOOST_AUTO_TEST_SUITE(EFL)
 
-	BOOST_AUTO_TEST_SUITE(Wayland_EFL_Clock_Suite)
+	BOOST_AUTO_TEST_SUITE(Clock)
 	
 		WAYLAND_ELM_HARNESS_TEST_CASE(ClockTimeTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(ClockEditionTest)

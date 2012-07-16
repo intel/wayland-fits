@@ -123,9 +123,9 @@ private:
 	Background	bg_;
 };
 
-BOOST_AUTO_TEST_SUITE(Wayland_EFL_Suite)
+BOOST_AUTO_TEST_SUITE(EFL)
 
-	BOOST_AUTO_TEST_SUITE(Wayland_EFL_Background_Suite)
+	BOOST_AUTO_TEST_SUITE(Background)
 	
 		WAYLAND_ELM_HARNESS_TEST_CASE(BackgroundColorTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(BackgroundImageTest)

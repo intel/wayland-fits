@@ -105,9 +105,9 @@ private:
 	EvasObject	check_;
 };
 
-BOOST_AUTO_TEST_SUITE(Wayland_EFL_Suite)
+BOOST_AUTO_TEST_SUITE(EFL)
 
-	BOOST_AUTO_TEST_SUITE(Wayland_EFL_Check_Suite)
+	BOOST_AUTO_TEST_SUITE(Check)
 	
 		WAYLAND_ELM_HARNESS_TEST_CASE(CheckStateTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(CheckTextTest)

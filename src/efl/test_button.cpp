@@ -90,9 +90,9 @@ private:
 	EvasObject	button_;
 };
 
-BOOST_AUTO_TEST_SUITE(Wayland_EFL_Suite)
+BOOST_AUTO_TEST_SUITE(EFL)
 
-	BOOST_AUTO_TEST_SUITE(Wayland_EFL_Button_Suite)
+	BOOST_AUTO_TEST_SUITE(Button)
 	
 		WAYLAND_ELM_HARNESS_TEST_CASE(ButtonResizeTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(ButtonMoveTest)

@@ -273,9 +273,9 @@ private:
 	Window		window_;
 };
 
-BOOST_AUTO_TEST_SUITE(Wayland_EFL_Suite)
+BOOST_AUTO_TEST_SUITE(EFL)
 
-	BOOST_AUTO_TEST_SUITE(Wayland_EFL_Window_Suite)
+	BOOST_AUTO_TEST_SUITE(Window)
 	
 		WAYLAND_ELM_HARNESS_TEST_CASE(WindowResizeTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(WindowMoveTest)
