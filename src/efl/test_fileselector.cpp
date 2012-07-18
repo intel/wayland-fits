@@ -191,9 +191,9 @@ public:
 		}
 	}
 
-	void checkMode(const Eina_Bool inwin)
+	void checkMode(const Eina_Bool mode)
 	{
-		BOOST_CHECK_EQUAL(elm_fileselector_mode_get(control_), inwin);
+		BOOST_CHECK_EQUAL(elm_fileselector_mode_get(control_), mode);
 	}
 
 private:
