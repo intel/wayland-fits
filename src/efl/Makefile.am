@@ -23,24 +23,25 @@ LDFLAGS += 			\
 
 bin_PROGRAMS = $(TESTS)
 
-wayland_efl_test_SOURCES =	\
-	actionslider.cpp	\
-	application.cpp		\
-	background.cpp		\
-	elmtestharness.cpp	\
-	evasobject.cpp		\
-	window.cpp		\
-	test_actionslider.cpp	\
-	test_background.cpp	\
-	test_bubble.cpp		\
-	test_button.cpp		\
-	test_check.cpp		\
-	test_clock.cpp		\
-	test_colorselector.cpp	\
-	test_dayselector.cpp	\
-	test_engine_set.cpp	\
-	test_entry.cpp		\
-	test_window.cpp		\
+wayland_efl_test_SOURCES =		\
+	actionslider.cpp		\
+	application.cpp			\
+	background.cpp			\
+	elmtestharness.cpp		\
+	evasobject.cpp			\
+	window.cpp			\
+	test_actionslider.cpp		\
+	test_background.cpp		\
+	test_bubble.cpp			\
+	test_button.cpp			\
+	test_check.cpp			\
+	test_clock.cpp			\
+	test_colorselector.cpp		\
+	test_dayselector.cpp		\
+	test_engine_set.cpp		\
+	test_entry.cpp			\
+	test_fileselector_button.cpp	\
+	test_window.cpp			\
 	../testmain.cpp
 
 endif
