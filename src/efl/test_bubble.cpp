@@ -1,9 +1,13 @@
 #include <Elementary.h>
 #include <boost/bind.hpp>
 
+#include <vector>
+
 #include "window.h"
 #include "evasobject.h"
 #include "elmtestharness.h"
+
+using std::vector;
 
 class BubblePosTest : public ElmTestHarness
 {
@@ -15,6 +19,15 @@ public:
 		, bubble_(elm_bubble_add(window_))
 	{
 		evas_object_resize(bubble_, 200, 100);
+
+		positions_.push_back(ELM_BUBBLE_POS_TOP_LEFT);
+		positions_.push_back(ELM_BUBBLE_POS_TOP_RIGHT);
+		positions_.push_back(ELM_BUBBLE_POS_TOP_LEFT);
+		positions_.push_back(ELM_BUBBLE_POS_BOTTOM_LEFT);
+		positions_.push_back(ELM_BUBBLE_POS_TOP_LEFT);
+		positions_.push_back(ELM_BUBBLE_POS_BOTTOM_RIGHT);
+		positions_.push_back(ELM_BUBBLE_POS_TOP_LEFT);
+
 		return;
 	}
 
@@ -23,21 +36,13 @@ public:
 		window_.show();
 		evas_object_show(bubble_);
 
-		Elm_Bubble_Pos pos[] = { ELM_BUBBLE_POS_TOP_LEFT,
-					 ELM_BUBBLE_POS_TOP_RIGHT,
-					 ELM_BUBBLE_POS_TOP_LEFT,
-					 ELM_BUBBLE_POS_BOTTOM_LEFT,
-					 ELM_BUBBLE_POS_TOP_LEFT,
-					 ELM_BUBBLE_POS_BOTTOM_RIGHT,
-					 ELM_BUBBLE_POS_TOP_LEFT
-				      };
-
-		for (int i = 0; i < (sizeof(pos) / sizeof(int)); ++i)
+		vector<Elm_Bubble_Pos>::iterator it;
+		for (it = positions_.begin(); it != positions_.end(); it++)
 		{
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(&elm_bubble_pos_set, boost::ref(bubble_), pos[i]),
-					boost::bind(&BubblePosTest::checkPos, boost::ref(*this), pos[i])
+					boost::bind(&elm_bubble_pos_set, boost::ref(bubble_), *it),
+					boost::bind(&BubblePosTest::checkPos, boost::ref(*this), *it)
 				)
 			);
 		}
@@ -49,8 +54,9 @@ public:
 	}
 
 private:
-	Window		window_;
-	EvasObject	bubble_;
+	Window			window_;
+	EvasObject		bubble_;
+	vector<Elm_Bubble_Pos>	positions_;
 };
 
 class BubbleTextTest : public ElmTestHarness
