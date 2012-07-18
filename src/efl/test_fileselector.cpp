@@ -202,6 +202,53 @@ private:
 	vector<Elm_Fileselector_Mode>	states_;
 };
 
+class FileselectorOkCancelTest : public ElmTestHarness
+{
+public:
+
+	FileselectorOkCancelTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("FileselectorOkCancelTest", "Fileselector OkCancel Test")
+		, control_(elm_fileselector_add(window_))
+	{
+		states_.push_back(EINA_TRUE);
+		states_.push_back(EINA_FALSE);
+		states_.push_back(EINA_TRUE);
+
+		return;
+	}
+
+	void setup()
+	{
+		control_.setSize(100, 100);
+		control_.setPosition(50, 10);
+
+		window_.show();
+		control_.show();
+
+		vector<Eina_Bool>::iterator it;
+		for (it = states_.begin(); it != states_.end(); it++)
+		{
+			queueCallback(
+				ModifyCheckCallback(
+					boost::bind(elm_fileselector_buttons_ok_cancel_set, boost::ref(control_), *it),
+					boost::bind(&FileselectorOkCancelTest::checkOkCancel, boost::ref(*this), *it)
+				)
+			);
+		}
+	}
+
+	void checkOkCancel(const Eina_Bool okcancel)
+	{
+		BOOST_CHECK_EQUAL(elm_fileselector_buttons_ok_cancel_get(control_), okcancel);
+	}
+
+private:
+	Window			window_;
+	EvasObject		control_;
+	vector<Eina_Bool>	states_;
+};
+
 BOOST_AUTO_TEST_SUITE(EFL)
 
 	BOOST_AUTO_TEST_SUITE(FileSelector)
@@ -210,6 +257,7 @@ BOOST_AUTO_TEST_SUITE(EFL)
 		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorFolderOnlyTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorIsSaveTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorModeTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorOkCancelTest)
 	
 	BOOST_AUTO_TEST_SUITE_END()
 
