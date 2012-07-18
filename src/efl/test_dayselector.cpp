@@ -1,10 +1,14 @@
 #include <Elementary.h>
 #include <boost/bind.hpp>
 
+#include <vector>
+
 #include "window.h"
 #include "actionslider.h"
 #include "evasobject.h"
 #include "elmtestharness.h"
+
+using std::vector;
 
 class DayselectorDayTest : public ElmTestHarness
 {
@@ -18,6 +22,15 @@ public:
 		window_.setSize(500, 400);
 		evas_object_size_hint_weight_set(control_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 		elm_win_resize_object_add(window_, control_);
+
+		days_.push_back(ELM_DAYSELECTOR_SUN);
+		days_.push_back(ELM_DAYSELECTOR_MON);
+		days_.push_back(ELM_DAYSELECTOR_TUE);
+		days_.push_back(ELM_DAYSELECTOR_WED);
+		days_.push_back(ELM_DAYSELECTOR_THU);
+		days_.push_back(ELM_DAYSELECTOR_FRI);
+		days_.push_back(ELM_DAYSELECTOR_SAT);
+
 		return;
 	}
 
@@ -26,38 +39,27 @@ public:
 		window_.show();
 		control_.show();
 
-		const Elm_Dayselector_Day day[] = {
-			ELM_DAYSELECTOR_SUN,
-			ELM_DAYSELECTOR_MON,
-			ELM_DAYSELECTOR_TUE,
-			ELM_DAYSELECTOR_WED,
-			ELM_DAYSELECTOR_THU,
-			ELM_DAYSELECTOR_FRI,
-			ELM_DAYSELECTOR_SAT
-		};
-
-
-		unsigned int i;
-		for (i = 0; i < (sizeof(day) / sizeof(Elm_Dayselector_Day)); i++)
+		vector<Elm_Dayselector_Day>::iterator it;
+		for (it = days_.begin(); it < days_.end(); it++)
 		{
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), day[i], EINA_TRUE),
-					boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), day[i], EINA_TRUE)
+					boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), *it, EINA_TRUE),
+					boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), *it, EINA_TRUE)
 				)
 			);
 
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), day[i], EINA_FALSE),
-					boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), day[i], EINA_FALSE)
+					boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), *it, EINA_FALSE),
+					boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), *it, EINA_FALSE)
 				)
 			);
 
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), day[i], EINA_TRUE),
-					boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), day[i], EINA_TRUE)
+					boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), *it, EINA_TRUE),
+					boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), *it, EINA_TRUE)
 				)
 			);
 		}
@@ -69,8 +71,9 @@ public:
 	}
 
 private:
-	Window		window_;
-	EvasObject	control_;
+	Window				window_;
+	EvasObject			control_;
+	vector<Elm_Dayselector_Day>	days_;
 };
 
 class DayselectorLocaleTest : public ElmTestHarness
