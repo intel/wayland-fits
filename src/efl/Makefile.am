@@ -24,7 +24,6 @@ LDFLAGS += 			\
 bin_PROGRAMS = $(TESTS)
 
 wayland_efl_test_SOURCES =		\
-	actionslider.cpp		\
 	application.cpp			\
 	background.cpp			\
 	elmtestharness.cpp		\

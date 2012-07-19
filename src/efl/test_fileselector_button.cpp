@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "window.h"
-#include "actionslider.h"
 #include "evasobject.h"
 #include "elmtestharness.h"
 

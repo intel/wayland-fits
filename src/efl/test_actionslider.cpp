@@ -1,10 +1,13 @@
 #include <Elementary.h>
 #include <boost/bind.hpp>
 
+#include <vector>
+
 #include "window.h"
-#include "actionslider.h"
 #include "evasobject.h"
 #include "elmtestharness.h"
+
+using std::vector;
 
 class ActionsliderPosTest : public ElmTestHarness
 {
@@ -13,43 +16,46 @@ public:
 	ActionsliderPosTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("ActionsliderPosTest", "Actionslider Position Test")
-		, control_(window_)
+		, control_(elm_actionslider_add(window_))
 	{
+		positions_.push_back(ELM_ACTIONSLIDER_LEFT);
+		positions_.push_back(ELM_ACTIONSLIDER_CENTER);
+		positions_.push_back(ELM_ACTIONSLIDER_LEFT);
+		positions_.push_back(ELM_ACTIONSLIDER_RIGHT);
+		positions_.push_back(ELM_ACTIONSLIDER_CENTER);
+
 		return;
 	}
 
 	void setup()
 	{
-		elm_win_resize_object_add(window_, control_);
-		window_.show();
-		control_.show();
+		SET_CHECK_SHOW(window_);
+		SET_CHECK_SHOW(control_);
 
-		const Elm_Actionslider_Pos position[] = {
-			 				  ELM_ACTIONSLIDER_LEFT,
-							  ELM_ACTIONSLIDER_CENTER,
-							  ELM_ACTIONSLIDER_RIGHT
-							};
+		control_.setSize(200, 100);
+		control_.setPosition(50, 10);
 
-		unsigned int p;
-		for (p = 0; p < (sizeof(position) / sizeof(Elm_Actionslider_Pos)); p++)
+		vector<Elm_Actionslider_Pos>::iterator it;
+		for (it = positions_.begin(); it != positions_.end(); it++)
 		{
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(&Actionslider::setPos, boost::ref(control_), position[p]),
-					boost::bind(&ActionsliderPosTest::checkPos, boost::ref(*this), position[p])
+					boost::bind(elm_actionslider_indicator_pos_set, boost::ref(control_), *it),
+					boost::bind(&ActionsliderPosTest::checkPos, boost::ref(*this), *it)
 				)
 			);
 		}
 	}
 
-	void checkPos(Elm_Actionslider_Pos pos)
+	void checkPos(const Elm_Actionslider_Pos expected)
 	{
-		BOOST_CHECK_EQUAL(control_.getPos(), pos);
+		BOOST_CHECK_EQUAL(elm_actionslider_indicator_pos_get(control_), expected);
 	}
 
 private:
-	Window		window_;
-	Actionslider	control_;
+	Window				window_;
+	EvasObject			control_;
+	vector<Elm_Actionslider_Pos>	positions_;
 };
 
 BOOST_AUTO_TEST_SUITE(EFL)
