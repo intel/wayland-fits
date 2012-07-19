@@ -16,6 +16,7 @@ public:
 	const int getHeight();
 	const int getX();
 	const int getY();
+	const Eina_Bool isVisible();
 
 	operator Evas*();
 	operator Ecore_Evas*();

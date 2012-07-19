@@ -78,19 +78,24 @@ const int EvasObject::getHeight()
 	return h;
 }
 
+const Eina_Bool EvasObject::isVisible()
+{
+	return evas_object_visible_get(*this);
+}
+
 void EvasObject::checkSize(const int width, const int height)
 {
-	BOOST_CHECK_EQUAL(getWidth(), width);
-	BOOST_CHECK_EQUAL(getHeight(), height);
+	BOOST_CHECK_EQUAL(this->getWidth(), width);
+	BOOST_CHECK_EQUAL(this->getHeight(), height);
 }
 
 void EvasObject::checkPosition(const int xcoord, const int ycoord)
 {
-	BOOST_CHECK_EQUAL(getX(), xcoord);
-	BOOST_CHECK_EQUAL(getY(), ycoord);
+	BOOST_CHECK_EQUAL(this->getX(), xcoord);
+	BOOST_CHECK_EQUAL(this->getY(), ycoord);
 }
 
 void EvasObject::checkVisible(const Eina_Bool isVisible)
 {
-	BOOST_CHECK_EQUAL(evas_object_visible_get(*this), isVisible);
+	BOOST_CHECK_EQUAL(this->isVisible(), isVisible);
 }
