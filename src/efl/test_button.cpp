@@ -22,25 +22,8 @@ public:
 		window_.show();
 		button_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&EvasObject::setSize, boost::ref(button_), 75, 75),
-				boost::bind(&ButtonResizeTest::checkSize, boost::ref(*this), 75, 75)
-			)
-		);
-
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&EvasObject::setSize, boost::ref(button_), 120, 30),
-				boost::bind(&ButtonResizeTest::checkSize, boost::ref(*this), 120, 30)
-			)
-		);
-	}
-
-	void checkSize(unsigned w, unsigned h)
-	{
-		BOOST_CHECK_EQUAL(button_.getWidth(), w);
-		BOOST_CHECK_EQUAL(button_.getHeight(), h);
+		SET_CHECK_SIZE(button_, 75, 75);
+		SET_CHECK_SIZE(button_, 120, 30);
 	}
 
 private:
@@ -64,25 +47,8 @@ public:
 		window_.show();
 		button_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&EvasObject::setPosition, boost::ref(button_), 60, 15),
-				boost::bind(&ButtonMoveTest::checkPosition, boost::ref(*this), 60, 15)
-			)
-		);
-
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&EvasObject::setPosition, boost::ref(button_), 10, 10),
-				boost::bind(&ButtonMoveTest::checkPosition, boost::ref(*this), 10, 10)
-			)
-		);
-	}
-
-	void checkPosition(unsigned x, unsigned y)
-	{
-		BOOST_CHECK_EQUAL(button_.getX(), x);
-		BOOST_CHECK_EQUAL(button_.getY(), y);
+		SET_CHECK_POSITION(button_, 60, 15);
+		SET_CHECK_POSITION(button_, 10, 10);
 	}
 
 private:
