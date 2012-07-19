@@ -1,6 +1,8 @@
 #include <Elementary.h>
 #include <boost/bind.hpp>
 
+#include <vector>
+
 #include "application.h"
 #include "window.h"
 #include "background.h"
@@ -8,6 +10,7 @@
 #include "elmtestharness.h"
 
 using boost::filesystem::path;
+using std::vector;
 
 class BackgroundColorTest : public ElmTestHarness
 {
@@ -16,16 +19,16 @@ public:
 	BackgroundColorTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("BackgroundColorTest", "Background Color Test")
-		, bg_(window_)
+		, control_(window_)
 	{
-		evas_object_size_hint_weight_set(bg_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-		elm_win_resize_object_add(window_, bg_);
+		evas_object_size_hint_weight_set(control_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+		elm_win_resize_object_add(window_, control_);
 		return;
 	}
 
 	void setup()
 	{
-		bg_.show();
+		control_.show();
 		window_.show();
 
 		int r, g, b;
@@ -35,24 +38,26 @@ public:
 		{
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(&Background::setColor, boost::ref(bg_), r, g, b),
+					boost::bind(&Background::setColor, boost::ref(control_), r, g, b),
 					boost::bind(&BackgroundColorTest::checkColor, boost::ref(*this), r, g, b)
 				)
 			);
 		}
 	}
 
-	void checkColor(int r, int g, int b)
+	void checkColor(int r_expected, int g_expected, int b_expected)
 	{
-		int r_, g_, b_;
-		bg_.getColor(&r_, &g_, &b_);
+		int r_actual, g_actual, b_actual;
+		control_.getColor(&r_actual, &g_actual, &b_actual);
 
-		BOOST_CHECK(r_ == r && g_ == g && b_ == b);
+		BOOST_CHECK_EQUAL(r_actual, r_expected);
+		BOOST_CHECK_EQUAL(g_actual, g_expected);
+		BOOST_CHECK_EQUAL(b_actual, b_expected);
 	}
 
 private:
 	Window		window_;
-	Background	bg_;
+	Background	control_;
 };
 
 class BackgroundImageTest : public ElmTestHarness
@@ -62,65 +67,77 @@ public:
 	BackgroundImageTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("BackgroundImageTest", "Background Image Test")
-		, bg_(window_)
+		, control_(window_)
 	{
-		evas_object_size_hint_weight_set(bg_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-		elm_win_resize_object_add(window_, bg_);
+		evas_object_size_hint_weight_set(control_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+		elm_win_resize_object_add(window_, control_);
+		window_.maximize(EINA_TRUE);
+
+		options_.push_back(ELM_BG_OPTION_SCALE);
+		options_.push_back(ELM_BG_OPTION_CENTER);
+		options_.push_back(ELM_BG_OPTION_STRETCH);
+		options_.push_back(ELM_BG_OPTION_CENTER);
+		options_.push_back(ELM_BG_OPTION_TILE);
+		options_.push_back(ELM_BG_OPTION_CENTER);
+
 		return;
 	}
 
 	void setup()
 	{
-		bg_.show();
+		control_.show();
 		window_.show();
 
 		path p(MEDIA_PATH"/bridge_of_the_gods.png");
 
 		queueCallback(
 			ModifyCheckCallback(
-				boost::bind(&Background::setImage, boost::ref(bg_), p),
+				boost::bind(&Background::setImage, boost::ref(control_), p),
 				boost::bind(&BackgroundImageTest::checkImage, boost::ref(*this), p)
 				)
 			);
 
-		Elm_Bg_Option option[] = { ELM_BG_OPTION_SCALE,
-					   ELM_BG_OPTION_CENTER,
-					   ELM_BG_OPTION_STRETCH,
-					   ELM_BG_OPTION_CENTER,
-					   ELM_BG_OPTION_TILE,
-					   ELM_BG_OPTION_CENTER
-					 };
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(&Window::maximize, boost::ref(window_), EINA_TRUE),
+				boost::bind(&BackgroundImageTest::checkMax, boost::ref(*this), EINA_TRUE)
+				)
+			);
 
-		window_.maximize(EINA_TRUE);
-
-		unsigned int o;
-		for (o = 0; o < (sizeof(option) / sizeof(Elm_Bg_Option)); o++)
+		vector<Elm_Bg_Option>::iterator it;
+		for (it = options_.begin(); it != options_.end(); it++)
 		{
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(&Background::setImageOpt, boost::ref(bg_), option[o]),
-					boost::bind(&BackgroundImageTest::checkImageOpt, boost::ref(*this), option[o])
+					boost::bind(&Background::setImageOpt, boost::ref(control_), *it),
+					boost::bind(&BackgroundImageTest::checkImageOpt, boost::ref(*this), *it)
 				)
 			);
 		}
 	}
 
-	void checkImage(path& p)
+	void checkMax(const Eina_Bool expected)
 	{
-		path ret;
-		bg_.getImage(ret);
-
-		BOOST_CHECK_EQUAL(ret, p);
+		BOOST_CHECK_EQUAL(window_.isMaximized(), expected);
 	}
 
-	void checkImageOpt(Elm_Bg_Option option)
+	void checkImage(path& expected)
 	{
-		BOOST_CHECK_EQUAL(option, bg_.getImageOpt());
+		path actual;
+		control_.getImage(actual);
+
+		BOOST_CHECK_EQUAL(actual, expected);
+	}
+
+	void checkImageOpt(Elm_Bg_Option expected)
+	{
+		BOOST_CHECK_EQUAL(control_.getImageOpt(), expected);
 	}
 
 private:
-	Window		window_;
-	Background	bg_;
+	Window			window_;
+	Background		control_;
+	vector<Elm_Bg_Option>	options_;
 };
 
 BOOST_AUTO_TEST_SUITE(EFL)
