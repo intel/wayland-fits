@@ -1,6 +1,7 @@
 #include <Ecore_Evas.h>
 
 #include "evasobject.h"
+#include "application.h"
 
 EvasObject::EvasObject(Evas_Object* o)
 	: obj_(o)
@@ -47,21 +48,21 @@ void EvasObject::show()
 	evas_object_show(*this);
 }
 
-int EvasObject::getX()
+const int EvasObject::getX()
 {
 	int x;
 	evas_object_geometry_get(*this, &x, NULL, NULL, NULL);
 	return x;
 }
 
-int EvasObject::getY()
+const int EvasObject::getY()
 {
 	int y;
 	evas_object_geometry_get(*this, NULL, &y, NULL, NULL);
 	return y;
 }
 
-int EvasObject::getWidth()
+const int EvasObject::getWidth()
 {
 	int w;
 	evas_object_geometry_get(*this, NULL, NULL, &w, NULL);
@@ -69,10 +70,27 @@ int EvasObject::getWidth()
 	return w;
 }
 
-int EvasObject::getHeight()
+const int EvasObject::getHeight()
 {
 	int h;
 	evas_object_geometry_get(*this, NULL, NULL, NULL, &h);
 // 	evas_output_size_get(*this, NULL, &h);
 	return h;
+}
+
+void EvasObject::checkSize(const int width, const int height)
+{
+	BOOST_CHECK_EQUAL(getWidth(), width);
+	BOOST_CHECK_EQUAL(getHeight(), height);
+}
+
+void EvasObject::checkPosition(const int xcoord, const int ycoord)
+{
+	BOOST_CHECK_EQUAL(getX(), xcoord);
+	BOOST_CHECK_EQUAL(getY(), ycoord);
+}
+
+void EvasObject::checkVisible(const Eina_Bool isVisible)
+{
+	BOOST_CHECK_EQUAL(evas_object_visible_get(*this), isVisible);
 }

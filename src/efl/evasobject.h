@@ -12,17 +12,22 @@ public:
 	void setPosition(int x, int y);
 	void show();
 
-	int getWidth();
-	int getHeight();
-	int getX();
-	int getY();
+	const int getWidth();
+	const int getHeight();
+	const int getX();
+	const int getY();
 
 	operator Evas*();
 	operator Ecore_Evas*();
 	operator Evas_Object*();
 
+	void checkSize(const int width, const int height);
+	void checkPosition(const int x, const int y);
+	void checkVisible(const Eina_Bool isVisible);
+
 private:
 	Evas_Object*	obj_;
+
 };
 
 
