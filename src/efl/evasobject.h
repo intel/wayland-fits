@@ -31,5 +31,28 @@ private:
 
 };
 
+#define SET_CHECK_SIZE(obj, w, h)\
+		queueCallback( \
+			ModifyCheckCallback( \
+				boost::bind(&EvasObject::setSize, boost::ref(obj), w, h), \
+				boost::bind(&EvasObject::checkSize, boost::ref(obj), w, h) \
+			) \
+		)
+
+#define SET_CHECK_POSITION(obj, x, y) \
+		queueCallback( \
+			ModifyCheckCallback( \
+				boost::bind(&EvasObject::setPosition, boost::ref(obj), x, y), \
+				boost::bind(&EvasObject::checkPosition, boost::ref(obj), x, y) \
+			) \
+		)
+
+#define SET_CHECK_SHOW(obj) \
+		queueCallback( \
+			ModifyCheckCallback( \
+				boost::bind(&EvasObject::show, boost::ref(obj)), \
+				boost::bind(&EvasObject::checkVisible, boost::ref(obj), EINA_TRUE) \
+			) \
+		)
 
 #endif
