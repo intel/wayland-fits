@@ -13,16 +13,16 @@ public:
 	ActionsliderPosTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("ActionsliderPosTest", "Actionslider Position Test")
-		, as_(window_)
+		, control_(window_)
 	{
 		return;
 	}
 
 	void setup()
 	{
-		elm_win_resize_object_add(window_, as_);
+		elm_win_resize_object_add(window_, control_);
 		window_.show();
-		as_.show();
+		control_.show();
 
 		const Elm_Actionslider_Pos position[] = {
 			 				  ELM_ACTIONSLIDER_LEFT,
@@ -35,7 +35,7 @@ public:
 		{
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(&Actionslider::setPos, boost::ref(as_), position[p]),
+					boost::bind(&Actionslider::setPos, boost::ref(control_), position[p]),
 					boost::bind(&ActionsliderPosTest::checkPos, boost::ref(*this), position[p])
 				)
 			);
@@ -44,12 +44,12 @@ public:
 
 	void checkPos(Elm_Actionslider_Pos pos)
 	{
-		BOOST_CHECK_EQUAL(as_.getPos(), pos);
+		BOOST_CHECK_EQUAL(control_.getPos(), pos);
 	}
 
 private:
 	Window		window_;
-	Actionslider	as_;
+	Actionslider	control_;
 };
 
 BOOST_AUTO_TEST_SUITE(EFL)
