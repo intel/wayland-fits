@@ -2,12 +2,14 @@
 #include <boost/bind.hpp>
 
 #include <vector>
+#include <string>
 
 #include "window.h"
 #include "evasobject.h"
 #include "elmtestharness.h"
 
 using std::vector;
+using std::string;
 
 class BubblePosTest : public ElmTestHarness
 {
@@ -18,8 +20,6 @@ public:
 		, window_("BubblePosTest", "Bubble Position Test")
 		, bubble_(elm_bubble_add(window_))
 	{
-		evas_object_resize(bubble_, 200, 100);
-
 		positions_.push_back(ELM_BUBBLE_POS_TOP_LEFT);
 		positions_.push_back(ELM_BUBBLE_POS_TOP_RIGHT);
 		positions_.push_back(ELM_BUBBLE_POS_TOP_LEFT);
@@ -34,7 +34,9 @@ public:
 	void setup()
 	{
 		window_.show();
-		evas_object_show(bubble_);
+		bubble_.show();
+
+		bubble_.setSize(200, 100);
 
 		vector<Elm_Bubble_Pos>::iterator it;
 		for (it = positions_.begin(); it != positions_.end(); it++)
@@ -48,9 +50,9 @@ public:
 		}
 	}
 
-	void checkPos(Elm_Bubble_Pos pos)
+	void checkPos(const Elm_Bubble_Pos expected)
 	{
-		BOOST_CHECK_EQUAL(elm_bubble_pos_get(bubble_), pos);
+		BOOST_CHECK_EQUAL(elm_bubble_pos_get(bubble_), expected);
 	}
 
 private:
@@ -68,36 +70,39 @@ public:
 		, window_("BubbleTextTest", "Bubble Text Test")
 		, bubble_(elm_bubble_add(window_))
 	{
-		evas_object_resize(bubble_, 200, 100);
+		sentinels_.push_back("default");
+		sentinels_.push_back("DEFAULT");
+
 		return;
 	}
 
 	void setup()
 	{
-		evas_object_show(bubble_);
+		bubble_.show();
 		window_.show();
 
-		std::string def[2] = { "default", "DEFAULT" };
+		bubble_.setSize(200, 100);
 
 		queueCallback(
 			ModifyCheckCallback(
-				boost::bind(elm_object_part_text_set, boost::ref(bubble_), def[0].c_str(), def[1].c_str()),
-				boost::bind(&BubbleTextTest::checkText, boost::ref(*this), def[0], def[1])
+				boost::bind(elm_object_part_text_set, boost::ref(bubble_), sentinels_[0].c_str(), sentinels_[1].c_str()),
+				boost::bind(&BubbleTextTest::checkText, boost::ref(*this), sentinels_[0], sentinels_[1])
 			)
 		);
 	}
 
-	void checkText(const std::string& part, const std::string& text)
+	void checkText(const string& part, const std::string& expected)
 	{
-		const char* raw = elm_object_part_text_get(bubble_, part.c_str());
-		std::string control(raw == NULL ? "" : raw);
+		const char* actual_raw = elm_object_part_text_get(bubble_, part.c_str());
+		string actual(actual_raw == NULL ? "" : actual_raw);
 
-		BOOST_CHECK_EQUAL(control, text);
+		BOOST_CHECK_EQUAL(actual, expected);
 	}
 
 private:
 	Window		window_;
 	EvasObject	bubble_;
+	vector<string>	sentinels_;
 };
 
 BOOST_AUTO_TEST_SUITE(EFL)
