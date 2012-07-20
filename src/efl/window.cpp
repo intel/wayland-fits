@@ -11,52 +11,52 @@ Window::Window(const std::string& name, const std::string& title, const unsigned
 }
 
 
-void Window::iconify(Eina_Bool iconify)
+void Window::iconify(const Eina_Bool iconify)
 {
 	elm_win_iconified_set(*this, iconify);
 }
 
-Eina_Bool Window::isIconified()
+const Eina_Bool Window::isIconified()
 {
 	return elm_win_iconified_get(*this);
 }
 
-void Window::maximize(Eina_Bool maximize)
+void Window::maximize(const Eina_Bool maximize)
 {
 	elm_win_maximized_set(*this, maximize);
 }
 
-Eina_Bool Window::isMaximized()
+const Eina_Bool Window::isMaximized()
 {
 	return elm_win_maximized_get(*this);
 }
 
-void Window::fullscreen(Eina_Bool fullscreen)
+void Window::fullscreen(const Eina_Bool fullscreen)
 {
 	elm_win_fullscreen_set(*this, fullscreen);
 }
 
-Eina_Bool Window::isFullscreen()
+const Eina_Bool Window::isFullscreen()
 {
 	return elm_win_fullscreen_get(*this);
 }
 
-void Window::sticky(Eina_Bool sticky)
+void Window::sticky(const Eina_Bool sticky)
 {
 	elm_win_sticky_set(*this, sticky);
 }
 
-Eina_Bool Window::isSticky()
+const Eina_Bool Window::isSticky()
 {
 	return elm_win_sticky_get(*this);
 }
 
-void Window::withdrawn(Eina_Bool withdraw)
+void Window::withdrawn(const Eina_Bool withdraw)
 {
 	elm_win_withdrawn_set(*this, withdraw);
 }
 
-Eina_Bool Window::isWithdrawn()
+const Eina_Bool Window::isWithdrawn()
 {
 	return elm_win_withdrawn_get(*this);
 }
@@ -66,7 +66,7 @@ void Window::rotate(const int degrees)
 	elm_win_rotation_set(*this, degrees);
 }
 
-int Window::getRotation()
+const int Window::getRotation()
 {
 	return elm_win_rotation_get(*this);
 }
