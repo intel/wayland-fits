@@ -4,10 +4,15 @@
 
 Application::Application()
 {
-	elm_init(
-		boost::unit_test::framework::master_test_suite().argc,
-		boost::unit_test::framework::master_test_suite().argv
-	);
+    elm_init(0, NULL);
+
+// FIXME: With boost 1.48 (and F17?) the master test suite argc
+// and argv don't seem to ever get initialized, thus causes a
+// memory access violation.
+// 	elm_init(
+// 		boost::unit_test::framework::master_test_suite().argc,
+// 		boost::unit_test::framework::master_test_suite().argv
+// 	);
 	setEngine(ENGINE_SHM);
 }
 
