@@ -4,7 +4,14 @@
 #include "window.h"
 #include "evasobject.h"
 #include "elmtestharness.h"
+#include "templates.h"
 
+
+// Basic suite START
+EFL_RESIZE_TEST(Clock, clock, 300, 200, 200, 100)
+EFL_POSITION_TEST(Clock, clock, 100, 50, 150, 100)
+EFL_VISIBILITY_TEST(Clock, clock)
+// Basic suite END
 
 class ClockTimeTest : public ElmTestHarness
 {
