@@ -1,8 +1,12 @@
 #include <Elementary.h>
 #include <boost/bind.hpp>
 
+#include <vector>
+
 #include "window.h"
 #include "elmtestharness.h"
+
+using std::vector;
 
 class WindowResizeTest : public ElmTestHarness
 {
@@ -273,6 +277,55 @@ private:
 	Window		window_;
 };
 
+class WindowRotationTest : public ElmTestHarness
+{
+public:
+	WindowRotationTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("WindowRotationTest", "Window Rotation Test")
+	{
+		degrees_.push_back(90);
+		degrees_.push_back(180);
+		degrees_.push_back(270);
+		degrees_.push_back(360);
+		degrees_.push_back(0);
+		degrees_.push_back(90);
+		degrees_.push_back(0);
+		degrees_.push_back(180);
+		degrees_.push_back(0);
+		degrees_.push_back(270);
+		degrees_.push_back(0);
+		degrees_.push_back(360);
+
+		return;
+	}
+
+	void setup()
+	{
+		window_.show();
+
+		vector<int>::iterator it;
+		for (it = degrees_.begin(); it != degrees_.end(); it++)
+		{
+			queueCallback(
+				ModifyCheckCallback(
+					boost::bind(&Window::rotate, boost::ref(window_), *it),
+					boost::bind(&WindowRotationTest::checkRotation, boost::ref(*this), *it)
+				)
+			);
+		}
+	}
+
+	void checkRotation(const int expected)
+	{
+		BOOST_CHECK_EQUAL(window_.getRotation(), expected);
+	}
+
+private:
+	Window		window_;
+	vector<int>	degrees_;
+};
+
 BOOST_AUTO_TEST_SUITE(EFL)
 
 	BOOST_AUTO_TEST_SUITE(Window)
@@ -284,6 +337,7 @@ BOOST_AUTO_TEST_SUITE(EFL)
 		WAYLAND_ELM_HARNESS_TEST_CASE(WindowFullscreenTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(WindowStickyTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(WindowWithdrawnTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(WindowRotationTest)
 	
 	BOOST_AUTO_TEST_SUITE_END()
 
