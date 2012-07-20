@@ -6,8 +6,15 @@
 #include "window.h"
 #include "evasobject.h"
 #include "elmtestharness.h"
+#include "templates.h"
 
 using std::vector;
+
+// Basic suite START
+EFL_RESIZE_TEST(FileselectorEntry, fileselector_entry, 300, 200, 200, 100)
+EFL_POSITION_TEST(FileselectorEntry, fileselector_entry, 100, 50, 150, 100)
+EFL_VISIBILITY_TEST(FileselectorEntry, fileselector_entry)
+// Basic suite END
 
 // TODO: FileselectorEntry and FileselectorButton share a lot of commonality
 // TODO: so an aggressive refactor with cpp macros could be leveraged.

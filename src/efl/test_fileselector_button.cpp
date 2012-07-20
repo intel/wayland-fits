@@ -6,8 +6,15 @@
 #include "window.h"
 #include "evasobject.h"
 #include "elmtestharness.h"
+#include "templates.h"
 
 using std::vector;
+
+// Basic suite START
+EFL_RESIZE_TEST(FileselectorButton, fileselector_button, 300, 200, 200, 100)
+EFL_POSITION_TEST(FileselectorButton, fileselector_button, 100, 50, 150, 100)
+EFL_VISIBILITY_TEST(FileselectorButton, fileselector_button)
+// Basic suite END
 
 class FileselectorButtonExpandableTest : public ElmTestHarness
 {
