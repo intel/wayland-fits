@@ -1,6 +1,7 @@
 #include <Elementary.h>
 
 #include "window.h"
+#include "application.h"
 
 Window::Window(const std::string& name, const std::string& title, const unsigned width, const unsigned height)
 	: EvasObject::EvasObject(
@@ -69,4 +70,34 @@ void Window::rotate(const int degrees)
 const int Window::getRotation()
 {
 	return elm_win_rotation_get(*this);
+}
+
+void Window::checkIconified(const Eina_Bool isIconified)
+{
+	BOOST_CHECK_EQUAL(this->isIconified(), isIconified);
+}
+
+void Window::checkMaximized(const Eina_Bool isMaximized)
+{
+	BOOST_CHECK_EQUAL(this->isMaximized(), isMaximized);
+}
+
+void Window::checkFullscreen(const Eina_Bool isFullscreen)
+{
+	BOOST_CHECK_EQUAL(this->isFullscreen(), isFullscreen);
+}
+
+void Window::checkSticky(const Eina_Bool isSticky)
+{
+	BOOST_CHECK_EQUAL(this->isSticky(), isSticky);
+}
+
+void Window::checkWithdrawn(const Eina_Bool isWithdrawn)
+{
+	BOOST_CHECK_EQUAL(this->isWithdrawn(), isWithdrawn);
+}
+
+void Window::checkRotation(const int expected)
+{
+	BOOST_CHECK_EQUAL(this->getRotation(), expected);
 }

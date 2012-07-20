@@ -26,22 +26,16 @@ public:
 		queueCallback(
 			ModifyCheckCallback(
 				boost::bind(&Window::setSize, boost::ref(window_), 400, 200),
-				boost::bind(&WindowResizeTest::checkSize, boost::ref(*this), 400, 200)
+				boost::bind(&Window::checkSize, boost::ref(window_), 400, 200)
 			)
 		);
 
 		queueCallback(
 			ModifyCheckCallback(
 				boost::bind(&Window::setSize, boost::ref(window_), 100, 120),
-				boost::bind(&WindowResizeTest::checkSize, boost::ref(*this), 100, 120)
+				boost::bind(&Window::checkSize, boost::ref(window_), 100, 120)
 			)
 		);
-	}
-
-	void checkSize(unsigned w, unsigned h)
-	{
-		BOOST_CHECK_EQUAL(window_.getWidth(), w);
-		BOOST_CHECK_EQUAL(window_.getHeight(), h);
 	}
 
 private:
@@ -65,22 +59,16 @@ public:
 		queueCallback(
 			ModifyCheckCallback(
 				boost::bind(&Window::setPosition, boost::ref(window_), 10, 20),
-				boost::bind(&WindowMoveTest::checkPosition, boost::ref(*this), 10, 20)
+				boost::bind(&Window::checkPosition, boost::ref(window_), 10, 20)
 			)
 		);
 
 		queueCallback(
 			ModifyCheckCallback(
 				boost::bind(&Window::setPosition, boost::ref(window_), 15, 25),
-				boost::bind(&WindowMoveTest::checkPosition, boost::ref(*this), 15, 25)
+				boost::bind(&Window::checkPosition, boost::ref(window_), 15, 25)
 			)
 		);
-	}
-
-	void checkPosition(unsigned x, unsigned y)
-	{
-		BOOST_CHECK_EQUAL(window_.getX(), x);
-		BOOST_CHECK_EQUAL(window_.getY(), y);
 	}
 
 private:
@@ -104,21 +92,16 @@ public:
 		queueCallback(
 			ModifyCheckCallback(
 				boost::bind(&Window::iconify, boost::ref(window_), EINA_TRUE),
-				boost::bind(&WindowIconifyTest::checkIconified, boost::ref(*this), EINA_TRUE)
+				boost::bind(&Window::checkIconified, boost::ref(window_), EINA_TRUE)
 			)
 		);
 
 		queueCallback(
 			ModifyCheckCallback(
 				boost::bind(&Window::iconify, boost::ref(window_), EINA_FALSE),
-				boost::bind(&WindowIconifyTest::checkIconified, boost::ref(*this), EINA_FALSE)
+				boost::bind(&Window::checkIconified, boost::ref(window_), EINA_FALSE)
 			)
 		);
-	}
-
-	void checkIconified(Eina_Bool isIconified)
-	{
-		BOOST_CHECK_EQUAL(window_.isIconified(), isIconified);
 	}
 
 private:
@@ -142,21 +125,16 @@ public:
 		queueCallback(
 			ModifyCheckCallback(
 				boost::bind(&Window::maximize, boost::ref(window_), EINA_TRUE),
-				boost::bind(&WindowMaximizeTest::checkMaximized, boost::ref(*this), EINA_TRUE)
+				boost::bind(&Window::checkMaximized, boost::ref(window_), EINA_TRUE)
 			)
 		);
 
 		queueCallback(
 			ModifyCheckCallback(
 				boost::bind(&Window::maximize, boost::ref(window_), EINA_FALSE),
-				boost::bind(&WindowMaximizeTest::checkMaximized, boost::ref(*this), EINA_FALSE)
+				boost::bind(&Window::checkMaximized, boost::ref(window_), EINA_FALSE)
 			)
 		);
-	}
-
-	void checkMaximized(Eina_Bool isMaximized)
-	{
-		BOOST_CHECK_EQUAL(window_.isMaximized(), isMaximized);
 	}
 
 private:
@@ -180,21 +158,16 @@ public:
 		queueCallback(
 			ModifyCheckCallback(
 				boost::bind(&Window::fullscreen, boost::ref(window_), EINA_TRUE),
-				boost::bind(&WindowFullscreenTest::checkFullscreen, boost::ref(*this), EINA_TRUE)
+				boost::bind(&Window::checkFullscreen, boost::ref(window_), EINA_TRUE)
 			)
 		);
 
 		queueCallback(
 			ModifyCheckCallback(
 				boost::bind(&Window::fullscreen, boost::ref(window_), EINA_FALSE),
-				boost::bind(&WindowFullscreenTest::checkFullscreen, boost::ref(*this), EINA_FALSE)
+				boost::bind(&Window::checkFullscreen, boost::ref(window_), EINA_FALSE)
 			)
 		);
-	}
-
-	void checkFullscreen(Eina_Bool isFullscreen)
-	{
-		BOOST_CHECK_EQUAL(window_.isFullscreen(), isFullscreen);
 	}
 
 private:
@@ -218,21 +191,16 @@ public:
 		queueCallback(
 			ModifyCheckCallback(
 				boost::bind(&Window::sticky, boost::ref(window_), EINA_TRUE),
-				boost::bind(&WindowStickyTest::checkSticky, boost::ref(*this), EINA_TRUE)
+				boost::bind(&Window::checkSticky, boost::ref(window_), EINA_TRUE)
 			)
 		);
 
 		queueCallback(
 			ModifyCheckCallback(
 				boost::bind(&Window::sticky, boost::ref(window_), EINA_FALSE),
-				boost::bind(&WindowStickyTest::checkSticky, boost::ref(*this), EINA_FALSE)
+				boost::bind(&Window::checkSticky, boost::ref(window_), EINA_FALSE)
 			)
 		);
-	}
-
-	void checkSticky(Eina_Bool isSticky)
-	{
-		BOOST_CHECK_EQUAL(window_.isSticky(), isSticky);
 	}
 
 private:
@@ -256,21 +224,16 @@ public:
 		queueCallback(
 			ModifyCheckCallback(
 				boost::bind(&Window::withdrawn, boost::ref(window_), EINA_TRUE),
-				boost::bind(&WindowWithdrawnTest::checkWithdrawn, boost::ref(*this), EINA_TRUE)
+				boost::bind(&Window::checkWithdrawn, boost::ref(window_), EINA_TRUE)
 			)
 		);
 
 		queueCallback(
 			ModifyCheckCallback(
 				boost::bind(&Window::withdrawn, boost::ref(window_), EINA_FALSE),
-				boost::bind(&WindowWithdrawnTest::checkWithdrawn, boost::ref(*this), EINA_FALSE)
+				boost::bind(&Window::checkWithdrawn, boost::ref(window_), EINA_FALSE)
 			)
 		);
-	}
-
-	void checkWithdrawn(Eina_Bool isWithdrawn)
-	{
-		BOOST_CHECK_EQUAL(window_.isWithdrawn(), isWithdrawn);
 	}
 
 private:
@@ -310,15 +273,10 @@ public:
 			queueCallback(
 				ModifyCheckCallback(
 					boost::bind(&Window::rotate, boost::ref(window_), *it),
-					boost::bind(&WindowRotationTest::checkRotation, boost::ref(*this), *it)
+					boost::bind(&Window::checkRotation, boost::ref(window_), *it)
 				)
 			);
 		}
-	}
-
-	void checkRotation(const int expected)
-	{
-		BOOST_CHECK_EQUAL(window_.getRotation(), expected);
 	}
 
 private:

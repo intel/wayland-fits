@@ -23,6 +23,13 @@ public:
 	const Eina_Bool isSticky();
 	const Eina_Bool isWithdrawn();
 	const int getRotation();
+
+	void checkIconified(const Eina_Bool isIconified);
+	void checkMaximized(const Eina_Bool isMaximized);
+	void checkFullscreen(const Eina_Bool isFullscreen);
+	void checkSticky(const Eina_Bool isSticky);
+	void checkWithdrawn(const Eina_Bool isWithdrawn);
+	void checkRotation(const int expected);
 };
 
 #endif
