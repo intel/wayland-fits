@@ -6,8 +6,15 @@
 #include "window.h"
 #include "evasobject.h"
 #include "elmtestharness.h"
+#include "templates.h"
 
 using std::vector;
+
+// Basic suite START
+EFL_RESIZE_TEST(DaySelector, dayselector, 300, 200, 200, 100)
+EFL_POSITION_TEST(DaySelector, dayselector, 100, 50, 150, 100)
+EFL_VISIBILITY_TEST(DaySelector, dayselector)
+// Basic suite END
 
 class DayselectorDayTest : public ElmTestHarness
 {
