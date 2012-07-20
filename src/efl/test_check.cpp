@@ -4,7 +4,13 @@
 #include "window.h"
 #include "evasobject.h"
 #include "elmtestharness.h"
+#include "templates.h"
 
+// Basic suite START
+EFL_RESIZE_TEST(Check, check, 300, 200, 200, 100)
+EFL_POSITION_TEST(Check, check, 100, 50, 150, 100)
+EFL_VISIBILITY_TEST(Check, check)
+// Basic suite END
 
 class CheckStateTest : public ElmTestHarness
 {
