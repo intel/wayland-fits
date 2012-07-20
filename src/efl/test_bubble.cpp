@@ -7,17 +7,24 @@
 #include "window.h"
 #include "evasobject.h"
 #include "elmtestharness.h"
+#include "templates.h"
 
 using std::vector;
 using std::string;
 
-class BubblePosTest : public ElmTestHarness
+// Basic suite START
+EFL_RESIZE_TEST(Bubble, bubble, 300, 200, 200, 100)
+EFL_POSITION_TEST(Bubble, bubble, 100, 50, 150, 100)
+EFL_VISIBILITY_TEST(Bubble, bubble)
+// Basic suite END
+
+class BubbleCornerTest : public ElmTestHarness
 {
 public:
 
-	BubblePosTest()
+	BubbleCornerTest()
 		: ElmTestHarness::ElmTestHarness()
-		, window_("BubblePosTest", "Bubble Position Test")
+		, window_("BubbleCornerTest", "Bubble Corner Test")
 		, bubble_(elm_bubble_add(window_))
 	{
 		positions_.push_back(ELM_BUBBLE_POS_TOP_LEFT);
@@ -44,7 +51,7 @@ public:
 			queueCallback(
 				ModifyCheckCallback(
 					boost::bind(&elm_bubble_pos_set, boost::ref(bubble_), *it),
-					boost::bind(&BubblePosTest::checkPos, boost::ref(*this), *it)
+					boost::bind(&BubbleCornerTest::checkPos, boost::ref(*this), *it)
 				)
 			);
 		}
@@ -109,7 +116,7 @@ BOOST_AUTO_TEST_SUITE(EFL)
 
 	BOOST_AUTO_TEST_SUITE(Bubble)
 	
-		WAYLAND_ELM_HARNESS_TEST_CASE(BubblePosTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(BubbleCornerTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(BubbleTextTest)
 	
 	BOOST_AUTO_TEST_SUITE_END()
