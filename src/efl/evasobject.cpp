@@ -48,6 +48,11 @@ void EvasObject::show()
 	evas_object_show(*this);
 }
 
+void EvasObject::hide()
+{
+	evas_object_hide(*this);
+}
+
 const int EvasObject::getX()
 {
 	int x;
@@ -98,4 +103,9 @@ void EvasObject::checkPosition(const int xcoord, const int ycoord)
 void EvasObject::checkVisible(const Eina_Bool isVisible)
 {
 	BOOST_CHECK_EQUAL(this->isVisible(), isVisible);
+}
+
+void EvasObject::checkHidden(const Eina_Bool isHidden)
+{
+	BOOST_CHECK_EQUAL(this->isVisible(), (isHidden == EINA_TRUE ? EINA_FALSE : EINA_TRUE));
 }

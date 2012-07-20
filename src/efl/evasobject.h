@@ -11,6 +11,7 @@ public:
 	void setSize(int w, int h);
 	void setPosition(int x, int y);
 	void show();
+	void hide();
 
 	const int getWidth();
 	const int getHeight();
@@ -25,13 +26,14 @@ public:
 	void checkSize(const int width, const int height);
 	void checkPosition(const int x, const int y);
 	void checkVisible(const Eina_Bool isVisible);
+	void checkHidden(const Eina_Bool isHidden);
 
 private:
 	Evas_Object*	obj_;
 
 };
 
-#define SET_CHECK_SIZE(obj, w, h)\
+#define EFL_CHECK_SIZE(obj, w, h)\
 		queueCallback( \
 			ModifyCheckCallback( \
 				boost::bind(&EvasObject::setSize, boost::ref(obj), w, h), \
@@ -39,7 +41,7 @@ private:
 			) \
 		)
 
-#define SET_CHECK_POSITION(obj, x, y) \
+#define EFL_CHECK_POSITION(obj, x, y) \
 		queueCallback( \
 			ModifyCheckCallback( \
 				boost::bind(&EvasObject::setPosition, boost::ref(obj), x, y), \
@@ -47,11 +49,19 @@ private:
 			) \
 		)
 
-#define SET_CHECK_SHOW(obj) \
+#define EFL_CHECK_SHOW(obj) \
 		queueCallback( \
 			ModifyCheckCallback( \
 				boost::bind(&EvasObject::show, boost::ref(obj)), \
 				boost::bind(&EvasObject::checkVisible, boost::ref(obj), EINA_TRUE) \
+			) \
+		)
+
+#define EFL_CHECK_HIDE(obj) \
+		queueCallback( \
+			ModifyCheckCallback( \
+				boost::bind(&EvasObject::hide, boost::ref(obj)), \
+				boost::bind(&EvasObject::checkHidden, boost::ref(obj), EINA_TRUE) \
 			) \
 		)
 

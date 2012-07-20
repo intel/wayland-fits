@@ -1,25 +1,31 @@
-#include <Elementary.h>
-#include <boost/bind.hpp>
-
 #include <vector>
 
-#include "window.h"
-#include "evasobject.h"
-#include "elmtestharness.h"
+#include "templates.h"
 
 using std::vector;
 
-class ActionsliderPosTest : public ElmTestHarness
+
+// Basic suite START
+EFL_RESIZE_TEST(Actionslider, actionslider, 300, 200, 200, 100)
+EFL_POSITION_TEST(Actionslider, actionslider, 100, 50, 150, 100)
+EFL_VISIBILITY_TEST(Actionslider, actionslider)
+// Basic suite END
+
+class ActionsliderIndicatorTest : public ElmTestHarness
 {
 public:
 
-	ActionsliderPosTest()
+	ActionsliderIndicatorTest()
 		: ElmTestHarness::ElmTestHarness()
-		, window_("ActionsliderPosTest", "Actionslider Position Test")
+		, window_("ActionsliderIndicatorTest", "Actionslider Position Test")
 		, control_(elm_actionslider_add(window_))
 	{
 		positions_.push_back(ELM_ACTIONSLIDER_LEFT);
 		positions_.push_back(ELM_ACTIONSLIDER_CENTER);
+		positions_.push_back(ELM_ACTIONSLIDER_LEFT);
+		positions_.push_back(ELM_ACTIONSLIDER_RIGHT);
+		positions_.push_back(ELM_ACTIONSLIDER_CENTER);
+		positions_.push_back(ELM_ACTIONSLIDER_RIGHT);
 		positions_.push_back(ELM_ACTIONSLIDER_LEFT);
 		positions_.push_back(ELM_ACTIONSLIDER_RIGHT);
 		positions_.push_back(ELM_ACTIONSLIDER_CENTER);
@@ -29,8 +35,8 @@ public:
 
 	void setup()
 	{
-		SET_CHECK_SHOW(window_);
-		SET_CHECK_SHOW(control_);
+		window_.show();
+		control_.show();
 
 		control_.setSize(200, 100);
 		control_.setPosition(50, 10);
@@ -41,7 +47,7 @@ public:
 			queueCallback(
 				ModifyCheckCallback(
 					boost::bind(elm_actionslider_indicator_pos_set, boost::ref(control_), *it),
-					boost::bind(&ActionsliderPosTest::checkPos, boost::ref(*this), *it)
+					boost::bind(&ActionsliderIndicatorTest::checkPos, boost::ref(*this), *it)
 				)
 			);
 		}
@@ -62,7 +68,7 @@ BOOST_AUTO_TEST_SUITE(EFL)
 
 	BOOST_AUTO_TEST_SUITE(ActionSlider)
 	
-		WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderPosTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderIndicatorTest)
 	
 	BOOST_AUTO_TEST_SUITE_END()
 
