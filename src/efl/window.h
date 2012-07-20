@@ -8,7 +8,7 @@
 class Window : public EvasObject
 {
 public:
-	Window(const std::string& = "name", const std::string& = "title", const unsigned = 300, const unsigned = 200);
+	Window(const std::string& = "name", const std::string& = "title", const unsigned = 400, const unsigned = 300);
 	
 	void iconify(Eina_Bool iconify);
 	void maximize(Eina_Bool maximize);
