@@ -15,12 +15,14 @@ public:
 	void fullscreen(Eina_Bool fullscreen);
 	void sticky(Eina_Bool sticky);
 	void withdrawn(Eina_Bool withdraw);
+	void rotate(const int degrees);
 
 	Eina_Bool isIconified();
 	Eina_Bool isMaximized();
 	Eina_Bool isFullscreen();
 	Eina_Bool isSticky();
 	Eina_Bool isWithdrawn();
+	int getRotation();
 };
 
 #endif

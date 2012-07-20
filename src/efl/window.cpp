@@ -60,3 +60,13 @@ Eina_Bool Window::isWithdrawn()
 {
 	return elm_win_withdrawn_get(*this);
 }
+
+void Window::rotate(const int degrees)
+{
+	elm_win_rotation_set(*this, degrees);
+}
+
+int Window::getRotation()
+{
+	return elm_win_rotation_get(*this);
+}
