@@ -5,7 +5,7 @@
 #include <string>
 
 #include "window.h"
-#include "evasobject.h"
+
 #include "elmtestharness.h"
 
 using std::string;

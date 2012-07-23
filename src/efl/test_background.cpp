@@ -6,7 +6,7 @@
 #include "application.h"
 #include "window.h"
 #include "background.h"
-#include "evasobject.h"
+
 #include "elmtestharness.h"
 
 using boost::filesystem::path;

@@ -2,7 +2,7 @@
 #include <boost/bind.hpp>
 
 #include "window.h"
-#include "evasobject.h"
+
 #include "elmtestharness.h"
 #include "templates.h"
 
