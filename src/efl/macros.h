@@ -1,3 +1,6 @@
+#ifndef __WAYLAND_EFL_TEMPLATES_H__
+#define __WAYLAND_EFL_TEMPLATES_H__
+
 #include <Elementary.h>
 #include <boost/bind.hpp>
 
@@ -6,8 +9,6 @@
 #include "elmtestharness.h"
 #include "application.h"
 
-#ifndef __WAYLAND_EFL_TEMPLATES_H__
-#define __WAYLAND_EFL_TEMPLATES_H__
 
 
 

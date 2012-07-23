@@ -4,7 +4,7 @@
 #include "window.h"
 
 #include "elmtestharness.h"
-#include "templates.h"
+#include "macros.h"
 
 // Basic suite START
 EFL_RESIZE_TEST(Check, check, 300, 200, 200, 100)

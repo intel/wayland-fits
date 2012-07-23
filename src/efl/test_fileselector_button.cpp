@@ -6,7 +6,7 @@
 #include "window.h"
 
 #include "elmtestharness.h"
-#include "templates.h"
+#include "macros.h"
 
 using std::vector;
 

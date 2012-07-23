@@ -1,4 +1,4 @@
-#include "templates.h"
+#include "macros.h"
 
 // Basic suite START
 EFL_RESIZE_TEST(Button, button, 300, 200, 200, 100)
