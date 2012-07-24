@@ -4,13 +4,17 @@
 #include "window.h"
 
 #include "elmtestharness.h"
-#include "macros.h"
+#include "templates.h"
 
-// Basic suite START
-EFL_RESIZE_TEST(Check, check, 300, 200, 200, 100)
-EFL_POSITION_TEST(Check, check, 100, 50, 150, 100)
-EFL_VISIBILITY_TEST(Check, check)
-// Basic suite END
+class Check : public EvasObject
+{
+public:
+	Check(EvasObject &parent)
+		: EvasObject::EvasObject(elm_check_add(parent))
+	{
+		return;
+	}
+};
 
 class CheckStateTest : public ElmTestHarness
 {
@@ -111,10 +115,17 @@ private:
 	EvasObject	check_;
 };
 
+typedef ResizeObjectTest<Check> CheckResizeTest;
+typedef PositionObjectTest<Check> CheckPositionTest;
+typedef VisibleObjectTest<Check> CheckVisibilityTest;
+
 BOOST_AUTO_TEST_SUITE(EFL)
 
 	BOOST_AUTO_TEST_SUITE(Check)
 	
+		WAYLAND_ELM_HARNESS_TEST_CASE(CheckResizeTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(CheckPositionTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(CheckVisibilityTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(CheckStateTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(CheckTextTest)
 	

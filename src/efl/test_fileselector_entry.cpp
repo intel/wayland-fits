@@ -6,18 +6,22 @@
 #include "window.h"
 
 #include "elmtestharness.h"
-#include "macros.h"
+#include "templates.h"
 
 using std::vector;
 
-// Basic suite START
-EFL_RESIZE_TEST(FileselectorEntry, fileselector_entry, 300, 200, 200, 100)
-EFL_POSITION_TEST(FileselectorEntry, fileselector_entry, 100, 50, 150, 100)
-EFL_VISIBILITY_TEST(FileselectorEntry, fileselector_entry)
-// Basic suite END
-
 // TODO: FileselectorEntry and FileselectorButton share a lot of commonality
 // TODO: so an aggressive refactor with cpp macros could be leveraged.
+
+class FileselectorEntry : public EvasObject
+{
+public:
+	FileselectorEntry(EvasObject &parent)
+		: EvasObject::EvasObject(elm_fileselector_entry_add(parent))
+	{
+		return;
+	}
+};
 
 class FileselectorEntryExpandableTest : public ElmTestHarness
 {
@@ -207,10 +211,17 @@ private:
 	vector<Eina_Bool>	states_;
 };
 
+typedef ResizeObjectTest<FileselectorEntry> FileselectorEntryResizeTest;
+typedef PositionObjectTest<FileselectorEntry> FileselectorEntryPositionTest;
+typedef VisibleObjectTest<FileselectorEntry> FileselectorEntryVisibilityTest;
+
 BOOST_AUTO_TEST_SUITE(EFL)
 
 	BOOST_AUTO_TEST_SUITE(FileSelectorEntry)
 	
+		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryResizeTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryPositionTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryVisibilityTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryExpandableTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryFolderOnlyTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryIsSaveTest)

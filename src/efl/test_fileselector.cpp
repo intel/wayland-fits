@@ -6,15 +6,19 @@
 #include "window.h"
 
 #include "elmtestharness.h"
-#include "macros.h"
+#include "templates.h"
 
 using std::vector;
 
-// Basic suite START
-EFL_RESIZE_TEST(Fileselector, fileselector, 300, 200, 200, 100)
-EFL_POSITION_TEST(Fileselector, fileselector, 100, 50, 150, 100)
-EFL_VISIBILITY_TEST(Fileselector, fileselector)
-// Basic suite END
+class Fileselector : public EvasObject
+{
+public:
+	Fileselector(EvasObject &parent)
+		: EvasObject::EvasObject(elm_fileselector_add(parent))
+	{
+		return;
+	}
+};
 
 // TODO: Fileselector controls all share a lot of commonality, so an
 // TODO: aggressive refactor with cpp macros could be leveraged.
@@ -255,10 +259,17 @@ private:
 	vector<Eina_Bool>	states_;
 };
 
+typedef ResizeObjectTest<Fileselector> FileselectorResizeTest;
+typedef PositionObjectTest<Fileselector> FileselectorPositionTest;
+typedef VisibleObjectTest<Fileselector> FileselectorVisibilityTest;
+
 BOOST_AUTO_TEST_SUITE(EFL)
 
 	BOOST_AUTO_TEST_SUITE(FileSelector)
 	
+		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorResizeTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorPositionTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorVisibilityTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorExpandableTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorFolderOnlyTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorIsSaveTest)

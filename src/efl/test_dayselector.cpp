@@ -6,15 +6,19 @@
 #include "window.h"
 
 #include "elmtestharness.h"
-#include "macros.h"
+#include "templates.h"
 
 using std::vector;
 
-// Basic suite START
-EFL_RESIZE_TEST(DaySelector, dayselector, 300, 200, 200, 100)
-EFL_POSITION_TEST(DaySelector, dayselector, 100, 50, 150, 100)
-EFL_VISIBILITY_TEST(DaySelector, dayselector)
-// Basic suite END
+class Dayselector : public EvasObject
+{
+public:
+	Dayselector(EvasObject &parent)
+		: EvasObject::EvasObject(elm_dayselector_add(parent))
+	{
+		return;
+	}
+};
 
 class DayselectorDayTest : public ElmTestHarness
 {
@@ -152,10 +156,17 @@ private:
 	EvasObject	control_;
 };
 
+typedef ResizeObjectTest<Dayselector> DayselectorResizeTest;
+typedef PositionObjectTest<Dayselector> DayselectorPositionTest;
+typedef VisibleObjectTest<Dayselector> DayselectorVisibilityTest;
+
 BOOST_AUTO_TEST_SUITE(EFL)
 
 	BOOST_AUTO_TEST_SUITE(DaySelector)
 	
+		WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorResizeTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorPositionTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorVisibilityTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorDayTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorLocaleTest)
 	

@@ -7,16 +7,20 @@
 #include "window.h"
 
 #include "elmtestharness.h"
-#include "macros.h"
+#include "templates.h"
 
 using std::vector;
 using std::string;
 
-// Basic suite START
-EFL_RESIZE_TEST(Bubble, bubble, 300, 200, 200, 100)
-EFL_POSITION_TEST(Bubble, bubble, 100, 50, 150, 100)
-EFL_VISIBILITY_TEST(Bubble, bubble)
-// Basic suite END
+class Bubble : public EvasObject
+{
+public:
+	Bubble(EvasObject &parent)
+		: EvasObject::EvasObject(elm_bubble_add(parent))
+	{
+		return;
+	}
+};
 
 class BubbleCornerTest : public ElmTestHarness
 {
@@ -112,10 +116,18 @@ private:
 	vector<string>	sentinels_;
 };
 
+
+typedef ResizeObjectTest<Bubble> BubbleResizeTest;
+typedef PositionObjectTest<Bubble> BubblePositionTest;
+typedef VisibleObjectTest<Bubble> BubbleVisibilityTest;
+
 BOOST_AUTO_TEST_SUITE(EFL)
 
 	BOOST_AUTO_TEST_SUITE(Bubble)
 	
+		WAYLAND_ELM_HARNESS_TEST_CASE(BubbleResizeTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(BubblePositionTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(BubbleVisibilityTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(BubbleCornerTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(BubbleTextTest)
 	

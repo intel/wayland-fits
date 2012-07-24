@@ -4,14 +4,17 @@
 #include "window.h"
 
 #include "elmtestharness.h"
-#include "macros.h"
+#include "templates.h"
 
-
-// Basic suite START
-EFL_RESIZE_TEST(Clock, clock, 300, 200, 200, 100)
-EFL_POSITION_TEST(Clock, clock, 100, 50, 150, 100)
-EFL_VISIBILITY_TEST(Clock, clock)
-// Basic suite END
+class Clock : public EvasObject
+{
+public:
+	Clock(EvasObject &parent)
+		: EvasObject::EvasObject(elm_clock_add(parent))
+	{
+		return;
+	}
+};
 
 class ClockTimeTest : public ElmTestHarness
 {
@@ -201,10 +204,17 @@ private:
 	EvasObject	clock_;
 };
 
+typedef ResizeObjectTest<Clock> ClockResizeTest;
+typedef PositionObjectTest<Clock> ClockPositionTest;
+typedef VisibleObjectTest<Clock> ClockVisibilityTest;
+
 BOOST_AUTO_TEST_SUITE(EFL)
 
 	BOOST_AUTO_TEST_SUITE(Clock)
 	
+		WAYLAND_ELM_HARNESS_TEST_CASE(ClockResizeTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(ClockPositionTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(ClockVisibilityTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(ClockTimeTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(ClockEditionTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(ClockDigitEditionTest)

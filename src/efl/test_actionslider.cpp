@@ -1,15 +1,18 @@
 #include <vector>
 
-#include "macros.h"
+#include "templates.h"
 
 using std::vector;
 
-
-// Basic suite START
-EFL_RESIZE_TEST(Actionslider, actionslider, 300, 200, 200, 100)
-EFL_POSITION_TEST(Actionslider, actionslider, 100, 50, 150, 100)
-EFL_VISIBILITY_TEST(Actionslider, actionslider)
-// Basic suite END
+class Actionslider : public EvasObject
+{
+public:
+	Actionslider(EvasObject &parent)
+		: EvasObject::EvasObject(elm_actionslider_add(parent))
+	{
+		return;
+	}
+};
 
 class ActionsliderIndicatorTest : public ElmTestHarness
 {
@@ -18,7 +21,7 @@ public:
 	ActionsliderIndicatorTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("ActionsliderIndicatorTest", "Actionslider Position Test")
-		, control_(elm_actionslider_add(window_))
+		, control_(window_)
 	{
 		positions_.push_back(ELM_ACTIONSLIDER_LEFT);
 		positions_.push_back(ELM_ACTIONSLIDER_CENTER);
@@ -60,14 +63,21 @@ public:
 
 private:
 	Window				window_;
-	EvasObject			control_;
+	Actionslider			control_;
 	vector<Elm_Actionslider_Pos>	positions_;
 };
+
+typedef ResizeObjectTest<Actionslider> ActionsliderResizeTest;
+typedef PositionObjectTest<Actionslider> ActionsliderPositionTest;
+typedef VisibleObjectTest<Actionslider> ActionsliderVisibilityTest;
 
 BOOST_AUTO_TEST_SUITE(EFL)
 
 	BOOST_AUTO_TEST_SUITE(ActionSlider)
-	
+
+		WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderResizeTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderPositionTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderVisibilityTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderIndicatorTest)
 	
 	BOOST_AUTO_TEST_SUITE_END()

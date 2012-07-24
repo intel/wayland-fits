@@ -1,10 +1,27 @@
-#include "macros.h"
+#include "templates.h"
 
-// Basic suite START
-EFL_RESIZE_TEST(Button, button, 300, 200, 200, 100)
+class Button : public EvasObject
+{
+public:
+	Button(EvasObject &parent)
+		: EvasObject::EvasObject(elm_button_add(parent))
+	{
+		return;
+	}
+};
 
-EFL_POSITION_TEST(Button, button, 100, 50, 150, 100)
+typedef ResizeObjectTest<Button> ButtonResizeTest;
+typedef PositionObjectTest<Button> ButtonPositionTest;
+typedef VisibleObjectTest<Button> ButtonVisibilityTest;
 
-EFL_VISIBILITY_TEST(Button, button)
-// Basic suite END
+BOOST_AUTO_TEST_SUITE(EFL)
 
+	BOOST_AUTO_TEST_SUITE(Button)
+
+		WAYLAND_ELM_HARNESS_TEST_CASE(ButtonResizeTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(ButtonPositionTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(ButtonVisibilityTest)
+	
+	BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE_END()
