@@ -45,6 +45,7 @@ wayland_efl_test_SOURCES =		\
 	test_flip.cpp			\
 	test_flipselector.cpp		\
 	test_frame.cpp			\
+	test_hover.cpp			\
 	test_window.cpp			\
 	../testmain.cpp
 
