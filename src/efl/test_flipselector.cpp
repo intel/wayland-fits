@@ -57,6 +57,9 @@ public:
 		window_.show();
 		control_.show();
 
+		control_.setSize(200, 200);
+		control_.setPosition(50, 10);
+
 		vector<Elm_Object_Item*>::reverse_iterator item_it;
 		for (item_it = items_.rbegin(); item_it != items_.rend(); item_it++)
 		{
