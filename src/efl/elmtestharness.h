@@ -69,12 +69,13 @@ BOOST_AUTO_TEST_CASE(Harness##_shm_engine) \
 	Application::setEngine(Application::ENGINE_SHM); \
 	Harness().run(); \
 } \
-\
-BOOST_AUTO_TEST_CASE(Harness##_egl_engine) \
-{ \
-	Application::setEngine(Application::ENGINE_EGL); \
-	Harness().run(); \
-} \
+
+//\
+//BOOST_AUTO_TEST_CASE(Harness##_egl_engine) \
+//{ \
+//	Application::setEngine(Application::ENGINE_EGL); \
+//	Harness().run(); \
+//} \
 
 #endif
 
