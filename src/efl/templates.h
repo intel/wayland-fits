@@ -122,14 +122,14 @@ public:
 		queueCallback(
 			ModifyCheckCallback(
 				boost::bind(&T::hide, boost::ref(object_)),
-				boost::bind(&T::checkHidden, boost::ref(object_), EINA_TRUE)
+				boost::bind(&T::checkVisible, boost::ref(object_), EINA_FALSE)
 			)
 		);
 
 		queueCallback(
 			ModifyCheckCallback(
 				boost::bind(&T::show, boost::ref(object_)),
-				boost::bind(&T::checkHidden, boost::ref(object_), EINA_TRUE)
+				boost::bind(&T::checkVisible, boost::ref(object_), EINA_TRUE)
 			)
 		);
 	}

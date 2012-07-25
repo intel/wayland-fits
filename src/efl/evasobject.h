@@ -26,7 +26,6 @@ public:
 	void checkSize(const int width, const int height);
 	void checkPosition(const int x, const int y);
 	void checkVisible(const Eina_Bool isVisible);
-	void checkHidden(const Eina_Bool isHidden);
 
 private:
 	Evas_Object*	obj_;

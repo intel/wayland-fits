@@ -105,7 +105,3 @@ void EvasObject::checkVisible(const Eina_Bool isVisible)
 	BOOST_CHECK_EQUAL(this->isVisible(), isVisible);
 }
 
-void EvasObject::checkHidden(const Eina_Bool isHidden)
-{
-	BOOST_CHECK_EQUAL(this->isVisible(), (isHidden == EINA_TRUE ? EINA_FALSE : EINA_TRUE));
-}
