@@ -34,6 +34,10 @@ public:
 
 	void setup()
 	{
+
+		window_.show();
+		object_.show();
+
 		std::vector<int>::iterator width_it, height_it;
 		for (width_it = width_.begin(); width_it != width_.end(); width_it++)
 			for (height_it = height_.begin(); height_it != height_.end(); height_it++)
@@ -71,11 +75,17 @@ public:
 		y_.push_back(10);
 		y_.push_back(50);
 		y_.push_back(101);
+
+		object_.setSize(50, 50);
+
 		return;
 	}
 
 	void setup()
 	{
+		window_.show();
+		object_.show();
+
 		std::vector<int>::iterator x_it, y_it;
 		for (x_it = x_.begin(); x_it != x_.end(); x_it++)
 			for (y_it = y_.begin(); y_it != y_.end(); y_it++)
@@ -107,11 +117,16 @@ public:
 			, window_("VisibleObjectTest", "Visibility Test")
 			, object_(window_)
 	{
+		object_.setSize(50, 50);
+		object_.setPosition(100, 100);
+
 		return;
 	}
 
 	void setup()
 	{
+		window_.show();
+
 		queueCallback(
 			ModifyCheckCallback(
 				boost::bind(&T::show, boost::ref(object_)),
