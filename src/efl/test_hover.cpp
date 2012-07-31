@@ -41,14 +41,14 @@ public:
 		queueCallback(
 			ModifyCheckCallback(
 				boost::bind(elm_hover_parent_set, boost::ref(control_), boost::ref(window_)),
-				boost::bind(&HoverTargetTest::checkParent, boost::ref(*this), boost::ref(window_))
+				boost::bind(&HoverParentTargetTest::checkParent, boost::ref(*this), boost::ref(window_))
 			)
 		);
 	
 		queueCallback(
 			ModifyCheckCallback(
 				boost::bind(elm_hover_target_set, boost::ref(control_), boost::ref(button_)),
-				boost::bind(&HoverTargetTest::checkTarget, boost::ref(*this), boost::ref(button_))
+				boost::bind(&HoverParentTargetTest::checkTarget, boost::ref(*this), boost::ref(button_))
 			)
 		);
 	}
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_SUITE(EFL)
 		WAYLAND_ELM_HARNESS_TEST_CASE(HoverResizeTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(HoverPositionTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(HoverVisibilityTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(HoverParentTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(HoverParentTargetTest)
 	
 	BOOST_AUTO_TEST_SUITE_END()
 
