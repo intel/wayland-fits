@@ -35,9 +35,9 @@ public:
 		window_.show();
 		object_.show();
 
-		foreach (const int& w, widths_)
+		foreach (const int w, widths_)
 		{
-			foreach (const int& h, heights_)
+			foreach (const int h, heights_)
 			{
 				queueCallback(
 					ModifyCheckCallback(

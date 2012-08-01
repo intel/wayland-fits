@@ -54,8 +54,6 @@ public:
 		options_.push_back(ELM_FLIP_PAGE_RIGHT);
 		options_.push_back(ELM_FLIP_PAGE_UP);
 		options_.push_back(ELM_FLIP_PAGE_DOWN);
-
-		return;
 	}
 
 	void setup()
@@ -65,19 +63,18 @@ public:
 		second_.show();
 		window_.show();
 
-		vector<Elm_Flip_Mode>::iterator it;
-		for (it = options_.begin(); it != options_.end(); it++)
+		foreach (Elm_Flip_Mode option, options_)
 		{
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(elm_flip_go, boost::ref(control_), *it),
+					boost::bind(elm_flip_go, boost::ref(control_), option),
 					boost::bind(&FlipGoTest::checkFront, boost::ref(*this), EINA_TRUE)
 				)
 			);
 
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(elm_flip_go, boost::ref(control_), *it),
+					boost::bind(elm_flip_go, boost::ref(control_), option),
 					boost::bind(&FlipGoTest::checkFront, boost::ref(*this), EINA_FALSE)
 				)
 			);

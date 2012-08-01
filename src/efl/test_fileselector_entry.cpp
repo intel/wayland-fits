@@ -38,8 +38,6 @@ public:
 		states_.push_back(EINA_TRUE);
 		states_.push_back(EINA_FALSE);
 		states_.push_back(EINA_TRUE);
-
-		return;
 	}
 
 	void setup()
@@ -47,13 +45,12 @@ public:
 		window_.show();
 		control_.show();
 
-		vector<Eina_Bool>::iterator it;
-		for (it = states_.begin(); it != states_.end(); it++)
+		foreach (Eina_Bool state, states_)
 		{
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(elm_fileselector_entry_expandable_set, boost::ref(control_), *it),
-					boost::bind(&FileselectorEntryExpandableTest::checkExpandable, boost::ref(*this), *it)
+					boost::bind(elm_fileselector_entry_expandable_set, boost::ref(control_), state),
+					boost::bind(&FileselectorEntryExpandableTest::checkExpandable, boost::ref(*this), state)
 				)
 			);
 		}
@@ -85,8 +82,6 @@ public:
 		states_.push_back(EINA_TRUE);
 		states_.push_back(EINA_FALSE);
 		states_.push_back(EINA_TRUE);
-
-		return;
 	}
 
 	void setup()
@@ -94,13 +89,12 @@ public:
 		window_.show();
 		control_.show();
 
-		vector<Eina_Bool>::iterator it;
-		for (it = states_.begin(); it != states_.end(); it++)
+		foreach (Eina_Bool state, states_)
 		{
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(elm_fileselector_entry_folder_only_set, boost::ref(control_), *it),
-					boost::bind(&FileselectorEntryFolderOnlyTest::checkFolderOnly, boost::ref(*this), *it)
+					boost::bind(elm_fileselector_entry_folder_only_set, boost::ref(control_), state),
+					boost::bind(&FileselectorEntryFolderOnlyTest::checkFolderOnly, boost::ref(*this), state)
 				)
 			);
 		}
@@ -141,13 +135,12 @@ public:
 		window_.show();
 		control_.show();
 
-		vector<Eina_Bool>::iterator it;
-		for (it = states_.begin(); it != states_.end(); it++)
+		foreach (Eina_Bool state, states_)
 		{
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(elm_fileselector_entry_is_save_set, boost::ref(control_), *it),
-					boost::bind(&FileselectorEntryIsSaveTest::checkIsSave, boost::ref(*this), *it)
+					boost::bind(elm_fileselector_entry_is_save_set, boost::ref(control_), state),
+					boost::bind(&FileselectorEntryIsSaveTest::checkIsSave, boost::ref(*this), state)
 				)
 			);
 		}
@@ -188,13 +181,12 @@ public:
 		window_.show();
 		control_.show();
 
-		vector<Eina_Bool>::iterator it;
-		for (it = states_.begin(); it != states_.end(); it++)
+		foreach (Eina_Bool state, states_)
 		{
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(elm_fileselector_entry_inwin_mode_set, boost::ref(control_), *it),
-					boost::bind(&FileselectorEntryInwinTest::checkInwin, boost::ref(*this), *it)
+					boost::bind(elm_fileselector_entry_inwin_mode_set, boost::ref(control_), state),
+					boost::bind(&FileselectorEntryInwinTest::checkInwin, boost::ref(*this), state)
 				)
 			);
 		}

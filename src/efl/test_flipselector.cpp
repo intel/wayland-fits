@@ -43,14 +43,23 @@ public:
 
 	void setup()
 	{
-		vector<string>::iterator string_it;
-		for (string_it = strings_.begin(); string_it != strings_.end(); string_it++)
+		Elm_Object_Item* pivot(
+			elm_flipselector_item_append(
+				control_, "PIVOT", NULL, NULL
+			)
+		);
+		
+		BOOST_CHECK_NE(pivot, static_cast<Elm_Object_Item*>(NULL));
+		
+		vector<Elm_Object_Item*> items;
+
+		foreach (const std::string& label, strings_)
 		{
-			Elm_Object_Item* item = elm_flipselector_item_append(control_, string_it->c_str(), NULL, NULL);
-			BOOST_CHECK_NE(item, (Elm_Object_Item*)NULL);
+			Elm_Object_Item* item = elm_flipselector_item_append(control_, label.c_str(), NULL, NULL);
+			BOOST_CHECK_NE(item, static_cast<Elm_Object_Item*>(NULL));
 			if (item != NULL)
 			{
-				items_.push_back(item);
+				items.push_back(item);
 			}
 		}
 
@@ -60,30 +69,40 @@ public:
 		control_.setSize(200, 200);
 		control_.setPosition(50, 10);
 
-		vector<Elm_Object_Item*>::reverse_iterator item_it;
-		for (item_it = items_.rbegin(); item_it != items_.rend(); item_it++)
+		foreach_reverse (Elm_Object_Item* item, items)
 		{
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(elm_flipselector_item_selected_set, boost::ref(*item_it), EINA_TRUE),
-					boost::bind(&FlipSelectorItemTest::checkItem, boost::ref(*this), *item_it)
+					boost::bind(elm_flipselector_item_selected_set, item, EINA_TRUE),
+					boost::bind(&FlipSelectorItemTest::checkItem, boost::ref(*this), item, pivot, EINA_TRUE)
+				)
+			);
+			queueCallback(
+				ModifyCheckCallback(
+					boost::bind(elm_flipselector_item_selected_set, pivot, EINA_TRUE),
+					boost::bind(&FlipSelectorItemTest::checkItem, boost::ref(*this), item, pivot, EINA_FALSE)
+				)
+			);
+			queueCallback(
+				ModifyCheckCallback(
+					boost::bind(elm_flipselector_item_selected_set, item, EINA_TRUE),
+					boost::bind(&FlipSelectorItemTest::checkItem, boost::ref(*this), item, pivot, EINA_TRUE)
 				)
 			);
 		}
 
 	}
 
-	void checkItem(const Elm_Object_Item* expected)
+	void checkItem(const Elm_Object_Item* item, const Elm_Object_Item* pivot, Eina_Bool expected)
 	{
-		BOOST_CHECK_EQUAL(elm_flipselector_item_selected_get(expected), EINA_TRUE);
+		BOOST_CHECK_EQUAL(elm_flipselector_item_selected_get(item), expected);
+		BOOST_CHECK_EQUAL(elm_flipselector_item_selected_get(pivot), not expected);
 	}
 
 private:
-	Window				window_;
-	Flipselector			control_;
-	vector<string>			strings_;
-	vector<Elm_Object_Item*>	items_;
-	
+	Window			window_;
+	Flipselector	control_;
+	vector<string>	strings_;
 };
 
 typedef ResizeObjectTest<Flipselector> FlipSelectorResizeTest;
@@ -92,7 +111,7 @@ typedef VisibleObjectTest<Flipselector> FlipSelectorVisibilityTest;
 
 BOOST_AUTO_TEST_SUITE(EFL)
 
-	BOOST_AUTO_TEST_SUITE(FlipSelectorSuite)
+	BOOST_AUTO_TEST_SUITE(FlipSelector)
 
 		WAYLAND_ELM_HARNESS_TEST_CASE(FlipSelectorItemTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(FlipSelectorResizeTest)
