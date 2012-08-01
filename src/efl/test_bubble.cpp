@@ -49,13 +49,12 @@ public:
 
 		bubble_.setSize(200, 100);
 
-		vector<Elm_Bubble_Pos>::iterator it;
-		for (it = positions_.begin(); it != positions_.end(); it++)
+		foreach (Elm_Bubble_Pos p, positions_)
 		{
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(&elm_bubble_pos_set, boost::ref(bubble_), *it),
-					boost::bind(&BubbleCornerTest::checkPos, boost::ref(*this), *it)
+					boost::bind(&elm_bubble_pos_set, boost::ref(bubble_), p),
+					boost::bind(&BubbleCornerTest::checkPos, boost::ref(*this), p)
 				)
 			);
 		}

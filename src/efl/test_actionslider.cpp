@@ -44,13 +44,12 @@ public:
 		control_.setSize(200, 100);
 		control_.setPosition(50, 10);
 
-		vector<Elm_Actionslider_Pos>::iterator it;
-		for (it = positions_.begin(); it != positions_.end(); it++)
+		foreach (Elm_Actionslider_Pos p, positions_)
 		{
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(elm_actionslider_indicator_pos_set, boost::ref(control_), *it),
-					boost::bind(&ActionsliderIndicatorTest::checkPos, boost::ref(*this), *it)
+					boost::bind(elm_actionslider_indicator_pos_set, boost::ref(control_), p),
+					boost::bind(&ActionsliderIndicatorTest::checkPos, boost::ref(*this), p)
 				)
 			);
 		}
@@ -62,8 +61,8 @@ public:
 	}
 
 private:
-	Window				window_;
-	Actionslider			control_;
+	Window							window_;
+	Actionslider					control_;
 	vector<Elm_Actionslider_Pos>	positions_;
 };
 

@@ -49,27 +49,26 @@ public:
 		window_.show();
 		control_.show();
 
-		vector<Elm_Dayselector_Day>::iterator it;
-		for (it = days_.begin(); it < days_.end(); it++)
+		foreach (Elm_Dayselector_Day d, days_)
 		{
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), *it, EINA_TRUE),
-					boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), *it, EINA_TRUE)
+					boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), d, EINA_TRUE),
+					boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), d, EINA_TRUE)
 				)
 			);
 
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), *it, EINA_FALSE),
-					boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), *it, EINA_FALSE)
+					boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), d, EINA_FALSE),
+					boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), d, EINA_FALSE)
 				)
 			);
 
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), *it, EINA_TRUE),
-					boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), *it, EINA_TRUE)
+					boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), d, EINA_TRUE),
+					boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), d, EINA_TRUE)
 				)
 			);
 		}

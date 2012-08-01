@@ -169,20 +169,21 @@ public:
 		 	ELM_CLOCK_EDIT_MIN_DECIMAL,
 			ELM_CLOCK_EDIT_MIN_UNIT,
 			ELM_CLOCK_EDIT_SEC_DECIMAL,
-			ELM_CLOCK_EDIT_SEC_UNIT };
+			ELM_CLOCK_EDIT_SEC_UNIT
+		};
 
 		Elm_Clock_Edit_Mode mask = ELM_CLOCK_EDIT_DEFAULT;
-		for (unsigned int i = 0; i < (sizeof(edition) / sizeof(unsigned int)); ++i)
+		foreach(Elm_Clock_Edit_Mode e, edition)
 		{
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(elm_clock_edit_mode_set, boost::ref(clock_), edition[i]),
-					boost::bind(&ClockDigitEditionTest::checkEdit, boost::ref(*this), edition[i])
+					boost::bind(elm_clock_edit_mode_set, boost::ref(clock_), e),
+					boost::bind(&ClockDigitEditionTest::checkEdit, boost::ref(*this), e)
 				)
 			);
 
-			mask = (Elm_Clock_Edit_Mode) (mask | edition[i]);
-			if (mask == edition[i])
+			mask = (Elm_Clock_Edit_Mode) (mask | e);
+			if (mask == e)
 				continue;
 
 			queueCallback(

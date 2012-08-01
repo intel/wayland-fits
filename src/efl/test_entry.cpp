@@ -81,12 +81,16 @@ public:
 
 		vector<string>::iterator it;
 		vector<int>::iterator sizeit;
-		for (it = emoticons_.begin(); it != emoticons_.end(); it++)
-			for (sizeit = sizes_.begin(); sizeit != sizes_.end(); sizeit++)
+		foreach (const string& e, emoticons_)
 		{
+			foreach (int size, sizes_)
+			{
+// 		for (it = emoticons_.begin(); it != emoticons_.end(); it++)
+// 			for (sizeit = sizes_.begin(); sizeit != sizes_.end(); sizeit++)
+// 		{
 			char buf[1024] = { '\0' };
 			snprintf(buf, 1024, "Emoticon: <item size=%dx%d vsize=full href=emoticon/%s></item>",
-				*sizeit, *sizeit, it->c_str()); 
+				size, size, e.c_str()); 
 			string markup = buf;
 
 			queueCallback(
@@ -95,6 +99,7 @@ public:
 					boost::bind(&EntryEmoticonTest::checkEmoticon, boost::ref(*this), markup)
 				)
 			);
+		}
 		}
 	}
 

@@ -46,15 +46,14 @@ private:
 	EvasObject	selector_;
 };
 
-/* TODO: Disabled per EFL #1153
-BOOST_AUTO_TEST_SUITE(Wayland_EFL_Suite)
+BOOST_AUTO_TEST_SUITE(EFL)
 
-	BOOST_AUTO_TEST_SUITE(Wayland_EFL_Colorselector_Suite)
+	BOOST_AUTO_TEST_SUITE(ColorSelector)
 
 		WAYLAND_ELM_HARNESS_TEST_CASE(ColorselectorColorTest)
 
 	BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE_END()
-*/
+
 

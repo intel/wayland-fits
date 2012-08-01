@@ -104,13 +104,12 @@ public:
 				)
 			);
 
-		vector<Elm_Bg_Option>::iterator it;
-		for (it = options_.begin(); it != options_.end(); it++)
+		foreach (Elm_Bg_Option o, options_)
 		{
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(&Background::setImageOpt, boost::ref(control_), *it),
-					boost::bind(&BackgroundImageTest::checkImageOpt, boost::ref(*this), *it)
+					boost::bind(&Background::setImageOpt, boost::ref(control_), o),
+					boost::bind(&BackgroundImageTest::checkImageOpt, boost::ref(*this), o)
 				)
 			);
 		}
@@ -135,8 +134,8 @@ public:
 	}
 
 private:
-	Window			window_;
-	Background		control_;
+	Window					window_;
+	Background				control_;
 	vector<Elm_Bg_Option>	options_;
 };
 
