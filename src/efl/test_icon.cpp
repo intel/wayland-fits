@@ -65,8 +65,6 @@ public:
 		control_.setPosition(50, 10);
 
 		elm_icon_standard_set(control_, "home");
-
-		return;
 	}
 
 	void setup()
@@ -74,13 +72,12 @@ public:
 		window_.show();
 		control_.show();
 
-		vector<string>::iterator it;
-		for (it = icons_.begin(); it != icons_.end(); it++)
+		foreach (const std::string& name, icons_)
 		{
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(&IconStandardTest::setStandard, boost::ref(*this), *it),
-					boost::bind(&IconStandardTest::checkStandard, boost::ref(*this), *it)
+					boost::bind(&IconStandardTest::setStandard, boost::ref(*this), boost::cref(name)),
+					boost::bind(&IconStandardTest::checkStandard, boost::ref(*this), boost::cref(name))
 				)
 			);
 		}

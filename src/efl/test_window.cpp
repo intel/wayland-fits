@@ -267,13 +267,12 @@ public:
 	{
 		window_.show();
 
-		vector<int>::iterator it;
-		for (it = degrees_.begin(); it != degrees_.end(); it++)
+		foreach (const int degree, degrees_)
 		{
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(&Window::rotate, boost::ref(window_), *it),
-					boost::bind(&Window::checkRotation, boost::ref(window_), *it)
+					boost::bind(&Window::rotate, boost::ref(window_), degree),
+					boost::bind(&Window::checkRotation, boost::ref(window_), degree)
 				)
 			);
 		}

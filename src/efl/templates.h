@@ -83,9 +83,9 @@ public:
 		window_.show();
 		object_.show();
 
-		foreach (const int& x, xs_)
+		foreach (const int x, xs_)
 		{
-			foreach (const int& y, ys_)
+			foreach (const int y, ys_)
 			{
 				queueCallback(
 					ModifyCheckCallback(
