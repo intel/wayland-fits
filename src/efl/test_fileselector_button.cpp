@@ -44,8 +44,9 @@ public:
 		window_.show();
 		control_.show();
 
-		vector<Eina_Bool>::iterator it;
-		for (it = states_.begin(); it != states_.end(); it++)
+		typedef vector<Eina_Bool>::const_iterator CIterator;
+		const CIterator endIt(states_.end());
+		for (CIterator it(states_.begin()); it != endIt; ++it)
 		{
 			queueCallback(
 				ModifyCheckCallback(
