@@ -48,6 +48,7 @@ wayland_efl_test_SOURCES =		\
 	test_hover.cpp			\
 	test_hoversel.cpp		\
 	test_icon.cpp			\
+	test_image.cpp			\
 	test_window.cpp			\
 	../testmain.cpp
 
