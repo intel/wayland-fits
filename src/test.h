@@ -3,5 +3,8 @@
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/mpl/list.hpp>
+#include <boost/foreach.hpp>
+
+#define foreach BOOST_FOREACH
 
 #endif

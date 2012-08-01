@@ -4,7 +4,6 @@
 #include <boost/bind.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/static_assert.hpp>
-
 #include <vector>
 
 #include "elmtestharness.h"
@@ -18,43 +17,43 @@ class ResizeObjectTest : public ElmTestHarness
 
 public:
 	ResizeObjectTest()
-			: ElmTestHarness::ElmTestHarness()
-			, window_("ResizeObjectTest", "Resize Test")
-			, object_(window_)
+		: ElmTestHarness::ElmTestHarness()
+		, window_("ResizeObjectTest", "Resize Test")
+		, object_(window_)
 	{
-		width_.push_back(300);
-		width_.push_back(200);
-		width_.push_back(101);
+		widths_.push_back(300);
+		widths_.push_back(200);
+		widths_.push_back(101);
 
-		height_.push_back(200);
-		height_.push_back(100);
-		height_.push_back(51);
-		return;
+		heights_.push_back(200);
+		heights_.push_back(100);
+		heights_.push_back(51);
 	}
 
 	void setup()
 	{
-
 		window_.show();
 		object_.show();
 
-		std::vector<int>::iterator width_it, height_it;
-		for (width_it = width_.begin(); width_it != width_.end(); width_it++)
-			for (height_it = height_.begin(); height_it != height_.end(); height_it++)
+		foreach (const int& w, widths_)
 		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(&T::setSize, boost::ref(object_), *width_it, *height_it),
-					boost::bind(&T::checkSize, boost::ref(object_), *width_it, *height_it)
-				)
-			);
+			foreach (const int& h, heights_)
+			{
+				queueCallback(
+					ModifyCheckCallback(
+						boost::bind(&T::setSize, boost::ref(object_), w, h),
+						boost::bind(&T::checkSize, boost::ref(object_), w, h)
+					)
+				);
+			}
 		}
 	}
 
 private:
-	Window			window_;
-	T			object_;
-	std::vector<int>	width_, height_;
+	Window				window_;
+	T					object_;
+	std::vector<int>	widths_;
+	std::vector<int>	heights_;
 };
 
 template <typename T>
@@ -64,21 +63,19 @@ class PositionObjectTest : public ElmTestHarness
 
 public:
 	PositionObjectTest()
-			: ElmTestHarness::ElmTestHarness()
-			, window_("PositionObjectTest", "Position Test")
-			, object_(window_)
+		: ElmTestHarness::ElmTestHarness()
+		, window_("PositionObjectTest", "Position Test")
+		, object_(window_)
 	{
-		x_.push_back(50);
-		x_.push_back(100);
-		x_.push_back(151);
+		xs_.push_back(50);
+		xs_.push_back(100);
+		xs_.push_back(151);
 
-		y_.push_back(10);
-		y_.push_back(50);
-		y_.push_back(101);
+		ys_.push_back(10);
+		ys_.push_back(50);
+		ys_.push_back(101);
 
 		object_.setSize(50, 50);
-
-		return;
 	}
 
 	void setup()
@@ -86,23 +83,25 @@ public:
 		window_.show();
 		object_.show();
 
-		std::vector<int>::iterator x_it, y_it;
-		for (x_it = x_.begin(); x_it != x_.end(); x_it++)
-			for (y_it = y_.begin(); y_it != y_.end(); y_it++)
+		foreach (const int& x, xs_)
 		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(&T::setPosition, boost::ref(object_), *x_it, *y_it),
-					boost::bind(&T::checkPosition, boost::ref(object_), *x_it, *y_it)
-				)
-			);
+			foreach (const int& y, ys_)
+			{
+				queueCallback(
+					ModifyCheckCallback(
+						boost::bind(&T::setPosition, boost::ref(object_), x, y),
+						boost::bind(&T::checkPosition, boost::ref(object_), x, y)
+					)
+				);
+			}
 		}
 	}
 
 private:
-	Window			window_;
-	T			object_;
-	std::vector<int>	x_, y_;
+	Window				window_;
+	T					object_;
+	std::vector<int>	xs_;
+	std::vector<int>	ys_;
 };
 
 
@@ -113,9 +112,9 @@ class VisibleObjectTest : public ElmTestHarness
 
 public:
 	VisibleObjectTest()
-			: ElmTestHarness::ElmTestHarness()
-			, window_("VisibleObjectTest", "Visibility Test")
-			, object_(window_)
+		: ElmTestHarness::ElmTestHarness()
+		, window_("VisibleObjectTest", "Visibility Test")
+		, object_(window_)
 	{
 		object_.setSize(50, 50);
 		object_.setPosition(100, 100);
@@ -151,7 +150,7 @@ public:
 
 private:
 	Window	window_;
-	T	object_;
+	T		object_;
 };
 
 /* TODO: evasobject methods for color set/get/check
