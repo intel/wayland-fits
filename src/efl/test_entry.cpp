@@ -1,6 +1,6 @@
 #include <Elementary.h>
 #include <boost/bind.hpp>
-
+#include <boost/format.hpp>
 #include <vector>
 #include <string>
 
@@ -79,31 +79,24 @@ public:
 		window_.show();
 		control_.show();
 
-		vector<string>::iterator it;
-		vector<int>::iterator sizeit;
+		boost::format tmarkup("Emoticon: <item size=%1%x%1% vsize=full href=emoticon/%2%></item>");
 		foreach (const string& e, emoticons_)
 		{
 			foreach (int size, sizes_)
 			{
-// 		for (it = emoticons_.begin(); it != emoticons_.end(); it++)
-// 			for (sizeit = sizes_.begin(); sizeit != sizes_.end(); sizeit++)
-// 		{
-			char buf[1024] = { '\0' };
-			snprintf(buf, 1024, "Emoticon: <item size=%dx%d vsize=full href=emoticon/%s></item>",
-				size, size, e.c_str()); 
-			string markup = buf;
+				std::string markup(boost::str(tmarkup % size % e));
 
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_entry_entry_set, boost::ref(control_), markup.c_str()),
-					boost::bind(&EntryEmoticonTest::checkEmoticon, boost::ref(*this), markup)
-				)
-			);
-		}
+				queueCallback(
+					ModifyCheckCallback(
+						boost::bind(elm_entry_entry_set, boost::ref(control_), markup.c_str()),
+						boost::bind(&EntryEmoticonTest::checkEmoticon, boost::ref(*this), markup)
+					)
+				);
+			}
 		}
 	}
 
-	void checkEmoticon(string& expected)
+	void checkEmoticon(const string& expected)
 	{
 		const char* actual_ = elm_entry_entry_get(control_);
 		string actual = actual_ != NULL ? actual_ : "";
@@ -112,10 +105,10 @@ public:
 	}
 
 private:
-	Window		window_;
-	EvasObject	control_;
+	Window			window_;
+	EvasObject		control_;
 	vector<string>	emoticons_;
-	vector<int>	sizes_;
+	vector<int>		sizes_;
 };
 
 class EntryCutTest : public ElmTestHarness
@@ -196,7 +189,6 @@ public:
 		control_.setPosition(50, 10);
 
 		elm_entry_autosave_set(control_, EINA_FALSE);
-		return;
 	}
 
 	void setup()
@@ -251,7 +243,6 @@ public:
 		control_.setPosition(50, 10);
 
 		elm_entry_autosave_set(control_, EINA_FALSE);
-		return;
 	}
 
 	void setup()
@@ -289,13 +280,13 @@ public:
 
 	}
 
-	void cut(void)
+	void cut()
 	{
 		elm_entry_select_all(control_);
 		elm_entry_selection_cut(control_);
 	}
 
-	void paste(void)
+	void paste()
 	{
 		elm_entry_select_all(control_);
 		elm_entry_selection_paste(control_);
