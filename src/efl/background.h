@@ -13,7 +13,7 @@
 class Background : public EvasObject
 {
 public:
-	Background(Evas_Object *parent);
+	Background(EvasObject& parent);
 
 	void setColor(int, int, int);
 	void setImage(const boost::filesystem::path&);
@@ -22,9 +22,6 @@ public:
 	void getColor(int*, int*, int*);
 	void getImage(boost::filesystem::path&);
 	Elm_Bg_Option getImageOpt();
-
-private:
-	Evas_Object *parent;
 };
 
 #endif

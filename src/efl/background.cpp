@@ -2,11 +2,10 @@
 
 using boost::filesystem::path;
 
-Background::Background(Evas_Object *parent)
+Background::Background(EvasObject& parent)
 	: EvasObject::EvasObject(
 		elm_bg_add(parent)
 	)
-	, parent(parent)
 {
 	return;
 }
