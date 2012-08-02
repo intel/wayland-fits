@@ -30,9 +30,15 @@ public:
 		, control_(elm_flip_add(window_))
 		, first_(window_)
 		, second_(window_)
+		, options_()
+		, flipDone_(true)
+		, nWaitForFlip_(0)
 	{
 		control_.setSize(300, 300);
 		control_.setPosition(50, 10);
+
+		first_.setColor(255, 0, 0);
+		second_.setColor(0, 255, 0);
 
 		evas_object_size_hint_align_set(first_, EVAS_HINT_FILL, EVAS_HINT_FILL);
 		evas_object_size_hint_weight_set(first_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -41,7 +47,8 @@ public:
 
 		elm_object_part_content_set(control_, "front", first_);
 		elm_object_part_content_set(control_, "back", second_);
-		
+
+		options_.push_back(ELM_FLIP_ROTATE_Y_CENTER_AXIS);
 		options_.push_back(ELM_FLIP_ROTATE_Y_CENTER_AXIS);
 		options_.push_back(ELM_FLIP_ROTATE_X_CENTER_AXIS);
 		options_.push_back(ELM_FLIP_ROTATE_XZ_CENTER_AXIS);
@@ -54,6 +61,8 @@ public:
 		options_.push_back(ELM_FLIP_PAGE_RIGHT);
 		options_.push_back(ELM_FLIP_PAGE_UP);
 		options_.push_back(ELM_FLIP_PAGE_DOWN);
+		
+		evas_object_smart_callback_add(control_, "animate,done", animateDone, this);
 	}
 
 	void setup()
@@ -63,34 +72,76 @@ public:
 		second_.show();
 		window_.show();
 
-		foreach (Elm_Flip_Mode option, options_)
+		// The front is initially visible... so kick off the flip sequence
+		flipDone_ = true;
+		checkFlip(EINA_TRUE);
+	}
+
+	static void animateDone(void* data, Evas_Object *obj, void* event_info)
+	{
+		FlipGoTest* fgt = static_cast<FlipGoTest*>(data);
+		fgt->flipDone_ = true;
+	}
+	
+	void nullOp()
+	{
+		return;
+	}
+	
+	void checkFlip(const Eina_Bool visible)
+	{
+		// We would expect the signal to finish within a reasonable number of mainloop iterations.
+		// But, just in case the signal/callback mechanism is broken we don't wait forever.
+		BOOST_REQUIRE(nWaitForFlip_ < 100);
+
+		if (not flipDone_)
 		{
+			// we're still waiting for the "animate,done" signal
+			++nWaitForFlip_;
+
+			// just queue another callback with a nullOp Modify.
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(elm_flip_go, boost::ref(control_), option),
-					boost::bind(&FlipGoTest::checkFront, boost::ref(*this), EINA_TRUE)
+					boost::bind(&FlipGoTest::nullOp, boost::ref(*this)),
+					boost::bind(&FlipGoTest::checkFlip, boost::ref(*this), visible)
 				)
 			);
 
+			return; // Don't check the flip state yet! Maybe next time!
+		}
+
+		// Reset state for next flip operation
+		nWaitForFlip_ = 0;
+		flipDone_ = false;
+		
+		// verify the flip state
+		BOOST_CHECK_EQUAL(elm_flip_front_visible_get(control_), visible);
+
+		if (visible == EINA_FALSE)
+		{
+			// move on to the next flip option
+			options_.pop_front();
+		}
+
+		if (options_.size() > 0)
+		{
+			// we still have flip options to process.
 			queueCallback(
 				ModifyCheckCallback(
-					boost::bind(elm_flip_go, boost::ref(control_), option),
-					boost::bind(&FlipGoTest::checkFront, boost::ref(*this), EINA_FALSE)
+					boost::bind(elm_flip_go, boost::ref(control_), options_.front()),
+					boost::bind(&FlipGoTest::checkFlip, boost::ref(*this), not visible)
 				)
 			);
 		}
-	}
-
-	void checkFront(const Eina_Bool visible)
-	{
-		BOOST_CHECK_EQUAL(elm_flip_front_visible_get(control_), visible);
 	}
 
 private:
 	Window			window_;
 	EvasObject		control_;
 	Background		first_, second_;
-	vector<Elm_Flip_Mode>	options_;
+	std::deque<Elm_Flip_Mode>	options_;
+	bool			flipDone_;
+	unsigned		nWaitForFlip_;
 };
 
 typedef ResizeObjectTest<Flip> FlipResizeTest;
