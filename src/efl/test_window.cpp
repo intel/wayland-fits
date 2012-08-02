@@ -283,6 +283,144 @@ private:
 	vector<int>	degrees_;
 };
 
+class WindowAlphaTest : public ElmTestHarness
+{
+public:
+	WindowAlphaTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("WindowAlphaTest", "Window Alpha Test")
+	{
+		return;
+	}
+
+	void setup()
+	{
+		window_.show();
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(elm_win_alpha_set, boost::ref(window_), EINA_TRUE),
+				boost::bind(&WindowAlphaTest::checkAlpha, boost::ref(*this), EINA_TRUE)
+			)
+		);
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(elm_win_alpha_set, boost::ref(window_), EINA_FALSE),
+				boost::bind(&WindowAlphaTest::checkAlpha, boost::ref(*this), EINA_FALSE)
+			)
+		);
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(elm_win_alpha_set, boost::ref(window_), EINA_TRUE),
+				boost::bind(&WindowAlphaTest::checkAlpha, boost::ref(*this), EINA_TRUE)
+			)
+		);
+
+	}
+
+	void checkAlpha(const Eina_Bool expected)
+	{
+		BOOST_CHECK_EQUAL(elm_win_alpha_get(window_), expected);
+	}
+
+private:
+	Window		window_;
+};
+
+class WindowIndicatorTest : public ElmTestHarness
+{
+public:
+	WindowIndicatorTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("WindowIndicatorTest", "Window Indicator Test")
+	{
+		return;
+	}
+
+	void setup()
+	{
+		window_.show();
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(elm_win_indicator_mode_set, boost::ref(window_), ELM_WIN_INDICATOR_SHOW),
+				boost::bind(&WindowIndicatorTest::checkIndicator, boost::ref(*this), ELM_WIN_INDICATOR_SHOW)
+			)
+		);
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(elm_win_indicator_mode_set, boost::ref(window_), ELM_WIN_INDICATOR_HIDE),
+				boost::bind(&WindowIndicatorTest::checkIndicator, boost::ref(*this), ELM_WIN_INDICATOR_HIDE)
+			)
+		);
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(elm_win_indicator_mode_set, boost::ref(window_), ELM_WIN_INDICATOR_SHOW),
+				boost::bind(&WindowIndicatorTest::checkIndicator, boost::ref(*this), ELM_WIN_INDICATOR_SHOW)
+			)
+		);
+	}
+
+	void checkIndicator(const Elm_Win_Indicator_Mode expected)
+	{
+		BOOST_CHECK_EQUAL(elm_win_indicator_mode_get(window_), expected);
+	}
+
+private:
+	Window		window_;
+};
+
+class WindowIndicatorOpacityTest : public ElmTestHarness
+{
+public:
+	WindowIndicatorOpacityTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("WindowIndicatorOpacityTest", "Window Indicator Opacity Test")
+	{
+		modes_.push_back(ELM_WIN_INDICATOR_OPAQUE);
+		modes_.push_back(ELM_WIN_INDICATOR_TRANSLUCENT);
+		modes_.push_back(ELM_WIN_INDICATOR_TRANSPARENT);
+
+		return;
+	}
+
+	void setup()
+	{
+		window_.show();
+
+		vector<Elm_Win_Indicator_Opacity_Mode>::iterator it;
+		for (it = modes_.begin(); it != modes_.end(); it++)
+		{
+			queueCallback(
+				ModifyCheckCallback(
+					boost::bind(elm_win_indicator_opacity_set, boost::ref(window_), *it),
+					boost::bind(&WindowIndicatorOpacityTest::checkOpacity, boost::ref(*this), *it)
+				)
+			);
+
+			queueCallback(
+				ModifyCheckCallback(
+					boost::bind(elm_win_indicator_opacity_set, boost::ref(window_), ELM_WIN_INDICATOR_OPAQUE),
+					boost::bind(&WindowIndicatorOpacityTest::checkOpacity, boost::ref(*this), ELM_WIN_INDICATOR_OPAQUE)
+				)
+			);
+		}
+	}
+
+	void checkOpacity(const Elm_Win_Indicator_Opacity_Mode expected)
+	{
+		BOOST_CHECK_EQUAL(elm_win_indicator_opacity_get(window_), expected);
+	}
+
+private:
+	Window					window_;
+	vector<Elm_Win_Indicator_Opacity_Mode>	modes_;
+};
+
 BOOST_AUTO_TEST_SUITE(EFL)
 
 	BOOST_AUTO_TEST_SUITE(Window)
@@ -295,7 +433,18 @@ BOOST_AUTO_TEST_SUITE(EFL)
 		WAYLAND_ELM_HARNESS_TEST_CASE(WindowStickyTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(WindowWithdrawnTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(WindowRotationTest)
+
+/* XXX: The Window ctor uses a convenience function that creates a bare bg,
+   XXX: covering transparency-- need to have Window inherit from WindowBase
+   XXX: or something.
+		WAYLAND_ELM_HARNESS_TEST_CASE(WindowAlphaTest)
+*/
 	
+/* XXX:	blocked by Wayland #53018
+		WAYLAND_ELM_HARNESS_TEST_CASE(WindowIndicatorTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(WindowIndicatorOpacityTest)
+*/
+
 	BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE_END()
