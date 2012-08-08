@@ -50,6 +50,7 @@ wayland_efl_test_SOURCES =		\
 	test_icon.cpp			\
 	test_image.cpp			\
 	test_inwin.cpp			\
+	test_list.cpp			\
 	test_window.cpp			\
 	../testmain.cpp
 
