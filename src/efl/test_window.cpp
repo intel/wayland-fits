@@ -433,17 +433,10 @@ BOOST_AUTO_TEST_SUITE(EFL)
 		WAYLAND_ELM_HARNESS_TEST_CASE(WindowStickyTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(WindowWithdrawnTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(WindowRotationTest)
-
-/* XXX: The Window ctor uses a convenience function that creates a bare bg,
-   XXX: covering transparency-- need to have Window inherit from WindowBase
-   XXX: or something.
+		//TODO: These three below need work still
 		WAYLAND_ELM_HARNESS_TEST_CASE(WindowAlphaTest)
-*/
-	
-/* XXX:	blocked by Wayland #53018
 		WAYLAND_ELM_HARNESS_TEST_CASE(WindowIndicatorTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(WindowIndicatorOpacityTest)
-*/
 
 	BOOST_AUTO_TEST_SUITE_END()
 
