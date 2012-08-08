@@ -51,6 +51,7 @@ wayland_efl_test_SOURCES =		\
 	test_image.cpp			\
 	test_inwin.cpp			\
 	test_list.cpp			\
+	test_label.cpp			\
 	test_window.cpp			\
 	../testmain.cpp
 
