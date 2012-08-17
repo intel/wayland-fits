@@ -1,4 +1,7 @@
 #include <ctime>
+
+#include <vector>
+
 #include "templates.h"
 
 class Notify : public EvasObject
@@ -106,6 +109,66 @@ private:
 	time_t		clock_;
 };
 
+
+// TODO: add smart callbacks for "timeout" events for each orientation
+class NotifyOrientTest : public ElmTestHarness
+{
+public:
+	NotifyOrientTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("NotifyOrientTest", "Notify Orientation Test")
+		, control_(window_)
+		, content_(elm_label_add(window_))
+	{
+		elm_object_text_set(content_, "Notification");
+		elm_object_content_set(control_, content_);
+
+		control_.setSize(200, 100);
+		control_.setPosition(50, 10);
+
+		orients_.push_back(ELM_NOTIFY_ORIENT_TOP);
+		orients_.push_back(ELM_NOTIFY_ORIENT_CENTER);
+		orients_.push_back(ELM_NOTIFY_ORIENT_BOTTOM);
+		orients_.push_back(ELM_NOTIFY_ORIENT_LEFT);
+		orients_.push_back(ELM_NOTIFY_ORIENT_RIGHT);
+		orients_.push_back(ELM_NOTIFY_ORIENT_TOP_LEFT);
+		orients_.push_back(ELM_NOTIFY_ORIENT_TOP_RIGHT);
+		orients_.push_back(ELM_NOTIFY_ORIENT_BOTTOM_LEFT);
+		orients_.push_back(ELM_NOTIFY_ORIENT_BOTTOM_RIGHT);
+		orients_.push_back(ELM_NOTIFY_ORIENT_TOP);
+	}
+
+	void setup()
+	{
+		window_.show();
+		content_.show();
+		control_.show();
+
+		foreach (const Elm_Notify_Orient orient, orients_)
+		{
+			queueCallback(
+				ModifyCheckCallback(
+					boost::bind(elm_notify_orient_set, boost::ref(control_), orient),
+					boost::bind(&NotifyOrientTest::checkOrient, boost::ref(*this), orient)
+				)
+			);
+		}
+	}
+
+	void checkOrient(const Elm_Notify_Orient expected)
+	{
+		control_.show();
+		BOOST_CHECK_EQUAL(elm_notify_orient_get(control_), expected);
+		Application::yield();
+	}
+
+private:
+	Window				window_;
+	Notify				control_;
+	EvasObject			content_;
+	std::vector<Elm_Notify_Orient>	orients_;
+};
+
 typedef ResizeObjectTest<Notify> NotifyResizeTest;
 typedef PositionObjectTest<Notify> NotifyPositionTest;
 typedef VisibleObjectTest<Notify> NotifyVisibilityTest;
@@ -118,6 +181,7 @@ BOOST_AUTO_TEST_SUITE(EFL)
 		WAYLAND_ELM_HARNESS_TEST_CASE(NotifyPositionTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(NotifyVisibilityTest)
 		WAYLAND_ELM_HARNESS_TEST_CASE(NotifyTimeoutTest)
+		WAYLAND_ELM_HARNESS_TEST_CASE(NotifyOrientTest)
 	
 	BOOST_AUTO_TEST_SUITE_END()
 
