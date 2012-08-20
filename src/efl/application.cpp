@@ -45,6 +45,3 @@ void Application::yield(const unsigned time)
 	usleep(time);
 }
 
-
-// only one instance per test binary
-// BOOST_GLOBAL_FIXTURE(Application);

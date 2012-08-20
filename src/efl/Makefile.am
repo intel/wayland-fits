@@ -20,7 +20,8 @@ LDFLAGS += 			\
 	@EFL_LIBS@		\
 	@CHECK_LIBS@		\
 	-lboost_system		\
-	-lboost_filesystem
+	-lboost_filesystem	\
+	-lboost_program_options
 
 bin_PROGRAMS = $(TESTS)
 

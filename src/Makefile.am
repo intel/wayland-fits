@@ -11,7 +11,8 @@ CXXFLAGS =			\
 LDFLAGS = 			\
 	$(CAIRO_LIBS)		\
 	$(WAYLAND_LIBS)		\
-	@CHECK_LIBS@
+	@CHECK_LIBS@		\
+	-lboost_program_options
 
 bin_PROGRAMS = $(TESTS)
 
