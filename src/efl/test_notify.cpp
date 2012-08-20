@@ -60,7 +60,7 @@ public:
 	void checkTimedOut(const time_t max)
 	{
 		// if taking too long, fail the test
-		BOOST_REQUIRE(time(NULL) < max);
+		FAIL_UNLESS(time(NULL) < max);
 
 		if (not timedout_)
 		{
@@ -79,16 +79,16 @@ public:
 		}
 
 		// Supposedly captured the timeout signal-- check expected control state
-		BOOST_CHECK_EQUAL(timedout_, true);
-		BOOST_CHECK_EQUAL(control_.isVisible(), EINA_FALSE);
+		FAIL_UNLESS_EQUAL(timedout_, true);
+		FAIL_UNLESS_EQUAL(control_.isVisible(), EINA_FALSE);
 
 		// And, check that at least a second has passed passed
-		BOOST_CHECK_GE(time(NULL), clock_ + 1);
+		FAIL_UNLESS_GE(time(NULL), clock_ + 1);
 	}	
 	
 	void checkTimeout(const double expected)
 	{
-		BOOST_CHECK_EQUAL(elm_notify_timeout_get(control_), expected);
+		FAIL_UNLESS_EQUAL(elm_notify_timeout_get(control_), expected);
 	}
 
 	static void timeoutReached(void* data, Evas_Object *obj, void* event_info)
@@ -158,7 +158,7 @@ public:
 	void checkOrient(const Elm_Notify_Orient expected)
 	{
 		control_.show();
-		BOOST_CHECK_EQUAL(elm_notify_orient_get(control_), expected);
+		FAIL_UNLESS_EQUAL(elm_notify_orient_get(control_), expected);
 		Application::yield();
 	}
 
@@ -173,17 +173,9 @@ typedef ResizeObjectTest<Notify> NotifyResizeTest;
 typedef PositionObjectTest<Notify> NotifyPositionTest;
 typedef VisibleObjectTest<Notify> NotifyVisibilityTest;
 
-BOOST_AUTO_TEST_SUITE(EFL)
-
-	BOOST_AUTO_TEST_SUITE(Notify)
-	
-		WAYLAND_ELM_HARNESS_TEST_CASE(NotifyResizeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(NotifyPositionTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(NotifyVisibilityTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(NotifyTimeoutTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(NotifyOrientTest)
-	
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()
+WAYLAND_ELM_HARNESS_TEST_CASE(NotifyResizeTest, "Notify")
+WAYLAND_ELM_HARNESS_TEST_CASE(NotifyPositionTest, "Notify")
+WAYLAND_ELM_HARNESS_TEST_CASE(NotifyVisibilityTest, "Notify")
+WAYLAND_ELM_HARNESS_TEST_CASE(NotifyTimeoutTest, "Notify")
+WAYLAND_ELM_HARNESS_TEST_CASE(NotifyOrientTest, "Notify")
 

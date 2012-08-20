@@ -13,6 +13,11 @@ public:
 		engineLast
 	};
 
+	/**
+	 * Initialize's Elm and set's the default engine to ENGINE_SHM
+	 **/
+	Application();
+
 	virtual ~Application();
 
 	/**
@@ -26,14 +31,6 @@ public:
 	 * microseconds.
 	 **/
 	static void yield(const unsigned time = 0.01 * 1e6);
-
-private:
-	friend class ::boost::unit_test::ut_detail::global_fixture_impl<Application>;
-
-	/**
-	 * Initialize's Elm and set's the default engine to ENGINE_SHM
-	 **/
-	Application();
 };
 
 #endif //__WAYLAND_EFL_APPLICATION_H__

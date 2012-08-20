@@ -55,12 +55,12 @@ public:
 
 	void checkTarget(const Evas_Object *expected)
 	{
-		BOOST_CHECK_EQUAL(elm_hover_target_get(control_), expected);
+		FAIL_UNLESS_EQUAL(elm_hover_target_get(control_), expected);
 	}
 
 	void checkParent(const Evas_Object *expected)
 	{
-		BOOST_CHECK_EQUAL(elm_hover_parent_get(control_), expected);
+		FAIL_UNLESS_EQUAL(elm_hover_parent_get(control_), expected);
 	}
 
 private:
@@ -95,16 +95,8 @@ typedef ResizeObjectTest<Hover> HoverResizeTest;
 typedef PositionObjectTest<Hover> HoverPositionTest;
 typedef VisibleObjectTest<Hover> HoverVisibilityTest;
 
-BOOST_AUTO_TEST_SUITE(EFL)
-
-	BOOST_AUTO_TEST_SUITE(Hover)
-	
-		WAYLAND_ELM_HARNESS_TEST_CASE(HoverResizeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(HoverPositionTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(HoverVisibilityTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(HoverParentTargetTest)
-	
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()
+WAYLAND_ELM_HARNESS_TEST_CASE(HoverResizeTest, "Hover")
+WAYLAND_ELM_HARNESS_TEST_CASE(HoverPositionTest, "Hover")
+WAYLAND_ELM_HARNESS_TEST_CASE(HoverVisibilityTest, "Hover")
+WAYLAND_ELM_HARNESS_TEST_CASE(HoverParentTargetTest, "Hover")
 

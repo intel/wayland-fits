@@ -75,19 +75,19 @@ public:
 
 	void checkAmPm(Eina_Bool ampm)
 	{
-		BOOST_CHECK_EQUAL(elm_clock_show_am_pm_get(clock_), ampm);
+		FAIL_UNLESS_EQUAL(elm_clock_show_am_pm_get(clock_), ampm);
 	}
 
 	void checkSecs(Eina_Bool secs)
 	{
-		BOOST_CHECK_EQUAL(elm_clock_show_seconds_get(clock_), secs);
+		FAIL_UNLESS_EQUAL(elm_clock_show_seconds_get(clock_), secs);
 	}
 
 	void checkTime(int h, int m, int s)
 	{
 		int hr, min, sec;
 		elm_clock_time_get(clock_, &hr, &min, &sec);
-		BOOST_CHECK(h == hr && m == min && s == sec);
+		FAIL_UNLESS(h == hr && m == min && s == sec);
 	}
 
 private:
@@ -133,7 +133,7 @@ public:
 
 	void checkEdit(Eina_Bool edit)
 	{
-		BOOST_CHECK_EQUAL(elm_clock_edit_get(clock_), edit);
+		FAIL_UNLESS_EQUAL(elm_clock_edit_get(clock_), edit);
 	}
 
 private:
@@ -197,7 +197,7 @@ public:
 
 	void checkEdit(Elm_Clock_Edit_Mode mask)
 	{
-		BOOST_CHECK_EQUAL(elm_clock_edit_mode_get(clock_), mask);
+		FAIL_UNLESS_EQUAL(elm_clock_edit_mode_get(clock_), mask);
 	}
 
 private:
@@ -209,18 +209,9 @@ typedef ResizeObjectTest<Clock> ClockResizeTest;
 typedef PositionObjectTest<Clock> ClockPositionTest;
 typedef VisibleObjectTest<Clock> ClockVisibilityTest;
 
-BOOST_AUTO_TEST_SUITE(EFL)
-
-	BOOST_AUTO_TEST_SUITE(Clock)
-	
-		WAYLAND_ELM_HARNESS_TEST_CASE(ClockResizeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(ClockPositionTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(ClockVisibilityTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(ClockTimeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(ClockEditionTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(ClockDigitEditionTest)
-	
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()
-
+WAYLAND_ELM_HARNESS_TEST_CASE(ClockResizeTest, "Clock")
+WAYLAND_ELM_HARNESS_TEST_CASE(ClockPositionTest, "Clock")
+WAYLAND_ELM_HARNESS_TEST_CASE(ClockVisibilityTest, "Clock")
+WAYLAND_ELM_HARNESS_TEST_CASE(ClockTimeTest, "Clock")
+WAYLAND_ELM_HARNESS_TEST_CASE(ClockEditionTest, "Clock")
+WAYLAND_ELM_HARNESS_TEST_CASE(ClockDigitEditionTest, "Clock")

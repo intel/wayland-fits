@@ -51,7 +51,7 @@ public:
 
 	void checkPos(Eina_Bool checked)
 	{
-		BOOST_CHECK_EQUAL(elm_check_state_get(check_), checked);
+		FAIL_UNLESS_EQUAL(elm_check_state_get(check_), checked);
 	}
 
 private:
@@ -107,7 +107,7 @@ public:
 		std::string actual_text(actual == NULL ? "" : actual);
 		std::string expected_text(expected == NULL ? "" : expected);
 
-		BOOST_CHECK_EQUAL(actual_text, expected_text);
+		FAIL_UNLESS_EQUAL(actual_text, expected_text);
 	}
 
 private:
@@ -119,17 +119,9 @@ typedef ResizeObjectTest<Check> CheckResizeTest;
 typedef PositionObjectTest<Check> CheckPositionTest;
 typedef VisibleObjectTest<Check> CheckVisibilityTest;
 
-BOOST_AUTO_TEST_SUITE(EFL)
-
-	BOOST_AUTO_TEST_SUITE(Check)
-	
-		WAYLAND_ELM_HARNESS_TEST_CASE(CheckResizeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(CheckPositionTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(CheckVisibilityTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(CheckStateTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(CheckTextTest)
-	
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()
+WAYLAND_ELM_HARNESS_TEST_CASE(CheckResizeTest, "Check")
+WAYLAND_ELM_HARNESS_TEST_CASE(CheckPositionTest, "Check")
+WAYLAND_ELM_HARNESS_TEST_CASE(CheckVisibilityTest, "Check")
+WAYLAND_ELM_HARNESS_TEST_CASE(CheckStateTest, "Check")
+WAYLAND_ELM_HARNESS_TEST_CASE(CheckTextTest, "Check")
 

@@ -16,15 +16,7 @@ typedef ResizeObjectTest<Map> MapResizeTest;
 typedef PositionObjectTest<Map> MapPositionTest;
 typedef VisibleObjectTest<Map> MapVisibilityTest;
 
-BOOST_AUTO_TEST_SUITE(EFL)
-
-	BOOST_AUTO_TEST_SUITE(Map)
-	
-		WAYLAND_ELM_HARNESS_TEST_CASE(MapResizeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(MapPositionTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(MapVisibilityTest)
-	
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()
+WAYLAND_ELM_HARNESS_TEST_CASE(MapResizeTest, "Map")
+WAYLAND_ELM_HARNESS_TEST_CASE(MapPositionTest, "Map")
+WAYLAND_ELM_HARNESS_TEST_CASE(MapVisibilityTest, "Map")
 

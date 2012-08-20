@@ -19,15 +19,7 @@ typedef ResizeObjectTest<List> ListResizeTest;
 typedef PositionObjectTest<List> ListPositionTest;
 typedef VisibleObjectTest<List> ListVisibilityTest;
 
-BOOST_AUTO_TEST_SUITE(EFL)
-
-	BOOST_AUTO_TEST_SUITE(List)
-
-		WAYLAND_ELM_HARNESS_TEST_CASE(ListResizeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(ListPositionTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(ListVisibilityTest)
-
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()
+WAYLAND_ELM_HARNESS_TEST_CASE(ListResizeTest, "List")
+WAYLAND_ELM_HARNESS_TEST_CASE(ListPositionTest, "List")
+WAYLAND_ELM_HARNESS_TEST_CASE(ListVisibilityTest, "List")
 

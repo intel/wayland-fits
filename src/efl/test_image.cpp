@@ -46,7 +46,7 @@ public:
 
 	void checkImageSet(boost::filesystem::path& desired)
 	{
-		BOOST_CHECK_EQUAL(elm_image_file_set(control_, desired.c_str(), NULL), EINA_TRUE);
+		FAIL_UNLESS_EQUAL(elm_image_file_set(control_, desired.c_str(), NULL), EINA_TRUE);
 	}
 
 	void checkImage(boost::filesystem::path& expected)
@@ -56,7 +56,7 @@ public:
 
 		boost::filesystem::path actual(actual_path);
 
-		BOOST_CHECK_EQUAL(actual, expected);
+		FAIL_UNLESS_EQUAL(actual, expected);
 	}
 
 private:
@@ -73,7 +73,7 @@ public:
 		, control_(window_)
 	{
 
-		BOOST_CHECK_EQUAL(elm_image_file_set(control_, img.c_str(), NULL), EINA_TRUE);
+		FAIL_UNLESS_EQUAL(elm_image_file_set(control_, img.c_str(), NULL), EINA_TRUE);
 
 		control_.setSize(300, 300);
 		control_.setPosition(50, 10);
@@ -116,7 +116,7 @@ public:
 
 	void checkOrient(const Elm_Image_Orient expected)
 	{
-		BOOST_CHECK_EQUAL(elm_image_orient_get(control_), expected);
+		FAIL_UNLESS_EQUAL(elm_image_orient_get(control_), expected);
 	}
 
 private:
@@ -125,22 +125,13 @@ private:
 	std::vector<Elm_Image_Orient> orientations_;
 };
 
-
 typedef ResizeObjectTest<Image> ImageResizeTest;
 typedef PositionObjectTest<Image> ImagePositionTest;
 typedef VisibleObjectTest<Image> ImageVisibilityTest;
 
-BOOST_AUTO_TEST_SUITE(EFL)
-
-	BOOST_AUTO_TEST_SUITE(Image)
-	
-		WAYLAND_ELM_HARNESS_TEST_CASE(ImageResizeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(ImagePositionTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(ImageVisibilityTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(ImageFileTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(ImageOrientTest)
-	
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()
+WAYLAND_ELM_HARNESS_TEST_CASE(ImageResizeTest, "Image")
+WAYLAND_ELM_HARNESS_TEST_CASE(ImagePositionTest, "Image")
+WAYLAND_ELM_HARNESS_TEST_CASE(ImageVisibilityTest, "Image")
+WAYLAND_ELM_HARNESS_TEST_CASE(ImageFileTest, "Image")
+WAYLAND_ELM_HARNESS_TEST_CASE(ImageOrientTest, "Image")
 

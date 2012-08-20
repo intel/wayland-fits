@@ -75,7 +75,7 @@ public:
 
 	void checkWrap(const Elm_Wrap_Type wrap)
 	{
-		BOOST_CHECK_EQUAL(elm_label_line_wrap_get(control_), wrap);
+		FAIL_UNLESS_EQUAL(elm_label_line_wrap_get(control_), wrap);
 	}
 
 
@@ -125,7 +125,7 @@ public:
 
 	void checkWrapWidth(const Evas_Coord width)
 	{
-		BOOST_CHECK_EQUAL(elm_label_wrap_width_get(control_), width);
+		FAIL_UNLESS_EQUAL(elm_label_wrap_width_get(control_), width);
 	}
 
 private:
@@ -138,17 +138,9 @@ typedef ResizeObjectTest<Label> LabelResizeTest;
 typedef PositionObjectTest<Label> LabelPositionTest;
 typedef VisibleObjectTest<Label> LabelVisibilityTest;
 
-BOOST_AUTO_TEST_SUITE(EFL)
-
-	BOOST_AUTO_TEST_SUITE(Label)
-
-		WAYLAND_ELM_HARNESS_TEST_CASE(LabelResizeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(LabelPositionTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(LabelVisibilityTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(LabelWrapTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(LabelWrapWidthTest)
-
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()
+WAYLAND_ELM_HARNESS_TEST_CASE(LabelResizeTest, "Label")
+WAYLAND_ELM_HARNESS_TEST_CASE(LabelPositionTest, "Label")
+WAYLAND_ELM_HARNESS_TEST_CASE(LabelVisibilityTest, "Label")
+WAYLAND_ELM_HARNESS_TEST_CASE(LabelWrapTest, "Label")
+WAYLAND_ELM_HARNESS_TEST_CASE(LabelWrapWidthTest, "Label")
 

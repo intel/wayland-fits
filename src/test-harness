@@ -2,7 +2,7 @@
 
 $WLD/install/bin/weston & sleep 2 # allow time for weston to initialize
 
-${1} --log_level=all --log_format=xml --report_level=detailed
+${1}
 
 RESULT=$?
 

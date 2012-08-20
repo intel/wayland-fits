@@ -85,7 +85,7 @@ public:
 
 	void setStandard(const string& icon_name)
 	{
-		BOOST_CHECK_EQUAL(elm_icon_standard_set(control_, icon_name.c_str()), EINA_TRUE);
+		FAIL_UNLESS_EQUAL(elm_icon_standard_set(control_, icon_name.c_str()), EINA_TRUE);
 	}
 
 	void checkStandard(const string& expected)
@@ -93,7 +93,7 @@ public:
 		const char* actual_raw = elm_icon_standard_get(control_);
 		string actual(actual_raw == NULL ? "" : actual_raw);
 
-		BOOST_CHECK_EQUAL(actual, expected);
+		FAIL_UNLESS_EQUAL(actual, expected);
 	}
 
 private:
@@ -107,16 +107,8 @@ typedef ResizeObjectTest<Icon> IconResizeTest;
 typedef PositionObjectTest<Icon> IconPositionTest;
 typedef VisibleObjectTest<Icon> IconVisibilityTest;
 
-BOOST_AUTO_TEST_SUITE(EFL)
-
-	BOOST_AUTO_TEST_SUITE(Icon)
-	
-		WAYLAND_ELM_HARNESS_TEST_CASE(IconResizeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(IconPositionTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(IconVisibilityTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(IconStandardTest)
-	
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()
+WAYLAND_ELM_HARNESS_TEST_CASE(IconResizeTest, "Icon")
+WAYLAND_ELM_HARNESS_TEST_CASE(IconPositionTest, "Icon")
+WAYLAND_ELM_HARNESS_TEST_CASE(IconVisibilityTest, "Icon")
+WAYLAND_ELM_HARNESS_TEST_CASE(IconStandardTest, "Icon")
 

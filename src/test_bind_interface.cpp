@@ -8,7 +8,7 @@ struct BindInterface {
 		: display(wl_display_connect(0))
 		, object(0)
 	{
-		BOOST_REQUIRE(display);
+		FAIL_IF_EQUAL(display, NULL);
 	}
 	
 	void bind()
@@ -34,20 +34,19 @@ struct BindInterface {
 };
 
 #define BIND_TEST(name) \
-\
-std::string str_iface_##name = #name; \
-typedef BindInterface<name, name##_interface, str_iface_##name> bind_##name##_interface; \
-BOOST_FIXTURE_TEST_CASE(bind_##name, bind_##name##_interface) \
-{ \
-	BOOST_REQUIRE(object == NULL); \
-	bind(); \
-	BOOST_CHECK(object != NULL); \
-}
-BOOST_AUTO_TEST_SUITE(Bind_Interface_Suite)
-	BIND_TEST(wl_compositor)
-	BIND_TEST(wl_display)
-	BIND_TEST(wl_shm)
-	BIND_TEST(wl_output)
-	BIND_TEST(wl_seat)
-	BIND_TEST(wl_shell)
-BOOST_AUTO_TEST_SUITE_END()
+	std::string str_iface_##name = #name; \
+	typedef BindInterface<name, name##_interface, str_iface_##name> bind_##name##_interface; \
+	TEST(bind_##name, "Bind_Interface_Suite") \
+	{ \
+		bind_##name##_interface bi; \
+		FAIL_UNLESS(bi.object == NULL); \
+		bi.bind(); \
+		FAIL_IF(bi.object == NULL); \
+	}
+
+BIND_TEST(wl_compositor)
+BIND_TEST(wl_display)
+BIND_TEST(wl_shm)
+BIND_TEST(wl_output)
+BIND_TEST(wl_seat)
+BIND_TEST(wl_shell)

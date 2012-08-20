@@ -1,14 +1,16 @@
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE Wayland Functional Test Suite
-#define TESTING_PROGRAM
-#define BOOST_AUTO_TEST_MAIN
-
-#include <fstream>
 #include "test.h"
 
+int main(int argc, char** argv)
+{
+	TheGlobalTestSuite::instance().argc = argc;
+	TheGlobalTestSuite::instance().argv = argv;
 
-/**
- *
- * See http://www.boost.org/doc/libs/1_47_0/libs/test/doc/html/index.html
- *
- */
+	SRunner* sr = srunner_create (TheGlobalTestSuite::instance());
+	//   srunner_set_xml(sr, "results.xml");
+	srunner_run_all (sr, CK_ENV);
+
+	int n = srunner_ntests_failed(sr);
+	srunner_free(sr);
+	return (n == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+

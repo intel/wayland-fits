@@ -38,7 +38,7 @@ public:
 		int red = 0, green = 0, blue = 0, alpha = 0;
 		elm_colorselector_color_get(selector_, &red, &green, &blue, &alpha);
 
-		BOOST_CHECK(r == red && g == green && b == blue && a == alpha);
+		FAIL_UNLESS(r == red && g == green && b == blue && a == alpha);
 	}
 
 private:
@@ -46,14 +46,4 @@ private:
 	EvasObject	selector_;
 };
 
-BOOST_AUTO_TEST_SUITE(EFL)
-
-	BOOST_AUTO_TEST_SUITE(ColorSelector)
-
-		WAYLAND_ELM_HARNESS_TEST_CASE(ColorselectorColorTest)
-
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()
-
-
+WAYLAND_ELM_HARNESS_TEST_CASE(ColorselectorColorTest, "ColorSelector")

@@ -62,7 +62,7 @@ public:
 
 	void checkPos(const Elm_Bubble_Pos expected)
 	{
-		BOOST_CHECK_EQUAL(elm_bubble_pos_get(bubble_), expected);
+		FAIL_UNLESS_EQUAL(elm_bubble_pos_get(bubble_), expected);
 	}
 
 private:
@@ -106,7 +106,7 @@ public:
 		const char* actual_raw = elm_object_part_text_get(bubble_, part.c_str());
 		string actual(actual_raw == NULL ? "" : actual_raw);
 
-		BOOST_CHECK_EQUAL(actual, expected);
+		FAIL_UNLESS_EQUAL(actual, expected);
 	}
 
 private:
@@ -115,21 +115,13 @@ private:
 	vector<string>	sentinels_;
 };
 
-
 typedef ResizeObjectTest<Bubble> BubbleResizeTest;
 typedef PositionObjectTest<Bubble> BubblePositionTest;
 typedef VisibleObjectTest<Bubble> BubbleVisibilityTest;
 
-BOOST_AUTO_TEST_SUITE(EFL)
+WAYLAND_ELM_HARNESS_TEST_CASE(BubbleResizeTest, "Bubble")
+WAYLAND_ELM_HARNESS_TEST_CASE(BubblePositionTest, "Bubble")
+WAYLAND_ELM_HARNESS_TEST_CASE(BubbleVisibilityTest, "Bubble")
+WAYLAND_ELM_HARNESS_TEST_CASE(BubbleCornerTest, "Bubble")
+WAYLAND_ELM_HARNESS_TEST_CASE(BubbleTextTest, "Bubble")
 
-	BOOST_AUTO_TEST_SUITE(Bubble)
-	
-		WAYLAND_ELM_HARNESS_TEST_CASE(BubbleResizeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(BubblePositionTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(BubbleVisibilityTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(BubbleCornerTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(BubbleTextTest)
-	
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()

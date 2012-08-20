@@ -58,7 +58,7 @@ public:
 
 	void checkExpandable(const Eina_Bool expandable)
 	{
-		BOOST_CHECK_EQUAL(elm_fileselector_expandable_get(control_), expandable);
+		FAIL_UNLESS_EQUAL(elm_fileselector_expandable_get(control_), expandable);
 	}
 
 private:
@@ -102,7 +102,7 @@ public:
 
 	void checkFolderOnly(const Eina_Bool folderonly)
 	{
-		BOOST_CHECK_EQUAL(elm_fileselector_folder_only_get(control_), folderonly);
+		FAIL_UNLESS_EQUAL(elm_fileselector_folder_only_get(control_), folderonly);
 	}
 
 private:
@@ -146,7 +146,7 @@ public:
 
 	void checkIsSave(const Eina_Bool save)
 	{
-		BOOST_CHECK_EQUAL(elm_fileselector_is_save_get(control_), save);
+		FAIL_UNLESS_EQUAL(elm_fileselector_is_save_get(control_), save);
 	}
 
 private:
@@ -191,7 +191,7 @@ public:
 
 	void checkMode(const Eina_Bool mode)
 	{
-		BOOST_CHECK_EQUAL(elm_fileselector_mode_get(control_), mode);
+		FAIL_UNLESS_EQUAL(elm_fileselector_mode_get(control_), mode);
 	}
 
 private:
@@ -235,7 +235,7 @@ public:
 
 	void checkOkCancel(const Eina_Bool okcancel)
 	{
-		BOOST_CHECK_EQUAL(elm_fileselector_buttons_ok_cancel_get(control_), okcancel);
+		FAIL_UNLESS_EQUAL(elm_fileselector_buttons_ok_cancel_get(control_), okcancel);
 	}
 
 private:
@@ -248,19 +248,12 @@ typedef ResizeObjectTest<Fileselector> FileselectorResizeTest;
 typedef PositionObjectTest<Fileselector> FileselectorPositionTest;
 typedef VisibleObjectTest<Fileselector> FileselectorVisibilityTest;
 
-BOOST_AUTO_TEST_SUITE(EFL)
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorResizeTest, "FileSelector")
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorPositionTest, "FileSelector")
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorVisibilityTest, "FileSelector")
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorExpandableTest, "FileSelector")
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorFolderOnlyTest, "FileSelector")
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorIsSaveTest, "FileSelector")
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorModeTest, "FileSelector")
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorOkCancelTest, "FileSelector")
 
-	BOOST_AUTO_TEST_SUITE(FileSelector)
-	
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorResizeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorPositionTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorVisibilityTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorExpandableTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorFolderOnlyTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorIsSaveTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorModeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorOkCancelTest)
-	
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()

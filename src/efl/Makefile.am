@@ -11,15 +11,16 @@ CXXFLAGS +=			\
 	$(CAIRO_CFLAGS)		\
 	$(WAYLAND_CFLAGS)	\
 	-DMEDIA_PATH=$(MEDIA)	\
-	@EFL_CFLAGS@
+	@EFL_CFLAGS@		\
+	@CHECK_CFLAGS@
 
 LDFLAGS += 			\
 	$(CAIRO_LIBS)		\
 	$(WAYLAND_LIBS)		\
 	@EFL_LIBS@		\
+	@CHECK_LIBS@		\
 	-lboost_system		\
-	-lboost_filesystem	\
-	-lboost_unit_test_framework
+	-lboost_filesystem
 
 bin_PROGRAMS = $(TESTS)
 
@@ -56,6 +57,7 @@ wayland_efl_test_SOURCES =		\
 	test_mapbuf.cpp			\
 	test_notify.cpp			\
 	test_window.cpp			\
+	../test.cpp			\
 	../testmain.cpp
 
 #	test_index.cpp

@@ -58,7 +58,7 @@ public:
 
 	void checkExpandable(const Eina_Bool expandable)
 	{
-		BOOST_CHECK_EQUAL(elm_fileselector_entry_expandable_get(control_), expandable);
+		FAIL_UNLESS_EQUAL(elm_fileselector_entry_expandable_get(control_), expandable);
 	}
 
 private:
@@ -102,7 +102,7 @@ public:
 
 	void checkFolderOnly(const Eina_Bool folderonly)
 	{
-		BOOST_CHECK_EQUAL(elm_fileselector_entry_folder_only_get(control_), folderonly);
+		FAIL_UNLESS_EQUAL(elm_fileselector_entry_folder_only_get(control_), folderonly);
 	}
 
 private:
@@ -148,7 +148,7 @@ public:
 
 	void checkIsSave(const Eina_Bool save)
 	{
-		BOOST_CHECK_EQUAL(elm_fileselector_entry_is_save_get(control_), save);
+		FAIL_UNLESS_EQUAL(elm_fileselector_entry_is_save_get(control_), save);
 	}
 
 private:
@@ -194,7 +194,7 @@ public:
 
 	void checkInwin(const Eina_Bool inwin)
 	{
-		BOOST_CHECK_EQUAL(elm_fileselector_entry_inwin_mode_get(control_), inwin);
+		FAIL_UNLESS_EQUAL(elm_fileselector_entry_inwin_mode_get(control_), inwin);
 	}
 
 private:
@@ -207,18 +207,11 @@ typedef ResizeObjectTest<FileselectorEntry> FileselectorEntryResizeTest;
 typedef PositionObjectTest<FileselectorEntry> FileselectorEntryPositionTest;
 typedef VisibleObjectTest<FileselectorEntry> FileselectorEntryVisibilityTest;
 
-BOOST_AUTO_TEST_SUITE(EFL)
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryResizeTest, "FileSelectorEntry")
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryPositionTest, "FileSelectorEntry")
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryVisibilityTest, "FileSelectorEntry")
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryExpandableTest, "FileSelectorEntry")
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryFolderOnlyTest, "FileSelectorEntry")
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryIsSaveTest, "FileSelectorEntry")
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryInwinTest, "FileSelectorEntry")
 
-	BOOST_AUTO_TEST_SUITE(FileSelectorEntry)
-	
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryResizeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryPositionTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryVisibilityTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryExpandableTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryFolderOnlyTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryIsSaveTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryInwinTest)
-	
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()

@@ -62,17 +62,19 @@ private:
 	ModifyCheckCallbacks	callbacks_;
 };
 
-#define WAYLAND_ELM_HARNESS_TEST_CASE(Harness) \
+#define WAYLAND_ELM_HARNESS_TEST_CASE(Harness, suite) \
 \
-BOOST_AUTO_TEST_CASE(Harness##_shm_engine) \
+TEST(Harness##_shm_engine, "EFL/" suite) \
 { \
-	Application::setEngine(Application::ENGINE_SHM); \
+	Application app; \
+	app.setEngine(Application::ENGINE_SHM); \
 	Harness().run(); \
 } \
 \
-BOOST_AUTO_TEST_CASE(Harness##_egl_engine) \
+TEST(Harness##_egl_engine, "EFL/" suite) \
 { \
-	Application::setEngine(Application::ENGINE_EGL); \
+	Application app; \
+	app.setEngine(Application::ENGINE_EGL); \
 	Harness().run(); \
 } \
 

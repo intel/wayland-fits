@@ -322,7 +322,7 @@ public:
 
 	void checkAlpha(const Eina_Bool expected)
 	{
-		BOOST_CHECK_EQUAL(elm_win_alpha_get(window_), expected);
+		FAIL_UNLESS_EQUAL(elm_win_alpha_get(window_), expected);
 	}
 
 private:
@@ -367,7 +367,7 @@ public:
 
 	void checkIndicator(const Elm_Win_Indicator_Mode expected)
 	{
-		BOOST_CHECK_EQUAL(elm_win_indicator_mode_get(window_), expected);
+		FAIL_UNLESS_EQUAL(elm_win_indicator_mode_get(window_), expected);
 	}
 
 private:
@@ -413,7 +413,7 @@ public:
 
 	void checkOpacity(const Elm_Win_Indicator_Opacity_Mode expected)
 	{
-		BOOST_CHECK_EQUAL(elm_win_indicator_opacity_get(window_), expected);
+		FAIL_UNLESS_EQUAL(elm_win_indicator_opacity_get(window_), expected);
 	}
 
 private:
@@ -421,24 +421,16 @@ private:
 	vector<Elm_Win_Indicator_Opacity_Mode>	modes_;
 };
 
-BOOST_AUTO_TEST_SUITE(EFL)
-
-	BOOST_AUTO_TEST_SUITE(Window)
-	
-		WAYLAND_ELM_HARNESS_TEST_CASE(WindowResizeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(WindowMoveTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(WindowIconifyTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(WindowMaximizeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(WindowFullscreenTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(WindowStickyTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(WindowWithdrawnTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(WindowRotationTest)
-		//TODO: These three below need work still
-		WAYLAND_ELM_HARNESS_TEST_CASE(WindowAlphaTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(WindowIndicatorTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(WindowIndicatorOpacityTest)
-
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()
+WAYLAND_ELM_HARNESS_TEST_CASE(WindowResizeTest, "Window")
+WAYLAND_ELM_HARNESS_TEST_CASE(WindowMoveTest, "Window")
+WAYLAND_ELM_HARNESS_TEST_CASE(WindowIconifyTest, "Window")
+WAYLAND_ELM_HARNESS_TEST_CASE(WindowMaximizeTest, "Window")
+WAYLAND_ELM_HARNESS_TEST_CASE(WindowFullscreenTest, "Window")
+WAYLAND_ELM_HARNESS_TEST_CASE(WindowStickyTest, "Window")
+WAYLAND_ELM_HARNESS_TEST_CASE(WindowWithdrawnTest, "Window")
+WAYLAND_ELM_HARNESS_TEST_CASE(WindowRotationTest, "Window")
+//TODO: These three below need work still
+WAYLAND_ELM_HARNESS_TEST_CASE(WindowAlphaTest, "Window")
+WAYLAND_ELM_HARNESS_TEST_CASE(WindowIndicatorTest, "Window")
+WAYLAND_ELM_HARNESS_TEST_CASE(WindowIndicatorOpacityTest, "Window")
 

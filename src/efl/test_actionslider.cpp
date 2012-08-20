@@ -57,7 +57,7 @@ public:
 
 	void checkPos(const Elm_Actionslider_Pos expected)
 	{
-		BOOST_CHECK_EQUAL(elm_actionslider_indicator_pos_get(control_), expected);
+		FAIL_UNLESS_EQUAL(elm_actionslider_indicator_pos_get(control_), expected);
 	}
 
 private:
@@ -70,15 +70,8 @@ typedef ResizeObjectTest<Actionslider> ActionsliderResizeTest;
 typedef PositionObjectTest<Actionslider> ActionsliderPositionTest;
 typedef VisibleObjectTest<Actionslider> ActionsliderVisibilityTest;
 
-BOOST_AUTO_TEST_SUITE(EFL)
+WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderResizeTest, "ActionSlider")
+WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderPositionTest, "ActionSlider")
+WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderVisibilityTest, "ActionSlider")
+WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderIndicatorTest, "ActionSlider")
 
-	BOOST_AUTO_TEST_SUITE(ActionSlider)
-
-		WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderResizeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderPositionTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderVisibilityTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderIndicatorTest)
-	
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()

@@ -92,7 +92,7 @@ public:
 	{
 		// We would expect the signal to finish within a reasonable number of mainloop iterations.
 		// But, just in case the signal/callback mechanism is broken we don't wait forever.
-		BOOST_REQUIRE(nWaitForFlip_ < 100);
+		FAIL_UNLESS(nWaitForFlip_ < 100);
 
 		if (not flipDone_)
 		{
@@ -115,7 +115,7 @@ public:
 		flipDone_ = false;
 		
 		// verify the flip state
-		BOOST_CHECK_EQUAL(elm_flip_front_visible_get(control_), visible);
+		FAIL_UNLESS_EQUAL(elm_flip_front_visible_get(control_), visible);
 
 		if (visible == EINA_FALSE)
 		{
@@ -148,15 +148,8 @@ typedef ResizeObjectTest<Flip> FlipResizeTest;
 typedef PositionObjectTest<Flip> FlipPositionTest;
 typedef VisibleObjectTest<Flip> FlipVisibilityTest;
 
-BOOST_AUTO_TEST_SUITE(EFL)
+WAYLAND_ELM_HARNESS_TEST_CASE(FlipGoTest, "Flip")
+WAYLAND_ELM_HARNESS_TEST_CASE(FlipResizeTest, "Flip")
+WAYLAND_ELM_HARNESS_TEST_CASE(FlipPositionTest, "Flip")
+WAYLAND_ELM_HARNESS_TEST_CASE(FlipVisibilityTest, "Flip")
 
-	BOOST_AUTO_TEST_SUITE(FlipSuite)
-
-		WAYLAND_ELM_HARNESS_TEST_CASE(FlipGoTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FlipResizeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FlipPositionTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FlipVisibilityTest)
-	
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()

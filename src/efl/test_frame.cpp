@@ -29,7 +29,7 @@ public:
 		control_.setSize(200, 100);
 		control_.setPosition(50, 10);
 
-		BOOST_CHECK_EQUAL(elm_frame_collapse_get(control_), EINA_FALSE);
+		FAIL_UNLESS_EQUAL(elm_frame_collapse_get(control_), EINA_FALSE);
 		
 		queueCallback(
 			ModifyCheckCallback(
@@ -55,7 +55,7 @@ public:
 
 	void checkCollapse(const Eina_Bool expected)
 	{
-		BOOST_CHECK_EQUAL(elm_frame_collapse_get(control_), expected);
+		FAIL_UNLESS_EQUAL(elm_frame_collapse_get(control_), expected);
 	}
 
 private:
@@ -67,15 +67,8 @@ typedef ResizeObjectTest<Frame> FrameResizeTest;
 typedef PositionObjectTest<Frame> FramePositionTest;
 typedef VisibleObjectTest<Frame> FrameVisibilityTest;
 
-BOOST_AUTO_TEST_SUITE(EFL)
+WAYLAND_ELM_HARNESS_TEST_CASE(FrameGoTest, "Frame")
+WAYLAND_ELM_HARNESS_TEST_CASE(FrameResizeTest, "Frame")
+WAYLAND_ELM_HARNESS_TEST_CASE(FramePositionTest, "Frame")
+WAYLAND_ELM_HARNESS_TEST_CASE(FrameVisibilityTest, "Frame")
 
-	BOOST_AUTO_TEST_SUITE(Frame)
-
-		WAYLAND_ELM_HARNESS_TEST_CASE(FrameGoTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FrameResizeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FramePositionTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FrameVisibilityTest)
-	
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()

@@ -50,9 +50,9 @@ public:
 		int r_actual, g_actual, b_actual;
 		control_.getColor(&r_actual, &g_actual, &b_actual);
 
-		BOOST_CHECK_EQUAL(r_actual, r_expected);
-		BOOST_CHECK_EQUAL(g_actual, g_expected);
-		BOOST_CHECK_EQUAL(b_actual, b_expected);
+		FAIL_UNLESS_EQUAL(r_actual, r_expected);
+		FAIL_UNLESS_EQUAL(g_actual, g_expected);
+		FAIL_UNLESS_EQUAL(b_actual, b_expected);
 	}
 
 private:
@@ -117,7 +117,7 @@ public:
 
 	void checkMax(const Eina_Bool expected)
 	{
-		BOOST_CHECK_EQUAL(window_.isMaximized(), expected);
+		FAIL_UNLESS_EQUAL(window_.isMaximized(), expected);
 	}
 
 	void checkImage(path& expected)
@@ -125,12 +125,12 @@ public:
 		path actual;
 		control_.getImage(actual);
 
-		BOOST_CHECK_EQUAL(actual, expected);
+		FAIL_UNLESS_EQUAL(actual, expected);
 	}
 
 	void checkImageOpt(Elm_Bg_Option expected)
 	{
-		BOOST_CHECK_EQUAL(control_.getImageOpt(), expected);
+		FAIL_UNLESS_EQUAL(control_.getImageOpt(), expected);
 	}
 
 private:
@@ -139,14 +139,6 @@ private:
 	vector<Elm_Bg_Option>	options_;
 };
 
-BOOST_AUTO_TEST_SUITE(EFL)
-
-	BOOST_AUTO_TEST_SUITE(Background)
-	
-		WAYLAND_ELM_HARNESS_TEST_CASE(BackgroundColorTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(BackgroundImageTest)
-	
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()
+WAYLAND_ELM_HARNESS_TEST_CASE(BackgroundColorTest, "Background")
+WAYLAND_ELM_HARNESS_TEST_CASE(BackgroundImageTest, "Background")
 

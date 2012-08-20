@@ -74,30 +74,30 @@ const int Window::getRotation()
 
 void Window::checkIconified(const Eina_Bool isIconified)
 {
-	BOOST_CHECK_EQUAL(this->isIconified(), isIconified);
+	FAIL_UNLESS_EQUAL(this->isIconified(), isIconified);
 }
 
 void Window::checkMaximized(const Eina_Bool isMaximized)
 {
-	BOOST_CHECK_EQUAL(this->isMaximized(), isMaximized);
+	FAIL_UNLESS_EQUAL(this->isMaximized(), isMaximized);
 }
 
 void Window::checkFullscreen(const Eina_Bool isFullscreen)
 {
-	BOOST_CHECK_EQUAL(this->isFullscreen(), isFullscreen);
+	FAIL_UNLESS_EQUAL(this->isFullscreen(), isFullscreen);
 }
 
 void Window::checkSticky(const Eina_Bool isSticky)
 {
-	BOOST_CHECK_EQUAL(this->isSticky(), isSticky);
+	FAIL_UNLESS_EQUAL(this->isSticky(), isSticky);
 }
 
 void Window::checkWithdrawn(const Eina_Bool isWithdrawn)
 {
-	BOOST_CHECK_EQUAL(this->isWithdrawn(), isWithdrawn);
+	FAIL_UNLESS_EQUAL(this->isWithdrawn(), isWithdrawn);
 }
 
 void Window::checkRotation(const int expected)
 {
-	BOOST_CHECK_EQUAL(this->getRotation(), expected);
+	FAIL_UNLESS_EQUAL(this->getRotation(), expected);
 }

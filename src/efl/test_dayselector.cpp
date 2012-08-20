@@ -76,7 +76,7 @@ public:
 
 	void checkDay(Elm_Dayselector_Day day, Eina_Bool selected)
 	{
-		BOOST_CHECK_EQUAL(elm_dayselector_day_selected_get(control_, day), selected);
+		FAIL_UNLESS_EQUAL(elm_dayselector_day_selected_get(control_, day), selected);
 	}
 
 private:
@@ -142,12 +142,12 @@ public:
 
 	void checkStart(Elm_Dayselector_Day weekstart)
 	{
-		BOOST_CHECK_EQUAL(elm_dayselector_week_start_get(control_), weekstart);
+		FAIL_UNLESS_EQUAL(elm_dayselector_week_start_get(control_), weekstart);
 	}
 
 	void checkLength(const int length)
 	{
-		BOOST_CHECK_EQUAL(elm_dayselector_weekend_length_get(control_), length);
+		FAIL_UNLESS_EQUAL(elm_dayselector_weekend_length_get(control_), length);
 	}
 
 private:
@@ -159,16 +159,9 @@ typedef ResizeObjectTest<Dayselector> DayselectorResizeTest;
 typedef PositionObjectTest<Dayselector> DayselectorPositionTest;
 typedef VisibleObjectTest<Dayselector> DayselectorVisibilityTest;
 
-BOOST_AUTO_TEST_SUITE(EFL)
+WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorResizeTest, "DaySelector")
+WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorPositionTest, "DaySelector")
+WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorVisibilityTest, "DaySelector")
+WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorDayTest, "DaySelector")
+WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorLocaleTest, "DaySelector")
 
-	BOOST_AUTO_TEST_SUITE(DaySelector)
-	
-		WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorResizeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorPositionTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorVisibilityTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorDayTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorLocaleTest)
-	
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()

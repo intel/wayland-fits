@@ -49,14 +49,14 @@ public:
 			)
 		);
 		
-		BOOST_CHECK_NE(pivot, static_cast<Elm_Object_Item*>(NULL));
+		FAIL_IF_EQUAL(pivot, static_cast<Elm_Object_Item*>(NULL));
 		
 		vector<Elm_Object_Item*> items;
 
 		foreach (const std::string& label, strings_)
 		{
 			Elm_Object_Item* item = elm_flipselector_item_append(control_, label.c_str(), NULL, NULL);
-			BOOST_CHECK_NE(item, static_cast<Elm_Object_Item*>(NULL));
+			FAIL_IF_EQUAL(item, static_cast<Elm_Object_Item*>(NULL));
 			if (item != NULL)
 			{
 				items.push_back(item);
@@ -95,8 +95,8 @@ public:
 
 	void checkItem(const Elm_Object_Item* item, const Elm_Object_Item* pivot, Eina_Bool expected)
 	{
-		BOOST_CHECK_EQUAL(elm_flipselector_item_selected_get(item), expected);
-		BOOST_CHECK_EQUAL(elm_flipselector_item_selected_get(pivot), not expected);
+		FAIL_UNLESS_EQUAL(elm_flipselector_item_selected_get(item), expected);
+		FAIL_UNLESS_EQUAL(elm_flipselector_item_selected_get(pivot), not expected);
 	}
 
 private:
@@ -109,16 +109,8 @@ typedef ResizeObjectTest<Flipselector> FlipSelectorResizeTest;
 typedef PositionObjectTest<Flipselector> FlipSelectorPositionTest;
 typedef VisibleObjectTest<Flipselector> FlipSelectorVisibilityTest;
 
-BOOST_AUTO_TEST_SUITE(EFL)
-
-	BOOST_AUTO_TEST_SUITE(FlipSelector)
-
-		WAYLAND_ELM_HARNESS_TEST_CASE(FlipSelectorItemTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FlipSelectorResizeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FlipSelectorPositionTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FlipSelectorVisibilityTest)
-	
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()
+WAYLAND_ELM_HARNESS_TEST_CASE(FlipSelectorItemTest, "FlipSelector")
+WAYLAND_ELM_HARNESS_TEST_CASE(FlipSelectorResizeTest, "FlipSelector")
+WAYLAND_ELM_HARNESS_TEST_CASE(FlipSelectorPositionTest, "FlipSelector")
+WAYLAND_ELM_HARNESS_TEST_CASE(FlipSelectorVisibilityTest, "FlipSelector")
 

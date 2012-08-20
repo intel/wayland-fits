@@ -101,7 +101,7 @@ public:
 		const char* actual_ = elm_entry_entry_get(control_);
 		string actual = actual_ != NULL ? actual_ : "";
 
-		BOOST_CHECK_EQUAL(actual, expected);
+		FAIL_UNLESS_EQUAL(actual, expected);
 	}
 
 private:
@@ -156,7 +156,7 @@ public:
 		const char* actual_raw = elm_entry_entry_get(control_);
 		string actual(actual_raw != NULL ? actual_raw : "");
 
-		BOOST_CHECK_EQUAL(actual, expected);
+		FAIL_UNLESS_EQUAL(actual, expected);
 	}
 
 	void checkCut(const char* exp)
@@ -166,7 +166,7 @@ public:
 		const char* actual_raw = elm_entry_selection_get(control_);
 		string actual(actual_raw != NULL ? actual_raw : "");
 
-		BOOST_CHECK_EQUAL(actual, expected);
+		FAIL_UNLESS_EQUAL(actual, expected);
 	}
 
 private:
@@ -219,7 +219,7 @@ public:
 		const char* actual_raw = elm_entry_entry_get(control_);
 		string actual(actual_raw != NULL ? actual_raw : "");
 
-		BOOST_CHECK_EQUAL(actual, expected);
+		FAIL_UNLESS_EQUAL(actual, expected);
 	}
 
 private:
@@ -297,7 +297,7 @@ public:
 		const char* actual_raw = elm_entry_entry_get(control_);
 		string actual(actual_raw != NULL ? actual_raw : "");
 
-		BOOST_CHECK_EQUAL(actual, expected);
+		FAIL_UNLESS_EQUAL(actual, expected);
 	}
 
 private:
@@ -307,15 +307,8 @@ private:
 	string		jibberish_;
 };
 
-BOOST_AUTO_TEST_SUITE(EFL)
+WAYLAND_ELM_HARNESS_TEST_CASE(EntryEmoticonTest, "Entry")
+WAYLAND_ELM_HARNESS_TEST_CASE(EntryCutTest, "Entry")
+WAYLAND_ELM_HARNESS_TEST_CASE(EntryCopyTest, "Entry")
+WAYLAND_ELM_HARNESS_TEST_CASE(EntryPasteTest, "Entry")
 
-	BOOST_AUTO_TEST_SUITE(Entry)
-	
-		WAYLAND_ELM_HARNESS_TEST_CASE(EntryEmoticonTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(EntryCutTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(EntryCopyTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(EntryPasteTest)
-	
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()

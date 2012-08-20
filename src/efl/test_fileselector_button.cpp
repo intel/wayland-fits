@@ -57,7 +57,7 @@ public:
 
 	void checkExpandable(const Eina_Bool expandable)
 	{
-		BOOST_CHECK_EQUAL(elm_fileselector_button_expandable_get(control_), expandable);
+		FAIL_UNLESS_EQUAL(elm_fileselector_button_expandable_get(control_), expandable);
 	}
 
 private:
@@ -101,7 +101,7 @@ public:
 
 	void checkFolderOnly(const Eina_Bool folderonly)
 	{
-		BOOST_CHECK_EQUAL(elm_fileselector_button_folder_only_get(control_), folderonly);
+		FAIL_UNLESS_EQUAL(elm_fileselector_button_folder_only_get(control_), folderonly);
 	}
 
 private:
@@ -145,7 +145,7 @@ public:
 
 	void checkIsSave(const Eina_Bool save)
 	{
-		BOOST_CHECK_EQUAL(elm_fileselector_button_is_save_get(control_), save);
+		FAIL_UNLESS_EQUAL(elm_fileselector_button_is_save_get(control_), save);
 	}
 
 private:
@@ -189,7 +189,7 @@ public:
 
 	void checkInwin(const Eina_Bool inwin)
 	{
-		BOOST_CHECK_EQUAL(elm_fileselector_button_inwin_mode_get(control_), inwin);
+		FAIL_UNLESS_EQUAL(elm_fileselector_button_inwin_mode_get(control_), inwin);
 	}
 
 private:
@@ -202,18 +202,11 @@ typedef ResizeObjectTest<FileselectorButton> FileselectorButtonResizeTest;
 typedef PositionObjectTest<FileselectorButton> FileselectorButtonPositionTest;
 typedef VisibleObjectTest<FileselectorButton> FileselectorButtonVisibilityTest;
 
-BOOST_AUTO_TEST_SUITE(EFL)
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonResizeTest, "FileSelectorButton")
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonPositionTest, "FileSelectorButton")
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonVisibilityTest, "FileSelectorButton")
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonExpandableTest, "FileSelectorButton")
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonFolderOnlyTest, "FileSelectorButton")
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonIsSaveTest, "FileSelectorButton")
+WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonInwinTest, "FileSelectorButton")
 
-	BOOST_AUTO_TEST_SUITE(FileSelectorButton)
-	
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonResizeTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonPositionTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonVisibilityTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonExpandableTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonFolderOnlyTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonIsSaveTest)
-		WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonInwinTest)
-	
-	BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_AUTO_TEST_SUITE_END()

@@ -90,18 +90,18 @@ const Eina_Bool EvasObject::isVisible()
 
 void EvasObject::checkSize(const int width, const int height)
 {
-	BOOST_CHECK_EQUAL(this->getWidth(), width);
-	BOOST_CHECK_EQUAL(this->getHeight(), height);
+	FAIL_UNLESS_EQUAL(this->getWidth(), width);
+	FAIL_UNLESS_EQUAL(this->getHeight(), height);
 }
 
 void EvasObject::checkPosition(const int xcoord, const int ycoord)
 {
-	BOOST_CHECK_EQUAL(this->getX(), xcoord);
-	BOOST_CHECK_EQUAL(this->getY(), ycoord);
+	FAIL_UNLESS_EQUAL(this->getX(), xcoord);
+	FAIL_UNLESS_EQUAL(this->getY(), ycoord);
 }
 
 void EvasObject::checkVisible(const Eina_Bool isVisible)
 {
-	BOOST_CHECK_EQUAL(this->isVisible(), isVisible);
+	FAIL_UNLESS_EQUAL(this->isVisible(), isVisible);
 }
 
