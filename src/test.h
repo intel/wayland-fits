@@ -19,6 +19,8 @@ public:
 	int argc;
 	char** argv;
 
+	const std::string name;
+
 private:
 	friend class Singleton<GlobalTestSuite>;
 	GlobalTestSuite(); // non-default constructible

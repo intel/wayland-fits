@@ -1,7 +1,8 @@
 #include "test.h"
 
 GlobalTestSuite::GlobalTestSuite()
-	: suite_(suite_create("Wayland Functional Test Suite"))
+	: name("Wayland Functional Test Suite")
+	, suite_(suite_create(name.c_str()))
 {
 	return;
 }
