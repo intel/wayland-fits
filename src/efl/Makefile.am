@@ -58,6 +58,7 @@ wayland_efl_test_SOURCES =		\
 	test_mapbuf.cpp			\
 	test_notify.cpp			\
 	test_panel.cpp			\
+	test_popup.cpp			\
 	test_window.cpp			\
 	../test.cpp			\
 	../testmain.cpp
