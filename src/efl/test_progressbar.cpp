@@ -205,6 +205,51 @@ private:
 	Progressbar	control_;
 };
 
+class ProgressbarOrientTest : public ElmTestHarness
+{
+public:
+	ProgressbarOrientTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("ProgressbarOrientTest", "Progressbar Orient Test")
+		, control_(window_)
+	{
+		control_.setSize(200, 100);
+		control_.setPosition(50, 50);
+
+		elm_progressbar_value_set(control_, 0.5f);
+	}
+
+	void setup()
+	{
+		window_.show();
+		control_.show();
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(elm_progressbar_horizontal_set, boost::ref(control_), EINA_FALSE),
+				boost::bind(&ProgressbarOrientTest::checkOrient, boost::ref(*this), EINA_FALSE)
+			)
+		);
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(elm_progressbar_horizontal_set, boost::ref(control_), EINA_TRUE),
+				boost::bind(&ProgressbarOrientTest::checkOrient, boost::ref(*this), EINA_TRUE)
+			)
+		);
+
+	}
+
+	void checkOrient(const Eina_Bool expected)
+	{
+		FAIL_UNLESS_EQUAL(elm_progressbar_horizontal_get(control_), expected);
+	}
+
+private:
+	Window			window_;
+	Progressbar		control_;
+};
+
 typedef ResizeObjectTest<Progressbar> ProgressbarResizeTest;
 typedef PositionObjectTest<Progressbar> ProgressbarPositionTest;
 typedef VisibleObjectTest<Progressbar> ProgressbarVisibilityTest;
