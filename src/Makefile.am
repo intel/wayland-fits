@@ -12,7 +12,8 @@ LDFLAGS = 			\
 	$(CAIRO_LIBS)		\
 	$(WAYLAND_LIBS)		\
 	@CHECK_LIBS@		\
-	-lboost_program_options
+	-lboost_program_options	\
+	-lboost_regex
 
 bin_PROGRAMS = $(TESTS)
 

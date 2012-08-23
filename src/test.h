@@ -12,10 +12,13 @@
 
 class GlobalTestSuite
 {
+	typedef std::map<std::string, TCase*> Cases;
+
 public:
-	operator Suite*() const;
 	bool registerTest(TFun, const std::string&);
 
+	SRunner* createRunner(const std::string& = ".*") const;
+	
 	int argc;
 	char** argv;
 
@@ -25,10 +28,8 @@ private:
 	friend class Singleton<GlobalTestSuite>;
 	GlobalTestSuite(); // non-default constructible
 	GlobalTestSuite(const GlobalTestSuite&); // non-copyable
-	TCase* getCase(const std::string&);
 
-	Suite* suite_;
-	std::map<std::string, TCase*> cases_;
+	Cases cases_;
 };
 
 typedef Singleton<GlobalTestSuite> TheGlobalTestSuite;

@@ -21,7 +21,8 @@ LDFLAGS += 			\
 	@CHECK_LIBS@		\
 	-lboost_system		\
 	-lboost_filesystem	\
-	-lboost_program_options
+	-lboost_program_options	\
+	-lboost_regex
 
 bin_PROGRAMS = $(TESTS)
 

@@ -17,6 +17,7 @@ po::variables_map parseArgs(int argc, char** argv)
 	options.add_options()
 		("help", "display this help message")
 		("xml", po::value<std::string>(), "send results to XML file")
+		("filter", po::value<std::string>()->default_value(".*"), "egrep style regular expression to match tests to run")
 	;
 
 	po::variables_map args;
@@ -249,7 +250,8 @@ int main(int argc, char** argv)
 	TheGlobalTestSuite::instance().argc = argc;
 	TheGlobalTestSuite::instance().argv = argv;
 
-	SRunner* sr = srunner_create (TheGlobalTestSuite::instance());
+	SRunner* sr = TheGlobalTestSuite::instance()
+		.createRunner(args["filter"].as<std::string>());
 
 	srunner_run_all (sr, CK_ENV);
 

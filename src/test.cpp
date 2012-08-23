@@ -1,34 +1,34 @@
+#include <boost/regex.hpp>
+
 #include "test.h"
 
 GlobalTestSuite::GlobalTestSuite()
 	: name("Wayland Functional Test Suite")
-	, suite_(suite_create(name.c_str()))
 {
 	return;
 }
 
-GlobalTestSuite::operator Suite*() const
+SRunner* GlobalTestSuite::createRunner(const std::string& testPattern) const
 {
-	return suite_;
+	boost::regex exp(testPattern, boost::regex::egrep | boost::regex::icase);
+	boost::cmatch what;
+
+	Suite* suite(suite_create(name.c_str()));
+	foreach (const Cases::value_type& tcase, cases_)
+	{
+		if (boost::regex_match(tcase.first.c_str(), what, exp))
+		{
+			suite_add_tcase(suite, tcase.second);
+		}
+	}
+
+	return srunner_create(suite);
 }
 
-bool GlobalTestSuite::registerTest(TFun fn, const std::string& s)
+bool GlobalTestSuite::registerTest(TFun fn, const std::string& name)
 {
-	TCase* tc(getCase(s));
+	TCase* tc(tcase_create(name.c_str()));
 	tcase_add_test(tc, fn);
 	tcase_set_timeout(tc, 30);
-}
-
-TCase* GlobalTestSuite::getCase(const std::string& name)
-{
-	typedef std::map<std::string, TCase*>::iterator Iterator;
-	const Iterator match = cases_.find(name);
-	if (match != cases_.end())
-	{
-		return match->second;
-	}
-	TCase* tc(tcase_create(name.c_str()));
-	suite_add_tcase(suite_, tc);
 	cases_.insert(std::make_pair(name, tc));
-	return tc;
 }
