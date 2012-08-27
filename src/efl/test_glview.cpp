@@ -1,0 +1,240 @@
+#include <vector>
+
+#include "templates.h"
+
+class GLView : public EvasObject
+{
+public:
+	GLView(EvasObject &parent)
+		: EvasObject::EvasObject(elm_glview_add(parent))
+	{
+	}
+};
+
+class GLViewResizePolicyTest : public ElmTestHarness
+{
+public:
+
+	GLViewResizePolicyTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("GLViewResizePolicyTest", "GLView Resize Policy Test")
+		, control_(window_)
+		, set_(EINA_FALSE)
+	{
+		control_.setSize(200, 100);
+		control_.setPosition(50, 10);
+
+		policies_.push_back(ELM_GLVIEW_RESIZE_POLICY_RECREATE);
+		policies_.push_back(ELM_GLVIEW_RESIZE_POLICY_SCALE);
+		policies_.push_back(ELM_GLVIEW_RESIZE_POLICY_RECREATE);
+		policies_.push_back(ELM_GLVIEW_RESIZE_POLICY_SCALE);
+	}
+
+	void setup()
+	{
+		window_.show();
+		control_.show();
+
+		foreach (const Elm_GLView_Resize_Policy policy, policies_)
+		{
+			queueCallback(
+				ModifyCheckCallback(
+					boost::bind(&GLViewResizePolicyTest::set, boost::ref(*this), policy),
+					boost::bind(&GLViewResizePolicyTest::check, boost::ref(*this))
+				)
+			);
+		}
+	}
+
+	void set(const Elm_GLView_Resize_Policy policy)
+	{
+		set_ = elm_glview_resize_policy_set(control_, policy);
+	}
+
+	void check(void)
+	{
+		FAIL_UNLESS_EQUAL(set_, EINA_TRUE);
+	}
+
+private:
+	Window					window_;
+	GLView					control_;
+	Eina_Bool				set_;
+	std::vector<Elm_GLView_Resize_Policy>	policies_;
+};
+
+class GLViewRenderPolicyTest : public ElmTestHarness
+{
+public:
+
+	GLViewRenderPolicyTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("GLViewRenderPolicyTest", "GLView Render Policy Test")
+		, control_(window_)
+		, set_(EINA_FALSE)
+	{
+		control_.setSize(200, 100);
+		control_.setPosition(50, 10);
+
+		policies_.push_back(ELM_GLVIEW_RENDER_POLICY_ON_DEMAND);
+		policies_.push_back(ELM_GLVIEW_RENDER_POLICY_ALWAYS);
+		policies_.push_back(ELM_GLVIEW_RENDER_POLICY_ON_DEMAND);
+		policies_.push_back(ELM_GLVIEW_RENDER_POLICY_ALWAYS);
+	}
+
+	void setup()
+	{
+		window_.show();
+		control_.show();
+
+		foreach (const Elm_GLView_Render_Policy policy, policies_)
+		{
+			queueCallback(
+				ModifyCheckCallback(
+					boost::bind(&GLViewRenderPolicyTest::set, boost::ref(*this), policy),
+					boost::bind(&GLViewRenderPolicyTest::check, boost::ref(*this))
+				)
+			);
+		}
+	}
+
+	void set(const Elm_GLView_Render_Policy policy)
+	{
+		set_ = elm_glview_render_policy_set(control_, policy);
+	}
+
+	void check(void)
+	{
+		FAIL_UNLESS_EQUAL(set_, EINA_TRUE);
+	}
+
+private:
+	Window					window_;
+	GLView					control_;
+	Eina_Bool				set_;
+	std::vector<Elm_GLView_Render_Policy>	policies_;
+};
+
+class GLViewModeTest : public ElmTestHarness
+{
+public:
+
+	GLViewModeTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("GLViewModeTest", "GLView Mode Test")
+		, control_(window_)
+		, set_(EINA_FALSE)
+	{
+		control_.setSize(200, 100);
+		control_.setPosition(50, 10);
+
+		modes_.push_back(ELM_GLVIEW_ALPHA);
+		modes_.push_back(ELM_GLVIEW_DEPTH);
+		modes_.push_back(ELM_GLVIEW_ALPHA);
+		modes_.push_back(ELM_GLVIEW_STENCIL);
+		modes_.push_back(ELM_GLVIEW_ALPHA);
+		modes_.push_back(ELM_GLVIEW_DIRECT);
+		modes_.push_back(ELM_GLVIEW_ALPHA);
+	}
+
+	void setup()
+	{
+		window_.show();
+		control_.show();
+
+		foreach (const Elm_GLView_Mode mode, modes_)
+		{
+			queueCallback(
+				ModifyCheckCallback(
+					boost::bind(&GLViewModeTest::set, boost::ref(*this), mode),
+					boost::bind(&GLViewModeTest::check, boost::ref(*this))
+				)
+			);
+		}
+	}
+
+	void set(const Elm_GLView_Mode mode)
+	{
+		set_ = elm_glview_mode_set(control_, mode);
+	}
+
+	void check(void)
+	{
+		FAIL_UNLESS_EQUAL(set_, EINA_TRUE);
+	}
+
+private:
+	Window				window_;
+	GLView				control_;
+	Eina_Bool			set_;
+	std::vector<Elm_GLView_Mode>	modes_;
+};
+
+class GLViewAPITest : public ElmTestHarness
+{
+public:
+
+	GLViewAPITest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("GLViewAPITest", "GLView API Test")
+		, control_(window_)
+		, api_(NULL)
+	{
+		control_.setSize(200, 100);
+		control_.setPosition(50, 10);
+	}
+
+	void setup()
+	{
+		window_.show();
+		control_.show();
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(&GLViewAPITest::noOp, boost::ref(*this)),
+				boost::bind(&GLViewAPITest::check, boost::ref(*this))
+			)
+		);
+	}
+
+	void noOp(void)
+	{
+		// no op
+	}
+
+	void check(void)
+	{
+		api_ = elm_glview_gl_api_get(control_);
+
+		FAIL_UNLESS(api_ != NULL);
+
+		// check a few GL|ES 2 functions implemented in i915
+		FAIL_UNLESS(api_->glActiveTexture != NULL);
+		FAIL_UNLESS(api_->glAttachShader != NULL);
+		FAIL_UNLESS(api_->glBlendColor != NULL);
+		FAIL_UNLESS(api_->glBindFramebuffer != NULL);
+		FAIL_UNLESS(api_->glBindRenderbuffer != NULL);
+		FAIL_UNLESS(api_->glBindBuffer != NULL);
+		FAIL_UNLESS(api_->glCompileShader != NULL);
+		FAIL_UNLESS(api_->glLinkProgram != NULL);
+	}
+
+private:
+	Window		window_;
+	GLView		control_;
+	Evas_GL_API*	api_;
+};
+
+
+typedef ResizeObjectTest<GLView> GLViewResizeTest;
+typedef PositionObjectTest<GLView> GLViewPositionTest;
+typedef VisibleObjectTest<GLView> GLViewVisibilityTest;
+
+WAYLAND_ELM_HARNESS_EGL_TEST_CASE(GLViewResizeTest, "GLView")
+WAYLAND_ELM_HARNESS_EGL_TEST_CASE(GLViewPositionTest, "GLView")
+WAYLAND_ELM_HARNESS_EGL_TEST_CASE(GLViewVisibilityTest, "GLView")
+WAYLAND_ELM_HARNESS_EGL_TEST_CASE(GLViewResizePolicyTest, "GLView")
+WAYLAND_ELM_HARNESS_EGL_TEST_CASE(GLViewRenderPolicyTest, "GLView")
+WAYLAND_ELM_HARNESS_EGL_TEST_CASE(GLViewModeTest, "GLView")
+WAYLAND_ELM_HARNESS_EGL_TEST_CASE(GLViewAPITest, "GLView")
+
