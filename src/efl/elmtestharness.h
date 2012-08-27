@@ -78,5 +78,21 @@ TEST(Harness##_egl_engine, "EFL/" suite) \
 	Harness().run(); \
 } \
 
+#define WAYLAND_ELM_HARNESS_EGL_TEST_CASE(Harness, suite) \
+TEST(Harness##_egl_engine, "EFL/" suite) \
+{ \
+	Application app; \
+	app.setEngine(Application::ENGINE_EGL); \
+	Harness().run(); \
+} \
+
+#define WAYLAND_ELM_HARNESS_SHM_TEST_CASE(Harness, suite) \
+TEST(Harness##_egl_engine, "EFL/" suite) \
+{ \
+	Application app; \
+	app.setEngine(Application::ENGINE_EGL); \
+	Harness().run(); \
+} \
+
 #endif
 
