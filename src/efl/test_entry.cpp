@@ -308,7 +308,7 @@ private:
 };
 
 WAYLAND_ELM_HARNESS_TEST_CASE(EntryEmoticonTest, "Entry")
-WAYLAND_ELM_HARNESS_TEST_CASE(EntryCutTest, "Entry")
-WAYLAND_ELM_HARNESS_TEST_CASE(EntryCopyTest, "Entry")
-WAYLAND_ELM_HARNESS_TEST_CASE(EntryPasteTest, "Entry")
+//WAYLAND_ELM_HARNESS_TEST_CASE(EntryCutTest, "Entry")
+//WAYLAND_ELM_HARNESS_TEST_CASE(EntryCopyTest, "Entry")
+//WAYLAND_ELM_HARNESS_TEST_CASE(EntryPasteTest, "Entry")
 
