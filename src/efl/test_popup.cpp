@@ -46,8 +46,8 @@ public:
 			)
 		);
 
-		// If it takes more than 2 seconds for this event to fire, we have a bug
-		checkTimedOut(time(NULL) + 2);
+		// If it takes more than 5 seconds for this event to fire, we have a bug
+		checkTimedOut(time(NULL) + 5);
 	}
 
 	void noOp(void)
@@ -62,8 +62,8 @@ public:
 
 		if (not timedout_)
 		{
-			// prevent a hot loop, sleep for 1/100 of a second
-			Application::yield(10000);
+			// prevent a hot loop, sleep for 100ms
+			Application::yield(100);
 
 			// awaiting the "timedout" signal, so queue another noOp
 			queueCallback(
