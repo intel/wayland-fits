@@ -1,15 +1,21 @@
-#include <Elementary.h>
-#include <boost/bind.hpp>
 #include <boost/format.hpp>
+
 #include <vector>
 #include <string>
 
-#include "window.h"
-
-#include "elmtestharness.h"
+#include "templates.h"
 
 using std::string;
 using std::vector;
+
+class Entry : public EvasObject
+{
+public:
+	Entry(EvasObject &parent)
+		: EvasObject::EvasObject(elm_entry_add(parent))
+	{
+	}
+};
 
 class EntryEmoticonTest : public ElmTestHarness
 {
@@ -18,7 +24,7 @@ public:
 	EntryEmoticonTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("EntryEmoticonTest", "Entry Emoticon Test")
-		, control_(elm_entry_add(window_))
+		, control_(window_)
 	{
 		control_.setSize(200, 100);
 		control_.setPosition(50, 10);
@@ -105,10 +111,10 @@ public:
 	}
 
 private:
-	Window			window_;
-	EvasObject		control_;
+	Window		window_;
+	Entry		control_;
 	vector<string>	emoticons_;
-	vector<int>		sizes_;
+	vector<int>	sizes_;
 };
 
 class EntryCutTest : public ElmTestHarness
@@ -118,7 +124,7 @@ public:
 	EntryCutTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("EntryCutTest", "Entry Cut Test")
-		, control_(elm_entry_add(window_))
+		, control_(window_)
 		, sentinel_("Sentinel Text")
 	{
 		control_.setSize(50, 100);
@@ -170,9 +176,9 @@ public:
 	}
 
 private:
-	Window		window_;
-	EvasObject	control_;
-	string		sentinel_;
+	Window	window_;
+	Entry	control_;
+	string	sentinel_;
 };
 
 class EntryCopyTest : public ElmTestHarness
@@ -182,7 +188,7 @@ public:
 	EntryCopyTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("EntryCopyTest", "Entry Copy Test")
-		, control_(elm_entry_add(window_))
+		, control_(window_)
 		, sentinel_("Sentinel Text")
 	{
 		control_.setSize(50, 100);
@@ -223,9 +229,9 @@ public:
 	}
 
 private:
-	Window		window_;
-	EvasObject	control_;
-	string		sentinel_;
+	Window	window_;
+	Entry	control_;
+	string	sentinel_;
 };
 
 class EntryPasteTest : public ElmTestHarness
@@ -235,7 +241,7 @@ public:
 	EntryPasteTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("EntryPasteTest", "Entry Paste Test")
-		, control_(elm_entry_add(window_))
+		, control_(window_)
 		, sentinel_("Sentinel Text")
 		, jibberish_("jibberish")
 	{
@@ -301,12 +307,19 @@ public:
 	}
 
 private:
-	Window		window_;
-	EvasObject	control_;
-	string		sentinel_;
-	string		jibberish_;
+	Window	window_;
+	Entry	control_;
+	string	sentinel_;
+	string	jibberish_;
 };
 
+typedef ResizeObjectTest<Entry> EntryResizeTest;
+typedef PositionObjectTest<Entry> EntryPositionTest;
+typedef VisibleObjectTest<Entry> EntryVisibilityTest;
+
+WAYLAND_ELM_HARNESS_TEST_CASE(EntryResizeTest, "Entry")
+WAYLAND_ELM_HARNESS_TEST_CASE(EntryPositionTest, "Entry")
+WAYLAND_ELM_HARNESS_TEST_CASE(EntryVisibilityTest, "Entry")
 WAYLAND_ELM_HARNESS_TEST_CASE(EntryEmoticonTest, "Entry")
 //WAYLAND_ELM_HARNESS_TEST_CASE(EntryCutTest, "Entry")
 //WAYLAND_ELM_HARNESS_TEST_CASE(EntryCopyTest, "Entry")
