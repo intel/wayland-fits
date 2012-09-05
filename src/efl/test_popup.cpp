@@ -166,7 +166,7 @@ typedef ResizeObjectTest<Popup> PopupResizeTest;
 typedef PositionObjectTest<Popup> PopupPositionTest;
 typedef VisibleObjectTest<Popup> PopupVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(PopupResizeTest, "Popup")
+//WAYLAND_ELM_HARNESS_TEST_CASE(PopupResizeTest, "Popup")
 WAYLAND_ELM_HARNESS_TEST_CASE(PopupPositionTest, "Popup")
 WAYLAND_ELM_HARNESS_TEST_CASE(PopupVisibilityTest, "Popup")
 WAYLAND_ELM_HARNESS_TEST_CASE(PopupTimeoutTest, "Popup")
