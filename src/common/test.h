@@ -3,6 +3,7 @@
 
 #include <boost/foreach.hpp>
 #include <map>
+#include <vector>
 #include <check.h> // Check unit testing framework... see http://check.sourceforge.net
 
 #include "singleton.h"
@@ -23,6 +24,8 @@ public:
 	char** argv;
 
 	const std::string name;
+
+	std::vector<std::string> testNames(const std::string& = ".*") const;
 
 private:
 	friend class Singleton<GlobalTestSuite>;

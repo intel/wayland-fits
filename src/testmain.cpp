@@ -2,6 +2,7 @@
 #include <fstream>
 #include <deque>
 #include <map>
+#include <vector>
 #include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>
 #include <boost/shared_ptr.hpp>
@@ -16,6 +17,7 @@ po::variables_map parseArgs(int argc, char** argv)
 	po::options_description options("optional arguments");
 	options.add_options()
 		("help", "display this help message")
+		("list", "list test names")
 		("xml", po::value<std::string>(), "send results to XML file")
 		("filter", po::value<std::string>()->default_value(".*"), "egrep style regular expression to match tests to run")
 	;
@@ -38,7 +40,7 @@ po::variables_map parseArgs(int argc, char** argv)
 		std::cout << options << std::endl;
 		exit(EXIT_SUCCESS);
 	}
-	
+
 	return args;
 }
 
@@ -246,6 +248,13 @@ void toXML(SRunner* sr, const std::string& filename)
 int main(int argc, char** argv)
 {
 	po::variables_map args(parseArgs(argc, argv));
+
+	if (args.count("list"))
+	{
+		std::vector<std::string> names = TheGlobalTestSuite::instance().testNames(args["filter"].as<std::string>());
+		std::copy(names.begin(), names.end(), std::ostream_iterator<std::string>(std::cout, "\n"));
+		exit(EXIT_SUCCESS);
+	}
 
 	TheGlobalTestSuite::instance().argc = argc;
 	TheGlobalTestSuite::instance().argv = argv;

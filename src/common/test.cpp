@@ -32,3 +32,18 @@ bool GlobalTestSuite::registerTest(TFun fn, const std::string& name)
 	tcase_set_timeout(tc, 30);
 	cases_.insert(std::make_pair(name, tc));
 }
+
+std::vector<std::string> GlobalTestSuite::testNames(const std::string& testPattern) const
+{
+	boost::regex exp(testPattern, boost::regex::egrep | boost::regex::icase);
+	boost::cmatch what;
+	std::vector<std::string> result;
+	foreach (const Cases::value_type& tcase, cases_)
+	{
+		if (boost::regex_match(tcase.first.c_str(), what, exp))
+		{
+			result.push_back(tcase.first);
+		}
+	}
+	return result;
+}
