@@ -19,6 +19,9 @@ autom4te.cache
 *~
 *.o
 *.so
-
+*.lo
+*.la
+.libs
+src/wfits
 src/wayland-test
 src/efl/wayland-efl-test

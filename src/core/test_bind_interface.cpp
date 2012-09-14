@@ -1,6 +1,6 @@
 #include <string>
 #include <wayland-client.h>
-#include "test.h"
+#include "common/test.h"
 
 template <typename O, const wl_interface& interface, const std::string& str_interface>
 struct BindInterface {
@@ -36,7 +36,7 @@ struct BindInterface {
 #define BIND_TEST(name) \
 	std::string str_iface_##name = #name; \
 	typedef BindInterface<name, name##_interface, str_iface_##name> bind_##name##_interface; \
-	TEST(bind_##name, "Bind_Interface_Suite") \
+	TEST(bind_##name, "Core/BindInterface") \
 	{ \
 		bind_##name##_interface bi; \
 		FAIL_UNLESS(bi.object == NULL); \

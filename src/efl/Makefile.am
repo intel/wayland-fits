@@ -1,32 +1,10 @@
+MEDIA = \"$(abs_top_srcdir)/media\"
 
-if BUILD_EFL_TESTS
+INCLUDES = -I$(top_srcdir)/src
 
-TESTS = wayland-efl-test
-TESTS_ENVIRONMENT = $(SHELL) ../test-harness
+lib_LTLIBRARIES = libwfits-efl.la
 
-MEDIA = \"$(PWD)/../../media\"
-
-CXXFLAGS +=			\
-	-std=gnu++0x		\
-	$(CAIRO_CFLAGS)		\
-	$(WAYLAND_CFLAGS)	\
-	-DMEDIA_PATH=$(MEDIA)	\
-	@EFL_CFLAGS@		\
-	@CHECK_CFLAGS@
-
-LDFLAGS += 			\
-	$(CAIRO_LIBS)		\
-	$(WAYLAND_LIBS)		\
-	@EFL_LIBS@		\
-	@CHECK_LIBS@		\
-	-lboost_system		\
-	-lboost_filesystem	\
-	-lboost_program_options	\
-	-lboost_regex
-
-bin_PROGRAMS = $(TESTS)
-
-wayland_efl_test_SOURCES =		\
+libwfits_efl_la_SOURCES = \
 	application.cpp			\
 	background.cpp			\
 	elmtestharness.cpp		\
@@ -62,10 +40,20 @@ wayland_efl_test_SOURCES =		\
 	test_panel.cpp			\
 	test_popup.cpp			\
 	test_progressbar.cpp		\
-	test_window.cpp			\
-	../test.cpp			\
-	../testmain.cpp
+	test_window.cpp
 
-#	test_index.cpp
+libwfits_efl_la_LIBADD = \
+	$(top_builddir)/src/common/libwfits-common.la \
+	$(CAIRO_LIBS)		\
+	$(WAYLAND_LIBS)		\
+	@EFL_LIBS@		\
+	@CHECK_LIBS@
 
-endif
+AM_CXXFLAGS = \
+	$(CAIRO_CFLAGS)		\
+	$(WAYLAND_CFLAGS)	\
+	-DMEDIA_PATH=$(MEDIA)	\
+	@EFL_CFLAGS@		\
+	@CHECK_CFLAGS@
+	-lboost_system		\
+	-lboost_filesystem

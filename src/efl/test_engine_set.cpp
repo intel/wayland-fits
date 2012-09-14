@@ -1,5 +1,5 @@
 #include <Elementary.h>
-#include "../test.h"
+#include "common/test.h"
 
 TEST(elm_engine_set_wayland_shm, "EFL/Engine")
 {

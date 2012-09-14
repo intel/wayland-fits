@@ -1,7 +1,7 @@
 #ifndef __WAYLAND_EFL_APPLICATION_H__
 #define __WAYLAND_EFL_APPLICATION_H__
 
-#include "../test.h"
+#include "common/test.h"
 
 class Application
 {
