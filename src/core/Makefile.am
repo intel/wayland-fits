@@ -13,5 +13,4 @@ libwfits_core_la_LIBADD = \
 AM_CXXFLAGS = \
 	$(CAIRO_CFLAGS)		\
 	$(WAYLAND_CFLAGS)	\
-	-DSUITE_NAME=$(SUITE)	\
 	@CHECK_CFLAGS@
