@@ -2,7 +2,9 @@ INCLUDES = -I$(top_srcdir)/src
 
 lib_LTLIBRARIES = libwfits-core.la
 
-libwfits_core_la_SOURCES = test_bind_interface.cpp
+libwfits_core_la_SOURCES = \
+	test_bind_interface.cpp \
+	test_cursor.cpp
 
 libwfits_core_la_LIBADD = \
 	$(top_builddir)/src/common/libwfits-common.la \
