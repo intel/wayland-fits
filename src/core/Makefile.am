@@ -3,6 +3,7 @@ INCLUDES = -I$(top_srcdir)/src
 lib_LTLIBRARIES = libwfits-core.la
 
 libwfits_core_la_SOURCES = \
+	harness.cpp \
 	test_bind_interface.cpp \
 	test_cursor.cpp
 

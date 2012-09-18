@@ -1,0 +1,55 @@
+#ifndef __WFITS_CORE_HARNESS_H__
+#define __WFITS_CORE_HARNESS_H__
+
+#include <boost/function.hpp>
+#include <deque>
+#include <string>
+#include "display.h"
+
+class CoreTestHarness : public Display
+{
+public:
+	typedef boost::function<void()>		Test;
+	typedef std::deque<Test>			Tests;
+
+	CoreTestHarness();
+
+	virtual ~CoreTestHarness();
+	
+	void queueTest(Test);
+	void run();
+
+	/**
+	 * Optionally override this to do any special
+	 * interface binding and/or setup.
+	 **/
+	virtual void handleGlobal(uint32_t, const std::string&, uint32_t) { };
+	
+	/**
+	 * Optionally override this to do any special
+	 * setup before processing Tests.
+	 * i.e. you can queue all your tests from here.
+	 **/
+	virtual void setup() { };
+	
+	/**
+	 * Optionally override teardown to do any special
+	 * cleanup before the test exits.
+	 **/
+	virtual void teardown() { };
+
+private:
+	static void globalListener(wl_display*, uint32_t, const char*, uint32_t, void*);
+
+	wl_global_listener*	listener_;
+	Tests				tests_;
+};
+
+#define WFITS_CORE_HARNESS_TEST_CASE(Harness, suite) \
+\
+TEST(Harness, "Core/" suite) \
+{ \
+	::Harness().run(); \
+}
+
+#endif
