@@ -5,15 +5,31 @@ template <typename O, const wl_interface& interface, const std::string& str_inte
 class BindInterface : public CoreTestHarness
 {
 public:
+	BindInterface()
+		: CoreTestHarness::CoreTestHarness()
+		, object_(NULL)
+	{
+		return;
+	}
+
 	void handleGlobal(uint32_t id, const std::string& iface, uint32_t)
 	{
-		O* obj = static_cast<O*>(
-			wl_display_bind(
-				*this, id, &interface
-			)
-		);
-		FAIL_IF(obj == NULL);
+		if (iface == str_interface)
+		{
+			object_ = static_cast<O*>(
+				wl_display_bind(
+					*this, id, &interface
+				)
+			);
+		}
 	}
+	
+	void teardown()
+	{
+		FAIL_IF(object_ == NULL);
+	}
+private:
+	O* object_;
 };
 
 #define BIND_TEST(name) \
