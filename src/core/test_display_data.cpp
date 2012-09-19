@@ -1,12 +1,12 @@
 #include "harness.h"
 
-class SetDataTest : public CoreTestHarness
+class DisplayDataTest : public CoreTestHarness
 {
 public:
 	void setup()
 	{
 		queueTest(
-			boost::bind(&SetDataTest::test, boost::ref(*this))
+			boost::bind(&DisplayDataTest::test, boost::ref(*this))
 		);
 	}
 	
@@ -28,8 +28,7 @@ public:
 		d = static_cast<std::string*>(wl_display_get_user_data(*this));
 		FAIL_UNLESS_EQUAL(d, &p);
 		FAIL_UNLESS_EQUAL(*d, p);
-		std::cout << "SANITY" << std::endl;
 	}
 };
 
-WFITS_CORE_HARNESS_TEST_CASE(SetDataTest, "Display");
+WFITS_CORE_HARNESS_TEST_CASE(DisplayDataTest, "Display");

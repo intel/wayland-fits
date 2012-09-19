@@ -1,6 +1,7 @@
 #ifndef _WAYLAND_TEST_TEST_H_
 #define _WAYLAND_TEST_TEST_H_
 
+#include <iostream>
 #include <boost/foreach.hpp>
 #include <map>
 #include <vector>
@@ -49,7 +50,7 @@ typedef Singleton<GlobalTestSuite> TheGlobalTestSuite;
 #define TEST(name, suite) \
 	class class_ ## name { \
 	public: \
-	START_TEST(name) \
+	START_TEST(ck_ ## name) \
 	{ \
 		run(); \
 	} \
@@ -57,7 +58,7 @@ typedef Singleton<GlobalTestSuite> TheGlobalTestSuite;
 	static void run(); \
 	static bool registered; \
 	}; \
-	bool class_ ## name::registered = TheGlobalTestSuite::instance().registerTest(class_ ## name::name, suite "/" # name); \
+	bool class_ ## name::registered = TheGlobalTestSuite::instance().registerTest(class_ ## name::ck_ ## name, suite "/" # name); \
 	void class_ ## name::run()
 
 #endif

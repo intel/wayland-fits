@@ -46,11 +46,11 @@ private:
 	Tests				tests_;
 };
 
-#define WFITS_CORE_HARNESS_TEST_CASE(Harness, suite) \
+#define WFITS_CORE_HARNESS_TEST_CASE(HarnessClass, suite) \
 \
-TEST(Harness, "Core/" suite) \
+TEST(HarnessClass, "Core/" suite) \
 { \
-	::Harness().run(); \
+	HarnessClass().run(); \
 }
 
 #endif
