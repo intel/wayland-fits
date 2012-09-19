@@ -6,8 +6,7 @@ libwfits_core_la_SOURCES = \
 	harness.cpp \
 	test_bind_interface.cpp \
 	test_cursor.cpp \
-	test_display_data.cpp \
-	test_shm_data.cpp
+	test_data.cpp
 
 libwfits_core_la_LIBADD = \
 	$(top_builddir)/src/common/libwfits-common.la \
