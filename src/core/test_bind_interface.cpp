@@ -1,4 +1,4 @@
-#include <boost/bind.hpp>
+
 #include "harness.h"
 
 template <typename O, const wl_interface& interface, const std::string& str_interface>

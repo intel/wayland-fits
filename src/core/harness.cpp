@@ -1,4 +1,4 @@
-#include <boost/bind.hpp>
+
 #include "harness.h"
 
 CoreTestHarness::CoreTestHarness()

@@ -2,6 +2,7 @@
 #define __WFITS_CORE_HARNESS_H__
 
 #include <boost/function.hpp>
+#include <boost/bind.hpp>
 #include <deque>
 #include <string>
 #include "display.h"
