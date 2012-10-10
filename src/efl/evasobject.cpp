@@ -18,15 +18,16 @@ EvasObject::~EvasObject()
 	obj_ = NULL;
 }
 
-EvasObject::operator Evas*()
-{
-	return evas_object_evas_get(*this);
-}
+//FIXME: see header
+// EvasObject::operator Evas*()
+// {
+// 	return evas_object_evas_get(*this);
+// }
 
-EvasObject::operator Ecore_Evas*()
-{
-	return ecore_evas_object_ecore_evas_get(*this);
-}
+// EvasObject::operator Ecore_Evas*()
+// {
+// 	return ecore_evas_object_ecore_evas_get(*this);
+// }
 
 EvasObject::operator Evas_Object*()
 {
