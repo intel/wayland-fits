@@ -1,7 +1,7 @@
-#include <Ecore_Evas.h>
+#include <Evas.h>
 
 #include "evasobject.h"
-#include "application.h"
+#include "common/test.h"
 
 EvasObject::EvasObject(Evas_Object* o)
 	: obj_(o)
@@ -18,15 +18,9 @@ EvasObject::~EvasObject()
 	obj_ = NULL;
 }
 
-//FIXME: see header
 // EvasObject::operator Evas*()
 // {
 // 	return evas_object_evas_get(*this);
-// }
-
-// EvasObject::operator Ecore_Evas*()
-// {
-// 	return ecore_evas_object_ecore_evas_get(*this);
 // }
 
 EvasObject::operator Evas_Object*()

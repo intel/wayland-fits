@@ -19,11 +19,7 @@ public:
 	const int getY();
 	const Eina_Bool isVisible();
 
-	//FIXME: these compiled fine before... but for some reason they are flagged
-	// as ambiguous by the compiler now... this started happending when
-	// EO was added as dependency to Evas.
 // 	operator Evas*();
-// 	operator Ecore_Evas*();
 	
 	operator Evas_Object*();
 
