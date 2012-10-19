@@ -87,10 +87,10 @@ TEST(Harness##_egl_engine, "EFL/" suite) \
 } \
 
 #define WAYLAND_ELM_HARNESS_SHM_TEST_CASE(Harness, suite) \
-TEST(Harness##_egl_engine, "EFL/" suite) \
+TEST(Harness##_shm_engine, "EFL/" suite) \
 { \
 	Application app; \
-	app.setEngine(Application::ENGINE_EGL); \
+	app.setEngine(Application::ENGINE_SHM); \
 	Harness().run(); \
 } \
 
