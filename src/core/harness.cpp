@@ -3,16 +3,21 @@
 
 CoreTestHarness::CoreTestHarness()
 	: Display::Display()
-	, listener_(0)
+	, registry_(0)
 {
-	listener_ = wl_display_add_global_listener(
-		*this, &CoreTestHarness::globalListener, this);
-	FAIL_IF_EQUAL(listener_, NULL);
+	registry_ = wl_display_get_registry(*this);
+
+	static const struct wl_registry_listener listener = {
+		&CoreTestHarness::globalListener
+	};
+
+	wl_registry_add_listener(registry_, &listener, this);
+	FAIL_IF_EQUAL(registry_, NULL);
 }
 
 CoreTestHarness::~CoreTestHarness()
 {
-	wl_display_remove_global_listener(*this, listener_);
+	wl_registry_destroy(*this);
 }
 
 void CoreTestHarness::queueTest(Test test)
@@ -23,7 +28,7 @@ void CoreTestHarness::queueTest(Test test)
 void CoreTestHarness::run()
 {
 	// trigger client global announcements
-	wl_display_iterate(*this, WL_DISPLAY_READABLE);
+	wl_display_dispatch(*this);
 
 	setup();
 
@@ -37,10 +42,11 @@ void CoreTestHarness::run()
 }
 
 /*static*/
-void CoreTestHarness::globalListener(wl_display* display, uint32_t id, const char* iface, uint32_t version, void* data)
+void CoreTestHarness::globalListener(
+	void *data, struct wl_registry *registry, uint32_t id, const char* iface, uint32_t version)
 {
 	CoreTestHarness* harness = static_cast<CoreTestHarness*>(data);
-	FAIL_UNLESS_EQUAL(display, *harness);
+	FAIL_UNLESS_EQUAL(registry, *harness);
 	harness->handleGlobal(id, std::string(iface), version);
 }
 

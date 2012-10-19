@@ -54,7 +54,7 @@ protected:
 		{ \
 			if (iface == #name) \
 			{ \
-				obj_ = static_cast<name*>(wl_display_bind(*this, id, & name ## _interface)); \
+				obj_ = static_cast<name*>(wl_registry_bind(*this, id, & name ## _interface, 1)); \
 			} \
 		} \
 	}; \

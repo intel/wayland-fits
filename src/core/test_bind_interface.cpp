@@ -17,8 +17,8 @@ public:
 		if (iface == str_interface)
 		{
 			object_ = static_cast<O*>(
-				wl_display_bind(
-					*this, id, &interface
+				wl_registry_bind(
+					*this, id, &interface, 1
 				)
 			);
 		}

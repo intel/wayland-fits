@@ -10,8 +10,8 @@
 class CoreTestHarness : public Display
 {
 public:
-	typedef boost::function<void()>		Test;
-	typedef std::deque<Test>			Tests;
+	typedef boost::function<void()>	Test;
+	typedef std::deque<Test>	Tests;
 
 	CoreTestHarness();
 
@@ -39,11 +39,13 @@ public:
 	 **/
 	virtual void teardown() { };
 
-private:
-	static void globalListener(wl_display*, uint32_t, const char*, uint32_t, void*);
+	operator wl_registry*() { return registry_; }
 
-	wl_global_listener*	listener_;
-	Tests				tests_;
+private:
+	static void globalListener(void*, struct wl_registry*, uint32_t, const char*, uint32_t);
+
+	wl_registry*	registry_;
+	Tests		tests_;
 };
 
 #define WFITS_CORE_HARNESS_TEST_CASE(HarnessClass, suite) \

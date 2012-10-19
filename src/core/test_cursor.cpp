@@ -26,7 +26,7 @@ public:
 	{
 		if (iface == "wl_shm")
 		{
-			shm_ = static_cast<wl_shm*>(wl_display_bind(*this, id, &wl_shm_interface));
+			shm_ = static_cast<wl_shm*>(wl_registry_bind(*this, id, &wl_shm_interface, 1));
 			FAIL_IF_EQUAL(shm_, NULL);
 		}
 	}
