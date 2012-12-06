@@ -22,13 +22,19 @@ LT_INIT
 PKG_CHECK_MODULES([CHECK], [check >= 0.9.8])
 PKG_CHECK_MODULES(CAIRO, [cairo >= 1.10.0])
 PKG_CHECK_MODULES(WAYLAND, [wayland-client wayland-egl])
+PKG_CHECK_MODULES(WAYLAND_SERVER, [wayland-server])
 PKG_CHECK_MODULES(EFL, [elementary ecore-wayland evas-wayland-egl evas-wayland-shm])
 
 # TODO: Add support to conditionally build EFL suite, Core suite, etc...
+
+WAYLAND_SCANNER_RULES(['$(top_srcdir)/src/extensions/protocol'])
 
 AC_CONFIG_FILES([Makefile
 		 src/Makefile
 		 src/common/Makefile
 		 src/core/Makefile
-		 src/efl/Makefile])
+		 src/efl/Makefile
+		 src/extensions/Makefile
+		 src/extensions/weston/Makefile
+		 src/extensions/protocol/Makefile])
 AC_OUTPUT
