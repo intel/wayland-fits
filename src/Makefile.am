@@ -11,7 +11,8 @@ wfits_LDADD = \
 	$(top_builddir)/src/efl/libwfits-efl.la \
 	-lboost_regex \
 	-lboost_filesystem \
-	-lboost_program_options
+	-lboost_program_options \
+	-lcheck
 
 AM_CXXFLAGS = \
 	-Wno-strict-aliasing \
