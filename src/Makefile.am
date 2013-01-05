@@ -12,7 +12,7 @@ wfits_LDADD = \
 	-lboost_regex \
 	-lboost_filesystem \
 	-lboost_program_options \
-	-lcheck
+	@CHECK_LIBS@
 
 AM_CXXFLAGS = \
 	-Wno-strict-aliasing \
