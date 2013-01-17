@@ -7,7 +7,11 @@ module_LTLIBRARIES =				\
 # AM_LDFLAGS = -module -avoid-version -rpath $(libdir)
 
 weston_wfits = weston-wfits.la
-weston_wfits_la_CFLAGS = $(GCC_CFLAGS) $(WAYLAND_SERVER_CFLAGS)
+weston_wfits_la_CFLAGS =			\
+	$(GCC_CFLAGS)				\
+	$(WAYLAND_SERVER_CFLAGS)		\
+	$(PIXMAN_CFLAGS)
+
 weston_wfits_la_LDFLAGS = -module -avoid-version
 weston_wfits_la_LIBADD = $(WAYLAND_SERVER_LIBS)
 weston_wfits_la_SOURCES =			\

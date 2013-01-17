@@ -22,17 +22,12 @@
 
 #include <stdlib.h>
 #include <string.h>
-// #include "../src/compositor.h"
-#include "wayland-server.h"
+#include <wayland-server.h>
+#include "weston-headers/core/compositor.h"
 #include "wayland-fits-server-protocol.h"
 
-struct compositor {
-	struct wl_signal destroy_signal;
-	struct wl_display *wl_display;
-};
-
 struct wfits {
-	struct compositor *compositor;
+	struct weston_compositor *compositor;
 };
 
 static void
@@ -57,19 +52,20 @@ bind_uinput(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 }
 
 WL_EXPORT int
-module_init(void *p)
+module_init(struct weston_compositor *compositor)
 {
 	struct wfits *wfits;
-	struct compositor* ec = p;
+
+	weston_log("in weston-wfits::module_init\n");
 
 	wfits = malloc(sizeof *wfits);
 	if (wfits == NULL)
 		return -1;
 
 	memset(wfits, 0, sizeof *wfits);
-	wfits->compositor = ec;
+	wfits->compositor = compositor;
 
-	if (wl_display_add_global(ec->wl_display, &wfits_uinput_interface,
+	if (wl_display_add_global(compositor->wl_display, &wfits_uinput_interface,
 				  wfits, bind_uinput) == NULL)
 		return -1;
 	return 0;

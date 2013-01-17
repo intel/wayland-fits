@@ -24,6 +24,7 @@ PKG_CHECK_MODULES(CAIRO, [cairo >= 1.10.0])
 PKG_CHECK_MODULES(WAYLAND, [wayland-client wayland-egl])
 PKG_CHECK_MODULES(WAYLAND_SERVER, [wayland-server])
 PKG_CHECK_MODULES(EFL, [elementary ecore-wayland evas-wayland-egl evas-wayland-shm])
+PKG_CHECK_MODULES(PIXMAN, [pixman-1])
 
 # TODO: Add support to conditionally build EFL suite, Core suite, etc...
 
