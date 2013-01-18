@@ -1,4 +1,5 @@
 wayland-fits-client-protocol.h
 wayland-fits-protocol.c
 wayland-fits-server-protocol.h
+weston-headers/
 
