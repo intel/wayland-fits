@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <wayland-server.h>
-#include "weston-source/src/compositor.h"
+#include <weston/src/compositor.h>
 #include "wayland-fits-server-protocol.h"
 
 struct wfits {
