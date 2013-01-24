@@ -40,6 +40,8 @@ public:
 	 **/
 	virtual void teardown() { };
 
+	void noop() { };
+
 private:
 	static Eina_Bool idleSetup(void*);
 	static Eina_Bool doTestSetup(void*, int, void*);

@@ -421,6 +421,37 @@ private:
 	vector<Elm_Win_Indicator_Opacity_Mode>	modes_;
 };
 
+class EcoreWlWindowTest : public ElmTestHarness
+{
+public:
+	EcoreWlWindowTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("EcoreWlWindowTest", "EcoreWlWindowTest")
+	{
+		return;
+	}
+
+	void setup()
+	{
+		window_.show();
+
+		queueCallback(
+			ModifyCheckCallback(
+				boost::bind(&EcoreWlWindowTest::noop, boost::ref(*this)),
+				boost::bind(&EcoreWlWindowTest::check, boost::ref(*this))
+			)
+		);
+	}
+
+	void check()
+	{
+		ASSERT(elm_win_wl_window_get(window_) != NULL);
+	}
+
+private:
+	Window	window_;
+};
+
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowResizeTest, "Window")
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowMoveTest, "Window")
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowIconifyTest, "Window")
@@ -433,4 +464,4 @@ WAYLAND_ELM_HARNESS_TEST_CASE(WindowRotationTest, "Window")
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowAlphaTest, "Window")
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowIndicatorTest, "Window")
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowIndicatorOpacityTest, "Window")
-
+WAYLAND_ELM_HARNESS_TEST_CASE(EcoreWlWindowTest, "Window")
