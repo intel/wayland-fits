@@ -1,3 +1,5 @@
+INCLUDES = -I$(top_srcdir)/src
+
 moduledir = @libdir@/weston
 module_LTLIBRARIES =				\
 	$(weston_wfits)
@@ -14,16 +16,6 @@ weston_wfits_la_CFLAGS =			\
 
 weston_wfits_la_LDFLAGS = -module -avoid-version
 weston_wfits_la_LIBADD = $(WAYLAND_SERVER_LIBS)
-weston_wfits_la_SOURCES =			\
-	weston-wfits.c			\
-	wayland-fits-protocol.c			\
-	wayland-fits-server-protocol.h
-
-BUILT_SOURCES =					\
-	wayland-fits-protocol.c			\
-	wayland-fits-server-protocol.h		\
-	wayland-fits-client-protocol.h
-
-CLEANFILES = $(BUILT_SOURCES)
-
-@wayland_scanner_rules@
+weston_wfits_la_SOURCES =						\
+	weston-wfits.c							\
+	$(top_srcdir)/src/extensions/protocol/wayland-fits-protocol.c

@@ -1,4 +1,4 @@
-SUBDIRS = common core efl extensions
+SUBDIRS = common extensions core efl
 
 TESTS = wfits
 

@@ -26,10 +26,25 @@
     THIS SOFTWARE.
   </copyright>
 
-  <interface name="wfits_uinput" version="1">
+  <interface name="wfits_input" version="1">
     <request name="move_pointer">
       <arg name="x" type="int"/>
       <arg name="y" type="int"/>
     </request>
   </interface>
+  <interface name="wfits_query" version="1">
+    <request name="surface_geometry">
+      <arg name="surface" type="object" interface="wl_surface"/>
+    </request>
+    <event name="surface_geometry">
+      <arg name="x" type="fixed"/>
+      <arg name="y" type="fixed"/>
+      <arg name="width" type="int"/>
+      <arg name="height" type="int"/>
+    </event>
+    <request name="pointer_position"/>
+    <event name="pointer_position">
+      <arg name="x" type="fixed"/>
+      <arg name="y" type="fixed"/>
+    </event>
 </protocol>
