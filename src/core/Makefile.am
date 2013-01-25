@@ -9,6 +9,7 @@ libwfits_core_la_SOURCES =						\
 	seat.cpp							\
 	pointer.cpp							\
 	surface.cpp							\
+	shm.cpp								\
 	harness.cpp							\
 	test_bind_interface.cpp						\
 	test_cursor.cpp							\
