@@ -68,24 +68,34 @@ get_seat(struct wfits *wfits)
 	return seat;
 }
 
-static void
-global_to_compositor(struct wfits* wfits, int32_t *x, int32_t *y)
+static struct weston_output *
+get_output(struct wfits *wfits)
 {
-	struct weston_output *output, *next;
+	struct wl_list *output_list;
+
+	output_list = &wfits->compositor->output_list;
+	if (wl_list_length(output_list) != 1) {
+		weston_log("weston-wfits: ERROR: single output support only!\n");
+		assert(wl_list_length(output_list) == 1);
+	}
+
+	return container_of(output_list->next, struct weston_output, link);
+}
+
+static void
+compositor_to_global(struct wfits* wfits, int32_t *x, int32_t *y)
+{
+	struct weston_output *output;
 	struct x11_compositor *x11_compositor = NULL;
 	struct x11_output *x11_output = NULL;
 	xcb_get_geometry_reply_t *geom;
 	xcb_translate_coordinates_reply_t *trans;
 
-	wl_list_for_each_safe(output, next, &wfits->compositor->output_list, link) {
-		if (strcmp(output->make, "xwayland") == 0) {
-			x11_compositor = (struct x11_compositor*) wfits->compositor;
-			x11_output = (struct x11_output*) output;
-		}
-	}
+	output = get_output(wfits);
+	if (strcmp(output->make, "xwayland") == 0) {
+		x11_compositor = (struct x11_compositor*) wfits->compositor;
+		x11_output = (struct x11_output*) output;
 
-	weston_log("weston-wfits: %p %p\n", x11_compositor, x11_output);
-	if (x11_compositor && x11_output) {
 		geom = xcb_get_geometry_reply(
 			x11_compositor->conn,
 			xcb_get_geometry(
@@ -123,7 +133,7 @@ input_move_pointer(struct wl_client *client, struct wl_resource *resource,
 	struct wfits *wfits = resource->data;
 	struct input_event event;
 
-	global_to_compositor(wfits, &x, &y);
+	compositor_to_global(wfits, &x, &y);
 
 	weston_log("weston-wfits: moving pointer to %d %d\n", x, y);
 
@@ -163,6 +173,7 @@ static void
 create_pointer(struct wfits* wfits)
 {
 	struct uinput_user_dev device;
+	struct weston_output *output = get_output(wfits);
 
 	weston_log("weston-wfits: creating uinput device\n");
 
@@ -202,13 +213,15 @@ create_pointer(struct wfits* wfits)
 	device.id.vendor  = 0x1;
 	device.id.product = 0x1;
 	device.id.version = 1;
-	/* FIXME: This should be the compositor output geometry?? Otherwise, it seems
-	 * to skew/scale absolute x,y pointer movements. What about multidisplay?
+
+	/* FIXME: What about multidisplay? What about x11-backend?
+	 * On x11-backend the device should be bound to the compositor
+	 * X-client window viewport.
 	 */
-	device.absmin[ABS_X] = 0;
-	device.absmax[ABS_X] = 1440;
-	device.absmin[ABS_Y] = 0;
-	device.absmax[ABS_Y] = 900;
+	device.absmin[ABS_X] = output->x;
+	device.absmax[ABS_X] = output->width;
+	device.absmin[ABS_Y] = output->y;
+	device.absmax[ABS_Y] = output->height;
 
 	if (write(wfits->pointer_fd, &device, sizeof(device)) < 0) {
 		exit(EXIT_FAILURE);
