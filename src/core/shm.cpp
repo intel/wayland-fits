@@ -76,6 +76,8 @@ SharedMemoryBuffer::SharedMemoryBuffer(const SharedMemory& shm, int width, int h
 	wl_shm_pool_destroy(pool);
 	close(fd);
 
+	memset(data_, 0xff, size_);
+
 	wl_buffer_set_user_data(*this, this);
 }
 
