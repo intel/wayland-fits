@@ -53,4 +53,6 @@ TEST(Display, "Core/Wrapper")
 
 	FAIL_IF((wl_display*)display == NULL);
 	FAIL_UNLESS_EQUAL(wl_display_get_user_data(display), &display);
+
+	ASSERT(not wl_display_get_error(display));
 }
