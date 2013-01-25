@@ -15,3 +15,13 @@ Compositor::Compositor(const Display& display)
 {
 	wl_compositor_destroy(*this);
 }
+
+TEST(Compositor, "Core/Wrapper")
+{
+	Display display;
+	Compositor compositor(display);
+
+	FAIL_UNLESS_EQUAL(&compositor.display(), &display);
+	FAIL_IF((wl_compositor*)compositor == NULL);
+	FAIL_UNLESS_EQUAL(wl_compositor_get_user_data(compositor), &compositor);
+}

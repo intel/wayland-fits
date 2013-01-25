@@ -56,3 +56,14 @@ void Surface::commit() const
 	Surface* surface = static_cast<Surface*>(data);
 	ASSERT(wl_surface == *surface);
 }
+
+TEST(Surface, "Core/Wrapper")
+{
+	Display display;
+	Compositor compositor(display);
+	Surface surface(compositor);
+
+	FAIL_UNLESS_EQUAL(&surface.compositor(), &compositor);
+	FAIL_IF((wl_surface*)surface == NULL);
+	FAIL_UNLESS_EQUAL(wl_surface_get_user_data(surface), &surface);
+}

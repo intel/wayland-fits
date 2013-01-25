@@ -101,3 +101,16 @@ bool Pointer::hasFocus(const Surface* surface)
 	pointer->axis_ = axis;
 	pointer->axisValue_ = wl_fixed_to_double(value);
 }
+
+TEST(Pointer, "Core/Wrapper")
+{
+	Display display;
+	Seat seat(display);
+	Pointer pointer(seat);
+
+	FAIL_UNLESS_EQUAL(&pointer.seat(), &seat);
+	FAIL_IF((wl_pointer*)pointer == NULL);
+	FAIL_UNLESS_EQUAL(wl_pointer_get_user_data(pointer), &pointer);
+	FAIL_UNLESS(pointer.hasFocus(NULL));
+}
+

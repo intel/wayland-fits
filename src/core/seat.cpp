@@ -28,3 +28,14 @@ Seat::Seat(const Display& display)
 
 	seat->capabilities_ = caps;
 }
+
+TEST(Seat, "Core/Wrapper")
+{
+	Display display;
+	Seat seat(display);
+
+	FAIL_UNLESS_EQUAL(&seat.display(), &display);
+	FAIL_IF((wl_seat*)seat == NULL);
+	FAIL_UNLESS_EQUAL(wl_seat_get_user_data(seat), &seat);
+	FAIL_IF_EQUAL(seat.capabilities(), 0u);
+}

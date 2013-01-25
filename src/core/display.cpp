@@ -46,3 +46,11 @@ void Display::dispatch() const
 
 	display->globals_[std::string(interface)] = GlobalInfo(id, version);
 }
+
+TEST(Display, "Core/Wrapper")
+{
+	Display display;
+
+	FAIL_IF((wl_display*)display == NULL);
+	FAIL_UNLESS_EQUAL(wl_display_get_user_data(display), &display);
+}
