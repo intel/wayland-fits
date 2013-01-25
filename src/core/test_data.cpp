@@ -49,14 +49,12 @@ protected:
 	class data_ ## name : public DataTest<name> \
 	{ \
 	public: \
-		DATA_SETTER_GETTER(name) \
-		void handleGlobal(uint32_t id, const std::string& iface, uint32_t version) \
+		data_ ## name() \
+			: DataTest<name>::DataTest() \
 		{ \
-			if (iface == #name) \
-			{ \
-				obj_ = static_cast<name*>(wl_registry_bind(*this, id, & name ## _interface, 1)); \
-			} \
+			obj_ = display().bind<name>(#name, & name ## _interface); \
 		} \
+		DATA_SETTER_GETTER(name) \
 	}; \
 	WFITS_CORE_HARNESS_TEST_CASE(data_ ## name, "DataInterface")
 	

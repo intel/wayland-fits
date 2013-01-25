@@ -1,4 +1,3 @@
-
 #include "harness.h"
 
 template <typename O, const wl_interface& interface, const std::string& str_interface>
@@ -12,16 +11,9 @@ public:
 		return;
 	}
 
-	void handleGlobal(uint32_t id, const std::string& iface, uint32_t)
+	void setup()
 	{
-		if (iface == str_interface)
-		{
-			object_ = static_cast<O*>(
-				wl_registry_bind(
-					*this, id, &interface, 1
-				)
-			);
-		}
+		object_ = display().template bind<O>(str_interface, &interface);
 	}
 	
 	void teardown()
@@ -44,3 +36,6 @@ BIND_TEST(wl_output)
 BIND_TEST(wl_seat)
 BIND_TEST(wl_shell)
 BIND_TEST(wl_data_device_manager)
+// BIND_TEST(wfits_input)
+// BIND_TEST(wfits_query)
+

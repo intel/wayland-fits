@@ -2,10 +2,16 @@ INCLUDES = -I$(top_srcdir)/src
 
 lib_LTLIBRARIES = libwfits-core.la
 
-libwfits_core_la_SOURCES = \
-	harness.cpp \
-	test_bind_interface.cpp \
-	test_cursor.cpp \
+libwfits_core_la_SOURCES =						\
+	display.cpp							\
+	compositor.cpp							\
+	shell.cpp							\
+	seat.cpp							\
+	pointer.cpp							\
+	surface.cpp							\
+	harness.cpp							\
+	test_bind_interface.cpp						\
+	test_cursor.cpp							\
 	test_data.cpp
 
 libwfits_core_la_LIBADD = \

@@ -17,18 +17,9 @@ class ThemeLoadTest : public CoreTestHarness
 public:
 	ThemeLoadTest()
 		: CoreTestHarness::CoreTestHarness()
-		, shm_(0)
+		, shm_(display().bind<wl_shm>("wl_shm", &wl_shm_interface))
 	{
-		return;
-	}
-
-	void handleGlobal(uint32_t id, const std::string& iface, uint32_t version)
-	{
-		if (iface == "wl_shm")
-		{
-			shm_ = static_cast<wl_shm*>(wl_registry_bind(*this, id, &wl_shm_interface, 1));
-			FAIL_IF_EQUAL(shm_, NULL);
-		}
+		ASSERT(shm_ != NULL);
 	}
 
 	void setup()
