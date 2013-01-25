@@ -44,6 +44,8 @@ void Display::dispatch() const
 
 	ASSERT(display->wl_registry_ == wl_registry);
 
+	// FIXME: With multi-display, we get multiple wl_output global
+	// interface's presented to us.
 	display->globals_[std::string(interface)] = GlobalInfo(id, version);
 }
 

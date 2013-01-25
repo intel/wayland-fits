@@ -52,6 +52,7 @@ typedef Singleton<GlobalTestSuite> TheGlobalTestSuite;
 	public: \
 	START_TEST(ck_ ## name) \
 	{ \
+		std::cout << suite "/" # name << std::endl; \
 		run(); \
 	} \
 	END_TEST \
