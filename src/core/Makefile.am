@@ -10,6 +10,7 @@ libwfits_core_la_SOURCES =						\
 	pointer.cpp							\
 	surface.cpp							\
 	shm.cpp								\
+	shell_surface.cpp						\
 	harness.cpp							\
 	test_bind_interface.cpp						\
 	test_cursor.cpp							\
