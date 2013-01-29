@@ -31,6 +31,7 @@ public:
 
 	void roundtrip() const;
 	void dispatch() const;
+	void yield(const unsigned = 0.001 * 1e6) const;
 
 	operator wl_display*() const { return wl_display_; }
 

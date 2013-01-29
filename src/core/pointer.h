@@ -14,9 +14,11 @@ public:
 
 	operator wl_pointer*() const { return wl_pointer_; }
 	const Seat& seat() const { return seat_; }
+	const int32_t x() const { return x_; }
+	const int32_t y() const { return y_; }
+	const Surface* focus() const { return focus_; }
 
 	bool hasFocus(const Surface*);
-
 private:
 	static void enter(
 		void*, wl_pointer*, uint32_t, wl_surface*, wl_fixed_t, wl_fixed_t);

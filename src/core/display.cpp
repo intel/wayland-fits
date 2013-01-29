@@ -36,6 +36,12 @@ void Display::dispatch() const
 	ASSERT(wl_display_dispatch(*this) >= 0);
 }
 
+void Display::yield(const unsigned time) const
+{
+	roundtrip();
+	usleep(time);
+}
+
 /*static*/ void Display::global(
 	void *data, struct wl_registry *wl_registry, uint32_t id,
 	const char* interface, uint32_t version)

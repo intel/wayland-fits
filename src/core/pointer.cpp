@@ -33,7 +33,7 @@ Pointer::Pointer(const Seat& seat)
 
 bool Pointer::hasFocus(const Surface* surface)
 {
-	return focus_ == surface;
+	return focus() == surface;
 }
 
 /*static*/ void Pointer::enter(
@@ -43,8 +43,8 @@ bool Pointer::hasFocus(const Surface* surface)
 	Pointer* pointer = static_cast<Pointer*>(data);
 	ASSERT(wl_pointer == *pointer);
 
-	std::cout << "Pointer::enter(): " << wl_fixed_to_int(x) << " "
-		<< wl_fixed_to_int(y) << std::endl;
+// 	std::cout << "Pointer::enter(): " << wl_fixed_to_int(x) << " "
+// 		<< wl_fixed_to_int(y) << std::endl;
 	
 	pointer->focus_ = static_cast<Surface*>(
 		wl_surface_get_user_data(wl_surface));
@@ -59,7 +59,7 @@ bool Pointer::hasFocus(const Surface* surface)
 	Pointer* pointer = static_cast<Pointer*>(data);
 	ASSERT(wl_pointer == *pointer);
 
-	std::cout << "Pointer::leave(): " << std::endl;
+// 	std::cout << "Pointer::leave(): " << std::endl;
 	
 	pointer->focus_ = NULL;
 	pointer->x_ = -1;
@@ -73,8 +73,8 @@ bool Pointer::hasFocus(const Surface* surface)
 	Pointer* pointer = static_cast<Pointer*>(data);
 	ASSERT(wl_pointer == *pointer);
 
-	std::cout << "Pointer::motion(): " << wl_fixed_to_int(x) << " "
-		<< wl_fixed_to_int(y) << std::endl;
+// 	std::cout << "Pointer::motion(): " << wl_fixed_to_int(x) << " "
+// 		<< wl_fixed_to_int(y) << std::endl;
 
 	pointer->x_ = wl_fixed_to_int(x);
 	pointer->y_ = wl_fixed_to_int(y);

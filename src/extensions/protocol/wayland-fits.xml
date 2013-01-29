@@ -35,16 +35,22 @@
   <interface name="wfits_query" version="1">
     <request name="surface_geometry">
       <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="result" type="new_id" interface="wfits_query_result"/>
     </request>
+    <request name="global_pointer_position">
+      <arg name="result" type="new_id" interface="wfits_query_result"/>
+    </request>
+  </interface>
+  <interface name="wfits_query_result" version="1">
     <event name="surface_geometry">
       <arg name="x" type="fixed"/>
       <arg name="y" type="fixed"/>
       <arg name="width" type="int"/>
       <arg name="height" type="int"/>
     </event>
-    <request name="pointer_position"/>
-    <event name="pointer_position">
+    <event name="global_pointer_position">
       <arg name="x" type="fixed"/>
       <arg name="y" type="fixed"/>
     </event>
+  </interface>
 </protocol>

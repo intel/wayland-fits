@@ -42,6 +42,7 @@ struct x11_compositor {
 	struct weston_compositor base;
 	Display *dpy;
 	xcb_connection_t *conn;
+	xcb_screen_t *screen;
 };
 
 struct x11_output {
@@ -80,6 +81,23 @@ get_output(struct wfits *wfits)
 	}
 
 	return container_of(output_list->next, struct weston_output, link);
+}
+
+static void
+global_size(struct wfits *wfits, int32_t *width, int32_t *height)
+{
+	struct weston_output *output;
+	struct x11_compositor *x11_compositor = NULL;
+
+	output = get_output(wfits);
+	if (strcmp(output->make, "xwayland") == 0) {
+		x11_compositor = (struct x11_compositor*) wfits->compositor;
+		*width = x11_compositor->screen->width_in_pixels;
+		*height = x11_compositor->screen->height_in_pixels;
+	} else {
+		*width = output->width;
+		*height = output->height;
+	}
 }
 
 static void
@@ -128,14 +146,18 @@ compositor_to_global(struct wfits* wfits, int32_t *x, int32_t *y)
 
 static void
 input_move_pointer(struct wl_client *client, struct wl_resource *resource,
-	     int32_t x, int32_t y)
+		   int32_t x, int32_t y)
 {
 	struct wfits *wfits = resource->data;
 	struct input_event event;
 
+	weston_log("weston-wfits: move %d,%d %d,%d\n", x, y,
+		wl_fixed_from_int(x), wl_fixed_from_int(y)
+	);
+
 	compositor_to_global(wfits, &x, &y);
 
-	weston_log("weston-wfits: moving pointer to %d %d\n", x, y);
+	weston_log("weston-wfits: translated move %d,%d\n", x, y);
 
 	memset(&event, 0, sizeof(event));
 
@@ -174,6 +196,8 @@ create_pointer(struct wfits* wfits)
 {
 	struct uinput_user_dev device;
 	struct weston_output *output = get_output(wfits);
+	int32_t width;
+	int32_t height;
 
 	weston_log("weston-wfits: creating uinput device\n");
 
@@ -218,10 +242,11 @@ create_pointer(struct wfits* wfits)
 	 * On x11-backend the device should be bound to the compositor
 	 * X-client window viewport.
 	 */
-	device.absmin[ABS_X] = output->x;
-	device.absmax[ABS_X] = output->width;
-	device.absmin[ABS_Y] = output->y;
-	device.absmax[ABS_Y] = output->height;
+	global_size(wfits, &width, &height);
+	device.absmin[ABS_X] = 0;
+	device.absmax[ABS_X] = width;
+	device.absmin[ABS_Y] = 0;
+	device.absmax[ABS_Y] = height;
 
 	if (write(wfits->pointer_fd, &device, sizeof(device)) < 0) {
 		exit(EXIT_FAILURE);
@@ -234,31 +259,56 @@ create_pointer(struct wfits* wfits)
 
 static void
 query_surface_geometry(struct wl_client *client, struct wl_resource *resource,
-	     struct wl_resource *surface_resource)
+		       struct wl_resource *surface_resource, uint32_t result_id)
 {
+	struct wl_resource result;
 	struct wfits *wfits = resource->data;
 	struct weston_surface *surface = surface_resource->data;
 
-	wfits_query_send_surface_geometry(resource,
-					  wl_fixed_from_double(surface->geometry.x),
-					  wl_fixed_from_double(surface->geometry.y),
-					  surface->geometry.width,
-					  surface->geometry.height);
+	memset(&result, 0, sizeof(result));
+	result.object.interface = &wfits_query_result_interface;
+	result.object.id = result_id;
+	result.destroy = NULL;
+	result.client = client;
+	result.data = NULL;
+
+	wl_client_add_resource(client, &result);
+
+	wfits_query_result_send_surface_geometry(
+		&result,
+		wl_fixed_from_double(surface->geometry.x),
+		wl_fixed_from_double(surface->geometry.y),
+		surface->geometry.width,
+		surface->geometry.height);
+	wl_resource_destroy(&result);
 }
 
 static void
-query_pointer_position(struct wl_client *client, struct wl_resource *resource)
+query_global_pointer_position(struct wl_client *client,
+			      struct wl_resource *resource,
+			      uint32_t result_id)
 {
+	struct wl_resource result;
 	struct wfits *wfits = resource->data;
 	struct weston_seat *seat = get_seat(wfits);
 
-	wfits_query_send_pointer_position(resource, seat->pointer.x,
-					  seat->pointer.y);
+	memset(&result, 0, sizeof(result));
+	result.object.interface = &wfits_query_result_interface;
+	result.object.id = result_id;
+	result.destroy = NULL;
+	result.client = client;
+	result.data = NULL;
+
+	wl_client_add_resource(client, &result);
+	wfits_query_result_send_global_pointer_position(&result,
+							seat->pointer.x,
+						        seat->pointer.y);
+	wl_resource_destroy(&result);
 }
 
 static const struct wfits_query_interface wfits_query_implementation = {
 	query_surface_geometry,
-	query_pointer_position,
+	query_global_pointer_position,
 };
 
 static void
