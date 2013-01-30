@@ -44,7 +44,7 @@ SharedMemoryBuffer::SharedMemoryBuffer(const SharedMemory& shm, int width, int h
 	, stride_(width_ * 4)
 	, size_(stride_ * height_)
 {
-	wl_shm_pool *pool;
+	wl_shm_pool *pool(NULL);
 	char tmp[] = "/tmp/wfits_shm-XXXXXX";
 	int fd = mkstemp(tmp);
 
@@ -65,13 +65,23 @@ SharedMemoryBuffer::SharedMemoryBuffer(const SharedMemory& shm, int width, int h
 	}
 
 	pool = wl_shm_create_pool(shm_, fd, size_);
+	if (not pool) {
+		close(fd);
+		ASSERT(pool != NULL);
+	}
 
-	ASSERT(pool != NULL);
+	wl_shm_pool_set_user_data(pool, this);
+	if (wl_shm_pool_get_user_data(pool) != this) {
+		close(fd);
+		ASSERT(wl_shm_pool_get_user_data(pool) == this);
+	}
 
 	wl_buffer_ = wl_shm_pool_create_buffer(
 		pool, 0, width_, height_, stride_, WL_SHM_FORMAT_ARGB8888);
-
-	ASSERT(wl_buffer_ != NULL);
+	if (not wl_buffer_) {
+		close(fd);
+		ASSERT(wl_buffer_ != NULL);
+	}
 
 	wl_shm_pool_destroy(pool);
 	close(fd);
@@ -112,4 +122,3 @@ TEST(SharedMemoryBuffer, "Core/Wrapper")
 	FAIL_UNLESS_EQUAL(buffer.stride(), 4*24);
 	FAIL_UNLESS_EQUAL(buffer.size(), 4*24*13);
 }
-

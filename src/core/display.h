@@ -17,7 +17,7 @@ public:
 	template <typename T>
 	T* bind(
 		const std::string& interface,
-		const struct wl_interface *wl_interface) const
+		const wl_interface *wl_interface) const
 	{
 		const Globals::const_iterator match(globals_.find(interface));
 
@@ -34,10 +34,11 @@ public:
 	void yield(const unsigned = 0.001 * 1e6) const;
 
 	operator wl_display*() const { return wl_display_; }
+	operator wl_registry*() const { return wl_registry_; }
 
 private:
 	static void global(
-		void*, struct wl_registry*, uint32_t, const char*, uint32_t);
+		void*, wl_registry*, uint32_t, const char*, uint32_t);
 
 	wl_display	*wl_display_;
 	wl_registry	*wl_registry_;

@@ -9,9 +9,10 @@ Display::Display()
 
 	wl_registry_ = wl_display_get_registry(*this);
 
-	wl_display_set_user_data(*this, this);
-	
 	ASSERT(wl_registry_ != NULL);
+
+	wl_display_set_user_data(*this, this);
+	wl_registry_set_user_data(*this, this);
 
 	static const struct wl_registry_listener listener = {global};
 
@@ -60,7 +61,9 @@ TEST(Display, "Core/Wrapper")
 	Display display;
 
 	FAIL_IF((wl_display*)display == NULL);
+	FAIL_IF((wl_registry*)display == NULL);
 	FAIL_UNLESS_EQUAL(wl_display_get_user_data(display), &display);
+	FAIL_UNLESS_EQUAL(wl_registry_get_user_data(display), &display);
 
 	ASSERT(not wl_display_get_error(display));
 }

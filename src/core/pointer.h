@@ -16,6 +16,8 @@ public:
 	const Seat& seat() const { return seat_; }
 	const int32_t x() const { return x_; }
 	const int32_t y() const { return y_; }
+	const uint32_t button() const { return button_; }
+	const uint32_t buttonState() const { return buttonState_; }
 	const Surface* focus() const { return focus_; }
 
 	bool hasFocus(const Surface*);

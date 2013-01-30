@@ -35,6 +35,9 @@ void Surface::commit() const
 	bool		done(false);
 	wl_callback*	callback(wl_surface_frame(*this));
 
+	wl_callback_set_user_data(callback, &done);
+	FAIL_IF(wl_callback_get_user_data(callback) != &done);
+
 	wl_callback_add_listener(callback, &doneListener, &done);
 	wl_surface_commit(*this);
 

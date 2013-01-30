@@ -56,6 +56,18 @@ public:
 		FAIL_UNLESS_EQUAL(pointer.y(), y);
 	}
 
+	void checkButton(uint32_t button, uint32_t state)
+	{
+		display.yield();
+		for (unsigned i(0);
+		     i < 20 && (pointer.button() != button
+		     || pointer.buttonState() != state); ++i) {
+			display.yield(i*0.001*1e6);
+		}
+		FAIL_UNLESS_EQUAL(pointer.button(), button);
+		FAIL_UNLESS_EQUAL(pointer.buttonState(), state);
+	}
+
 	Display display;
 	Compositor compositor;
 	Shell shell;
@@ -68,6 +80,8 @@ public:
 	Query query;
 	Input input;
 };
+
+#include <linux/input.h>
 
 TEST(SurfacePointer, "Core/Input")
 {
@@ -82,4 +96,25 @@ TEST(SurfacePointer, "Core/Input")
 	}
 	client.movePointer(-1, -1);
 	client.checkFocus(false);
+
+	client.movePointer(5, 5);
+	client.checkFocus(true);
+	
+	wfits_input_key_press(client.input, BTN_LEFT, 1);
+	client.checkButton(BTN_LEFT, 1);
+
+	wfits_input_key_press(client.input, BTN_LEFT, 0);
+	client.checkButton(BTN_LEFT, 0);
+
+	wfits_input_key_press(client.input, BTN_RIGHT, 1);
+	client.checkButton(BTN_RIGHT, 1);
+
+	wfits_input_key_press(client.input, BTN_RIGHT, 0);
+	client.checkButton(BTN_RIGHT, 0);
+
+	wfits_input_key_press(client.input, BTN_MIDDLE, 1);
+	client.checkButton(BTN_MIDDLE, 1);
+
+	wfits_input_key_press(client.input, BTN_MIDDLE, 0);
+	client.checkButton(BTN_MIDDLE, 0);
 }

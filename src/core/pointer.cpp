@@ -87,6 +87,9 @@ bool Pointer::hasFocus(const Surface* surface)
 	Pointer* pointer = static_cast<Pointer*>(data);
 	ASSERT(wl_pointer == *pointer);
 
+	std::cout << "Pointer::button(): " << button << " "
+		<< state << std::endl;
+
 	pointer->button_ = button;
 	pointer->buttonState_ = state;
 }
@@ -97,6 +100,9 @@ bool Pointer::hasFocus(const Surface* surface)
 {
 	Pointer* pointer = static_cast<Pointer*>(data);
 	ASSERT(wl_pointer == *pointer);
+
+	std::cout << "Pointer::axis(): " << axis << " "
+		<< wl_fixed_to_double(value) << std::endl;
 
 	pointer->axis_ = axis;
 	pointer->axisValue_ = wl_fixed_to_double(value);

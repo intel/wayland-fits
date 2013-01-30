@@ -176,9 +176,29 @@ input_move_pointer(struct wl_client *client, struct wl_resource *resource,
 	event.value = 0;
 	write(wfits->pointer_fd, &event, sizeof(event));
 }
+static void
+input_key_press(struct wl_client *client, struct wl_resource *resource,
+		  int32_t key, uint32_t state)
+{
+	struct wfits *wfits = resource->data;
+	struct input_event event;
+
+	memset(&event, 0, sizeof(event));
+
+	event.type = EV_KEY;
+	event.code = key;
+	event.value = state;
+	write(wfits->pointer_fd, &event, sizeof(event));
+
+	event.type = EV_SYN;
+	event.code = SYN_REPORT;
+	event.value = 0;
+	write(wfits->pointer_fd, &event, sizeof(event));
+}
 
 static const struct wfits_input_interface wfits_input_implementation = {
 	input_move_pointer,
+	input_key_press,
 };
 
 static void
@@ -216,6 +236,10 @@ create_pointer(struct wfits* wfits)
 	}
 
 	if (ioctl(wfits->pointer_fd, UI_SET_KEYBIT, BTN_RIGHT) < 0) {
+		exit(EXIT_FAILURE);
+	}
+
+	if (ioctl(wfits->pointer_fd, UI_SET_KEYBIT, BTN_MIDDLE) < 0) {
 		exit(EXIT_FAILURE);
 	}
 

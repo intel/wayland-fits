@@ -31,6 +31,10 @@
       <arg name="x" type="int"/>
       <arg name="y" type="int"/>
     </request>
+    <request name="key_press">
+      <arg name="key" type="uint"/>
+      <arg name="state" type="uint"/>
+    </request>
   </interface>
   <interface name="wfits_query" version="1">
     <request name="surface_geometry">
