@@ -135,7 +135,6 @@ compositor_to_global(struct wfits* wfits, int32_t *x, int32_t *y)
 			NULL
 		);
 
-		weston_log("%d %d :: %d %d\n", *x, *y, trans->dst_x, trans->dst_y);
 		*x += (int16_t)trans->dst_x;
 		*y += (int16_t)trans->dst_y;
 
@@ -151,13 +150,7 @@ input_move_pointer(struct wl_client *client, struct wl_resource *resource,
 	struct wfits *wfits = resource->data;
 	struct input_event event;
 
-	weston_log("weston-wfits: move %d,%d %d,%d\n", x, y,
-		wl_fixed_from_int(x), wl_fixed_from_int(y)
-	);
-
 	compositor_to_global(wfits, &x, &y);
-
-	weston_log("weston-wfits: translated move %d,%d\n", x, y);
 
 	memset(&event, 0, sizeof(event));
 
