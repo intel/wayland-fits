@@ -2,8 +2,8 @@
 #include "harness.h"
 
 CoreTestHarness::CoreTestHarness()
-	: display_()
-	, tests_()
+	: TestHarness::TestHarness()
+	, display_()
 {
 	return;
 }
@@ -13,23 +13,16 @@ CoreTestHarness::~CoreTestHarness()
 	return;
 }
 
-void CoreTestHarness::queueTest(Test test)
+void CoreTestHarness::runStep(CoreTestHarness::TestStep step) const
 {
-	tests_.push_back(test);
+	step();
+	display().yield();
 }
 
-void CoreTestHarness::run()
+void CoreTestHarness::queueStep(TestStep step)
 {
-	setup();
-
-	while (not tests_.empty())
-	{
-		tests_.front()(); // call test
-		tests_.pop_front(); // remove test
-		display().roundtrip();
-	}
-
-	teardown();
+	TestHarness::queueStep(
+		boost::bind(&CoreTestHarness::runStep, boost::ref(*this), step));
 }
 
 class SimpleTest : public CoreTestHarness
@@ -44,14 +37,14 @@ public:
 
 	void setup()
 	{
-		queueTest(boost::bind(&SimpleTest::test, boost::ref(*this)));
+		queueStep(boost::bind(&SimpleTest::test, boost::ref(*this)));
 	}
 
 	void test()
 	{
 		if (++tested < 10)
 		{
-			queueTest(boost::bind(&SimpleTest::test, boost::ref(*this)));
+			queueStep(boost::bind(&SimpleTest::test, boost::ref(*this)));
 		}
 	}
 

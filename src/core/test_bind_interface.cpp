@@ -15,7 +15,7 @@ public:
 	{
 		object_ = display().template bind<O>(str_interface, &interface);
 	}
-	
+
 	void teardown()
 	{
 		FAIL_IF(object_ == NULL);

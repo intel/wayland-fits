@@ -24,10 +24,10 @@ public:
 
 	void setup()
 	{
-		queueTest(
+		queueStep(
 			boost::bind(&ThemeLoadTest::test, boost::ref(*this), "default", "default")
 		);
-		queueTest(
+		queueStep(
 			boost::bind(&ThemeLoadTest::test, boost::ref(*this), "this_theme_does_not_exist", "default")
 		);
 	}

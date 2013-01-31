@@ -7,7 +7,7 @@ class DataTest : public CoreTestHarness
 public:
 	virtual void setup()
 	{
-		queueTest(
+		queueStep(
 			boost::bind(&DataTest<O>::test, boost::ref(*this))
 		);
 	}
