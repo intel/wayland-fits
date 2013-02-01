@@ -20,7 +20,6 @@ public:
 class HoverParentTargetTest : public ElmTestHarness
 {
 public:
-
 	HoverParentTargetTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("HoverTargetTest", "Entry Emoticon Test")
@@ -29,8 +28,6 @@ public:
 	{
 		button_.setPosition(200, 100);
 		button_.setSize(200, 100);
-
-		return;
 	}
 
 	void setup()
@@ -38,19 +35,11 @@ public:
 		window_.show();
 		button_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_hover_parent_set, boost::ref(control_), boost::ref(window_)),
-				boost::bind(&HoverParentTargetTest::checkParent, boost::ref(*this), boost::ref(window_))
-			)
-		);
-	
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_hover_target_set, boost::ref(control_), boost::ref(button_)),
-				boost::bind(&HoverParentTargetTest::checkTarget, boost::ref(*this), boost::ref(button_))
-			)
-		);
+		queueStep(boost::bind(elm_hover_parent_set, boost::ref(control_), boost::ref(window_)));
+		queueStep(boost::bind(&HoverParentTargetTest::checkParent, boost::ref(*this), boost::ref(window_)));
+
+		queueStep(boost::bind(elm_hover_target_set, boost::ref(control_), boost::ref(button_)));
+		queueStep(boost::bind(&HoverParentTargetTest::checkTarget, boost::ref(*this), boost::ref(button_)));
 	}
 
 	void checkTarget(const Evas_Object *expected)
@@ -64,32 +53,10 @@ public:
 	}
 
 private:
-	Window			window_;
-	Hover			control_;
-	EvasObject		button_;
+	Window		window_;
+	Hover		control_;
+	EvasObject	button_;
 };
-
-/*
-		positions_.push_back("left");
-		positions_.push_back("top-left");
-		positions_.push_back("top");
-		positions_.push_back("top-right");
-		positions_.push_back("right");
-		positions_.push_back("bottom-right");
-		positions_.push_back("bottom");
-		positions_.push_back("bottom-left");
-		positions_.push_back("middle");
-		positions_.push_back("smart");
-*/
-
-/*
-		styles_.push_back("hoversel_vertical");
-		styles_.push_back("default");
-		styles_.push_back("menu");
-		styles_.push_back("default");
-		styles_.push_back("popout");
-		styles_.push_back("default");
-*/
 
 typedef ResizeObjectTest<Hover> HoverResizeTest;
 typedef PositionObjectTest<Hover> HoverPositionTest;

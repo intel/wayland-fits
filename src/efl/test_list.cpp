@@ -9,7 +9,7 @@ public:
 	List(EvasObject &parent)
 		: EvasObject::EvasObject(elm_list_add(parent))
 	{
-
+		return;
 	}
 };
 

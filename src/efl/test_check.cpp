@@ -26,7 +26,6 @@ public:
 		, check_(elm_check_add(window_))
 	{
 		evas_object_resize(check_, 200, 100);
-		return;
 	}
 
 	void setup()
@@ -34,19 +33,11 @@ public:
 		check_.show();
 		window_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_check_state_set, boost::ref(check_), EINA_FALSE),
-				boost::bind(&CheckStateTest::checkPos, boost::ref(*this), EINA_FALSE)
-			)
-		);
+		queueStep(boost::bind(elm_check_state_set, boost::ref(check_), EINA_FALSE));
+		queueStep(boost::bind(&CheckStateTest::checkPos, boost::ref(*this), EINA_FALSE));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_check_state_set, boost::ref(check_), EINA_TRUE),
-				boost::bind(&CheckStateTest::checkPos, boost::ref(*this), EINA_TRUE)
-			)
-		);
+		queueStep(boost::bind(elm_check_state_set, boost::ref(check_), EINA_TRUE));
+		queueStep(boost::bind(&CheckStateTest::checkPos, boost::ref(*this), EINA_TRUE));
 	}
 
 	void checkPos(Eina_Bool checked)
@@ -69,7 +60,6 @@ public:
 		, check_(elm_check_add(window_))
 	{
 		evas_object_resize(check_, 200, 100);
-		return;
 	}
 
 	void setup()
@@ -77,12 +67,8 @@ public:
 		check_.show();
 		window_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_object_part_text_set, boost::ref(check_), "default", "DEFAULT"),
-				boost::bind(&CheckTextTest::checkText, boost::ref(*this), "default", "DEFAULT")
-			)
-		);
+		queueStep(boost::bind(elm_object_part_text_set, boost::ref(check_), "default", "DEFAULT"));
+		queueStep(boost::bind(&CheckTextTest::checkText, boost::ref(*this), "default", "DEFAULT"));
 
 		/* TODO: Why don't these work?
 		queueCallback(

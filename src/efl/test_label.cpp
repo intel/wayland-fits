@@ -3,7 +3,7 @@
 #include "templates.h"
 
 // From "A Tale of Two Cities" by Dickens, Ch 5 (Public Domain, WikiSource)
-static const char* dickens = 
+static const char* dickens =
 	"A large cask of wine had been dropped and broken, in the street. The accident "
 	"had happened in getting it out of a cart; the cask had tumbled out with a run, "
 	"the hoops had burst, and it lay on the stones just outside the door of the "
@@ -62,14 +62,9 @@ public:
 		window_.show();
 		control_.show();
 
-		foreach (Elm_Wrap_Type wrap, wraps_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_label_line_wrap_set, boost::ref(control_), wrap),
-					boost::bind(&LabelWrapTest::checkWrap, boost::ref(*this), wrap)
-				)
-			);
+		foreach (Elm_Wrap_Type wrap, wraps_) {
+			queueStep(boost::bind(elm_label_line_wrap_set, boost::ref(control_), wrap));
+			queueStep(boost::bind(&LabelWrapTest::checkWrap, boost::ref(*this), wrap));
 		}
 	}
 
@@ -111,14 +106,9 @@ public:
 		window_.show();
 		control_.show();
 
-		foreach (Evas_Coord width, widths_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_label_wrap_width_set, boost::ref(control_), width),
-					boost::bind(&LabelWrapWidthTest::checkWrapWidth, boost::ref(*this), width)
-				)
-			);
+		foreach (Evas_Coord width, widths_) {
+			queueStep(boost::bind(elm_label_wrap_width_set, boost::ref(control_), width));
+			queueStep(boost::bind(&LabelWrapWidthTest::checkWrapWidth, boost::ref(*this), width));
 		}
 
 	}
@@ -129,9 +119,9 @@ public:
 	}
 
 private:
-	Window				window_;
-	Label				control_;
-	std::vector<Evas_Coord>		widths_;
+	Window			window_;
+	Label			control_;
+	std::vector<Evas_Coord>	widths_;
 };
 
 typedef ResizeObjectTest<Label> LabelResizeTest;

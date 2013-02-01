@@ -10,6 +10,7 @@ public:
 	Notify(EvasObject &parent)
 		: EvasObject::EvasObject(elm_notify_add(parent))
 	{
+		return;
 	}
 };
 
@@ -41,20 +42,11 @@ public:
 
 		// TODO: Using time(), so smallest units of measure are 'seconds'
 		// TODO: Use a monotonic mechanism instead of time() for better resolution
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_notify_timeout_set, boost::ref(control_), 1.0f),
-				boost::bind(&NotifyTimeoutTest::checkTimeout, boost::ref(*this), 1.0f)
-			)
-		);
+		queueStep(boost::bind(elm_notify_timeout_set, boost::ref(control_), 1.0f));
+		queueStep(boost::bind(&NotifyTimeoutTest::checkTimeout, boost::ref(*this), 1.0f));
 
 		// If it takes more than 5 seconds for this event to fire, we have a bug
 		checkTimedOut(time(NULL) + 5);
-	}
-
-	void noOp(void)
-	{
-		// no op
 	}
 
 	void checkTimedOut(const time_t max)
@@ -62,18 +54,12 @@ public:
 		// if taking too long, fail the test
 		FAIL_UNLESS(time(NULL) < max);
 
-		if (not timedout_)
-		{
+		if (not timedout_) {
 			// prevent a hot loop, sleep for 100ms
 			Application::yield(100);
 
-			// awaiting the "timedout" signal, so queue another noOp
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(&NotifyTimeoutTest::noOp, boost::ref(*this)),
-					boost::bind(&NotifyTimeoutTest::checkTimedOut, boost::ref(*this), max)
-				)
-			);
+			// awaiting the "timedout" signal
+			queueStep(boost::bind(&NotifyTimeoutTest::checkTimedOut, boost::ref(*this), max));
 
 			return;
 		}
@@ -144,20 +130,17 @@ public:
 		content_.show();
 		control_.show();
 
-		foreach (const Elm_Notify_Orient orient, orients_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_notify_orient_set, boost::ref(control_), orient),
-					boost::bind(&NotifyOrientTest::checkOrient, boost::ref(*this), orient)
-				)
-			);
+		foreach (const Elm_Notify_Orient orient, orients_) {
+			// FIXME: elm_notify_orient_set is deprecated
+			queueStep(boost::bind(elm_notify_orient_set, boost::ref(control_), orient));
+			queueStep(boost::bind(&NotifyOrientTest::checkOrient, boost::ref(*this), orient));
 		}
 	}
 
 	void checkOrient(const Elm_Notify_Orient expected)
 	{
 		control_.show();
+		// FIXME: elm_notify_orient_get is deprecated
 		FAIL_UNLESS_EQUAL(elm_notify_orient_get(control_), expected);
 		Application::yield();
 	}

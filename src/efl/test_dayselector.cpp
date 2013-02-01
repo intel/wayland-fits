@@ -40,8 +40,6 @@ public:
 		days_.push_back(ELM_DAYSELECTOR_THU);
 		days_.push_back(ELM_DAYSELECTOR_FRI);
 		days_.push_back(ELM_DAYSELECTOR_SAT);
-
-		return;
 	}
 
 	void setup()
@@ -49,28 +47,15 @@ public:
 		window_.show();
 		control_.show();
 
-		foreach (Elm_Dayselector_Day d, days_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), d, EINA_TRUE),
-					boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), d, EINA_TRUE)
-				)
-			);
+		foreach (Elm_Dayselector_Day d, days_) {
+			queueStep(boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), d, EINA_TRUE));
+			queueStep(boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), d, EINA_TRUE));
 
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), d, EINA_FALSE),
-					boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), d, EINA_FALSE)
-				)
-			);
+			queueStep(boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), d, EINA_FALSE));
+			queueStep(boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), d, EINA_FALSE));
 
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), d, EINA_TRUE),
-					boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), d, EINA_TRUE)
-				)
-			);
+			queueStep(boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), d, EINA_TRUE));
+			queueStep(boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), d, EINA_TRUE));
 		}
 	}
 
@@ -97,7 +82,6 @@ public:
 		window_.setSize(500, 400);
 		evas_object_size_hint_weight_set(control_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 		elm_win_resize_object_add(window_, control_);
-		return;
 	}
 
 	void setup()
@@ -108,36 +92,20 @@ public:
 		// toggle the first day of the week
 		const Elm_Dayselector_Day weekstart = elm_dayselector_week_start_get(control_);
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_dayselector_week_start_set, boost::ref(control_), ELM_DAYSELECTOR_WED),
-				boost::bind(&DayselectorLocaleTest::checkStart, boost::ref(*this), ELM_DAYSELECTOR_WED)
-			)
-		);
+		queueStep(boost::bind(elm_dayselector_week_start_set, boost::ref(control_), ELM_DAYSELECTOR_WED));
+		queueStep(boost::bind(&DayselectorLocaleTest::checkStart, boost::ref(*this), ELM_DAYSELECTOR_WED));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_dayselector_week_start_set, boost::ref(control_), weekstart),
-				boost::bind(&DayselectorLocaleTest::checkStart, boost::ref(*this), weekstart)
-			)
-		);
+		queueStep(boost::bind(elm_dayselector_week_start_set, boost::ref(control_), weekstart));
+		queueStep(boost::bind(&DayselectorLocaleTest::checkStart, boost::ref(*this), weekstart));
 
 		// Toggle the length of the weekend
 		const int len = elm_dayselector_weekend_length_get(control_);
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_dayselector_weekend_length_set, boost::ref(control_), 7),
-				boost::bind(&DayselectorLocaleTest::checkLength, boost::ref(*this), 7)
-			)
-		);
+		queueStep(boost::bind(elm_dayselector_weekend_length_set, boost::ref(control_), 7));
+		queueStep(boost::bind(&DayselectorLocaleTest::checkLength, boost::ref(*this), 7));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_dayselector_weekend_length_set, boost::ref(control_), len),
-				boost::bind(&DayselectorLocaleTest::checkLength, boost::ref(*this), len)
-			)
-		);
+		queueStep(boost::bind(elm_dayselector_weekend_length_set, boost::ref(control_), len));
+		queueStep(boost::bind(&DayselectorLocaleTest::checkLength, boost::ref(*this), len));
 	}
 
 	void checkStart(Elm_Dayselector_Day weekstart)

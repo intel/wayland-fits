@@ -23,7 +23,6 @@ public:
 	{
 		evas_object_size_hint_weight_set(control_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 		elm_win_resize_object_add(window_, control_);
-		return;
 	}
 
 	void setup()
@@ -31,17 +30,13 @@ public:
 		control_.show();
 		window_.show();
 
-		int r, g, b;
-		for (r = 0; r < 256; r += 64)
-			for (g = 0; g < 256; g += 64)
-				for (b = 0; b < 256; b += 64)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(&Background::setColor, boost::ref(control_), r, g, b),
-					boost::bind(&BackgroundColorTest::checkColor, boost::ref(*this), r, g, b)
-				)
-			);
+		for (int r(0); r < 256; r += 64) {
+			for (int g(0); g < 256; g += 64) {
+				for (int b(0); b < 256; b += 64) {
+					queueStep(boost::bind(&Background::setColor, boost::ref(control_), r, g, b));
+					queueStep(boost::bind(&BackgroundColorTest::checkColor, boost::ref(*this), r, g, b));
+				}
+			}
 		}
 	}
 
@@ -79,8 +74,6 @@ public:
 		options_.push_back(ELM_BG_OPTION_CENTER);
 		options_.push_back(ELM_BG_OPTION_TILE);
 		options_.push_back(ELM_BG_OPTION_CENTER);
-
-		return;
 	}
 
 	void setup()
@@ -90,28 +83,15 @@ public:
 
 		path p(MEDIA_PATH"/bridge_of_the_gods.png");
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&Background::setImage, boost::ref(control_), p),
-				boost::bind(&BackgroundImageTest::checkImage, boost::ref(*this), p)
-				)
-			);
+		queueStep(boost::bind(&Background::setImage, boost::ref(control_), p));
+		queueStep(boost::bind(&BackgroundImageTest::checkImage, boost::ref(*this), p));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&Window::maximize, boost::ref(window_), EINA_TRUE),
-				boost::bind(&BackgroundImageTest::checkMax, boost::ref(*this), EINA_TRUE)
-				)
-			);
+		queueStep(boost::bind(&Window::maximize, boost::ref(window_), EINA_TRUE));
+		queueStep(boost::bind(&BackgroundImageTest::checkMax, boost::ref(*this), EINA_TRUE));
 
-		foreach (Elm_Bg_Option o, options_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(&Background::setImageOpt, boost::ref(control_), o),
-					boost::bind(&BackgroundImageTest::checkImageOpt, boost::ref(*this), o)
-				)
-			);
+		foreach (Elm_Bg_Option o, options_) {
+			queueStep(boost::bind(&Background::setImageOpt, boost::ref(control_), o));
+			queueStep(boost::bind(&BackgroundImageTest::checkImageOpt, boost::ref(*this), o));
 		}
 	}
 
@@ -134,8 +114,8 @@ public:
 	}
 
 private:
-	Window					window_;
-	Background				control_;
+	Window			window_;
+	Background		control_;
 	vector<Elm_Bg_Option>	options_;
 };
 

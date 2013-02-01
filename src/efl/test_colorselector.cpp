@@ -8,16 +8,12 @@
 class ColorselectorColorTest : public ElmTestHarness
 {
 public:
-
 	ColorselectorColorTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("ColorselectorColorTest", "Colorselector Color Test")
 		, selector_(elm_colorselector_add(window_))
 	{
 		window_.setSize(800, 600);
-		//evas_object_size_hint_weight_set(selector_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-		//elm_win_resize_object_add(window_, selector_);
-		return;
 	}
 
 	void setup()
@@ -25,12 +21,8 @@ public:
 		selector_.show();
 		window_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_colorselector_color_set, boost::ref(selector_), 64, 64, 64, 0),
-				boost::bind(&ColorselectorColorTest::checkColor, boost::ref(*this), 64, 64, 64, 0)
-			)
-		);
+		queueStep(boost::bind(elm_colorselector_color_set, boost::ref(selector_), 64, 64, 64, 0));
+		queueStep(boost::bind(&ColorselectorColorTest::checkColor, boost::ref(*this), 64, 64, 64, 0));
 	}
 
 	void checkColor(const int r, const int g, const int b, const int a)

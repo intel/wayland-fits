@@ -28,8 +28,6 @@ public:
 	{
 		control_.setSize(300, 300);
 		control_.setPosition(50, 10);
-
-		return;
 	}
 
 	void setup()
@@ -37,12 +35,8 @@ public:
 		window_.show();
 		control_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&ImageFileTest::checkImageSet, boost::ref(*this), img),
-				boost::bind(&ImageFileTest::checkImage, boost::ref(*this), img)
-			)
-		);
+		queueStep(boost::bind(&ImageFileTest::checkImageSet, boost::ref(*this), img));
+		queueStep(boost::bind(&ImageFileTest::checkImage, boost::ref(*this), img));
 	}
 
 	void checkImageSet(boost::filesystem::path& desired)
@@ -73,7 +67,6 @@ public:
 		, window_("ImageOrientTest", "Image Orientation Test")
 		, control_(window_)
 	{
-
 		FAIL_UNLESS_EQUAL(elm_image_file_set(control_, img.c_str(), NULL), EINA_TRUE);
 
 		control_.setSize(300, 300);
@@ -87,8 +80,6 @@ public:
 		orientations_.push_back(ELM_IMAGE_FLIP_VERTICAL);
 		orientations_.push_back(ELM_IMAGE_FLIP_TRANSPOSE);
 		orientations_.push_back(ELM_IMAGE_FLIP_TRANSVERSE);
-
-		return;
 	}
 
 	void setup()
@@ -96,21 +87,12 @@ public:
 		window_.show();
 		control_.show();
 
-		foreach (const Elm_Image_Orient orientation, orientations_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_image_orient_set, boost::ref(control_), orientation),
-					boost::bind(&ImageOrientTest::checkOrient, boost::ref(*this), orientation)
-				)
-			);
+		foreach (const Elm_Image_Orient orientation, orientations_) {
+			queueStep(boost::bind(elm_image_orient_set, boost::ref(control_), orientation));
+			queueStep(boost::bind(&ImageOrientTest::checkOrient, boost::ref(*this), orientation));
 
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_image_orient_set, boost::ref(control_), ELM_IMAGE_ORIENT_0),
-					boost::bind(&ImageOrientTest::checkOrient, boost::ref(*this), ELM_IMAGE_ORIENT_0)
-				)
-			);
+			queueStep(boost::bind(elm_image_orient_set, boost::ref(control_), ELM_IMAGE_ORIENT_0));
+			queueStep(boost::bind(&ImageOrientTest::checkOrient, boost::ref(*this), ELM_IMAGE_ORIENT_0));
 		}
 
 	}
@@ -147,51 +129,26 @@ public:
 
 		FAIL_UNLESS(elm_image_animated_available_get(control_) == EINA_TRUE);
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_image_animated_set, boost::ref(control_), EINA_TRUE),
-				boost::bind(&ImageAnimateTest::checkAnimated, boost::ref(*this), EINA_TRUE)
-			)
-		);
+		queueStep(boost::bind(elm_image_animated_set, boost::ref(control_), EINA_TRUE));
+		queueStep(boost::bind(&ImageAnimateTest::checkAnimated, boost::ref(*this), EINA_TRUE));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_image_animated_play_set, boost::ref(control_), EINA_TRUE),
-				boost::bind(&ImageAnimateTest::checkPlay, boost::ref(*this), EINA_TRUE)
-			)
-		);
+		queueStep(boost::bind(elm_image_animated_play_set, boost::ref(control_), EINA_TRUE));
+		queueStep(boost::bind(&ImageAnimateTest::checkPlay, boost::ref(*this), EINA_TRUE));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&ImageAnimateTest::pause, boost::ref(*this)),
-				boost::bind(&ImageAnimateTest::pause, boost::ref(*this))
-			)
-		);
+		queueStep(boost::bind(&ImageAnimateTest::runLoop, boost::ref(*this)));
+		queueStep(boost::bind(&ImageAnimateTest::runLoop, boost::ref(*this)));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_image_animated_play_set, boost::ref(control_), EINA_FALSE),
-				boost::bind(&ImageAnimateTest::checkPlay, boost::ref(*this), EINA_FALSE)
-			)
-		);
+		queueStep(boost::bind(elm_image_animated_play_set, boost::ref(control_), EINA_FALSE));
+		queueStep(boost::bind(&ImageAnimateTest::checkPlay, boost::ref(*this), EINA_FALSE));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_image_animated_set, boost::ref(control_), EINA_FALSE),
-				boost::bind(&ImageAnimateTest::checkAnimated, boost::ref(*this), EINA_FALSE)
-			)
-		);
-
-
+		queueStep(boost::bind(elm_image_animated_set, boost::ref(control_), EINA_FALSE));
+		queueStep(boost::bind(&ImageAnimateTest::checkAnimated, boost::ref(*this), EINA_FALSE));
 	}
 
-	void pause(void)
+	void runLoop(void)
 	{
-		int loop;
-
 		// total is a half-second delay, but keep the main loop moving
-		for (loop = 0; loop < 5000; ++loop)
-		{
+		for (unsigned loop(0); loop < 5000; ++loop) {
 			Application::yield(100);
 		}
 	}

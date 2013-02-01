@@ -8,13 +8,13 @@ public:
 	GLView(EvasObject &parent)
 		: EvasObject::EvasObject(elm_glview_add(parent))
 	{
+		return;
 	}
 };
 
 class GLViewResizePolicyTest : public ElmTestHarness
 {
 public:
-
 	GLViewResizePolicyTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("GLViewResizePolicyTest", "GLView Resize Policy Test")
@@ -35,14 +35,9 @@ public:
 		window_.show();
 		control_.show();
 
-		foreach (const Elm_GLView_Resize_Policy policy, policies_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(&GLViewResizePolicyTest::set, boost::ref(*this), policy),
-					boost::bind(&GLViewResizePolicyTest::check, boost::ref(*this))
-				)
-			);
+		foreach (const Elm_GLView_Resize_Policy policy, policies_) {
+			queueStep(boost::bind(&GLViewResizePolicyTest::set, boost::ref(*this), policy));
+			queueStep(boost::bind(&GLViewResizePolicyTest::check, boost::ref(*this)));
 		}
 	}
 
@@ -66,7 +61,6 @@ private:
 class GLViewRenderPolicyTest : public ElmTestHarness
 {
 public:
-
 	GLViewRenderPolicyTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("GLViewRenderPolicyTest", "GLView Render Policy Test")
@@ -87,14 +81,9 @@ public:
 		window_.show();
 		control_.show();
 
-		foreach (const Elm_GLView_Render_Policy policy, policies_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(&GLViewRenderPolicyTest::set, boost::ref(*this), policy),
-					boost::bind(&GLViewRenderPolicyTest::check, boost::ref(*this))
-				)
-			);
+		foreach (const Elm_GLView_Render_Policy policy, policies_) {
+			queueStep(boost::bind(&GLViewRenderPolicyTest::set, boost::ref(*this), policy));
+			queueStep(boost::bind(&GLViewRenderPolicyTest::check, boost::ref(*this)));
 		}
 	}
 
@@ -118,7 +107,6 @@ private:
 class GLViewModeTest : public ElmTestHarness
 {
 public:
-
 	GLViewModeTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("GLViewModeTest", "GLView Mode Test")
@@ -142,14 +130,9 @@ public:
 		window_.show();
 		control_.show();
 
-		foreach (const Elm_GLView_Mode mode, modes_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(&GLViewModeTest::set, boost::ref(*this), mode),
-					boost::bind(&GLViewModeTest::check, boost::ref(*this))
-				)
-			);
+		foreach (const Elm_GLView_Mode mode, modes_) {
+			queueStep(boost::bind(&GLViewModeTest::set, boost::ref(*this), mode));
+			queueStep(boost::bind(&GLViewModeTest::check, boost::ref(*this)));
 		}
 	}
 
@@ -173,7 +156,6 @@ private:
 class GLViewAPITest : public ElmTestHarness
 {
 public:
-
 	GLViewAPITest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("GLViewAPITest", "GLView API Test")
@@ -189,17 +171,7 @@ public:
 		window_.show();
 		control_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&GLViewAPITest::noOp, boost::ref(*this)),
-				boost::bind(&GLViewAPITest::check, boost::ref(*this))
-			)
-		);
-	}
-
-	void noOp(void)
-	{
-		// no op
+		queueStep(boost::bind(&GLViewAPITest::check, boost::ref(*this)));
 	}
 
 	void check(void)

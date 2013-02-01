@@ -14,6 +14,7 @@ public:
 	Entry(EvasObject &parent)
 		: EvasObject::EvasObject(elm_entry_add(parent))
 	{
+		return;
 	}
 };
 
@@ -76,8 +77,6 @@ public:
 		sizes_.push_back(48);
 		sizes_.push_back(64);
 		sizes_.push_back(128);
-
-		return;
 	}
 
 	void setup()
@@ -86,18 +85,12 @@ public:
 		control_.show();
 
 		boost::format tmarkup("Emoticon: <item size=%1%x%1% vsize=full href=emoticon/%2%></item>");
-		foreach (const string& e, emoticons_)
-		{
-			foreach (int size, sizes_)
-			{
+		foreach (const string& e, emoticons_) {
+			foreach (int size, sizes_) {
 				std::string markup(boost::str(tmarkup % size % e));
 
-				queueCallback(
-					ModifyCheckCallback(
-						boost::bind(elm_entry_entry_set, boost::ref(control_), markup.c_str()),
-						boost::bind(&EntryEmoticonTest::checkEmoticon, boost::ref(*this), markup)
-					)
-				);
+				queueStep(boost::bind(elm_entry_entry_set, boost::ref(control_), markup.c_str()));
+				queueStep(boost::bind(&EntryEmoticonTest::checkEmoticon, boost::ref(*this), markup));
 			}
 		}
 	}
@@ -131,7 +124,6 @@ public:
 		control_.setPosition(50, 10);
 
 		elm_entry_autosave_set(control_, EINA_FALSE);
-		return;
 	}
 
 	void setup()
@@ -141,20 +133,11 @@ public:
 
 		elm_entry_select_all(control_);
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_entry_entry_set, boost::ref(control_), sentinel_.c_str()),
-				boost::bind(&EntryCutTest::checkEntry, boost::ref(*this), sentinel_)
-			)
-		);
+		queueStep(boost::bind(elm_entry_entry_set, boost::ref(control_), sentinel_.c_str()));
+		queueStep(boost::bind(&EntryCutTest::checkEntry, boost::ref(*this), sentinel_));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_entry_selection_cut, boost::ref(control_)),
-				boost::bind(&EntryCutTest::checkCut, boost::ref(*this), "")
-			)
-		);
-
+		queueStep(boost::bind(elm_entry_selection_cut, boost::ref(control_)));
+		queueStep(boost::bind(&EntryCutTest::checkCut, boost::ref(*this), ""));
 	}
 
 	void checkEntry(const string& expected)
@@ -204,20 +187,11 @@ public:
 
 		elm_entry_select_all(control_);
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_entry_entry_set, boost::ref(control_), sentinel_.c_str()),
-				boost::bind(&EntryCopyTest::checkEntry, boost::ref(*this), sentinel_)
-			)
-		);
+		queueStep(boost::bind(elm_entry_entry_set, boost::ref(control_), sentinel_.c_str()));
+		queueStep(boost::bind(&EntryCopyTest::checkEntry, boost::ref(*this), sentinel_));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_entry_selection_copy, boost::ref(control_)),
-				boost::bind(&EntryCopyTest::checkEntry, boost::ref(*this), sentinel_)
-			)
-		);
-
+		queueStep(boost::bind(elm_entry_selection_copy, boost::ref(control_)));
+		queueStep(boost::bind(&EntryCopyTest::checkEntry, boost::ref(*this), sentinel_));
 	}
 
 	void checkEntry(const string& expected)
@@ -256,34 +230,17 @@ public:
 		window_.show();
 		control_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_entry_entry_set, boost::ref(control_), sentinel_.c_str()),
-				boost::bind(&EntryPasteTest::checkEntry, boost::ref(*this), sentinel_)
-			)
-		);
+		queueStep(boost::bind(elm_entry_entry_set, boost::ref(control_), sentinel_.c_str()));
+		queueStep(boost::bind(&EntryPasteTest::checkEntry, boost::ref(*this), sentinel_));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&EntryPasteTest::cut, boost::ref(*this)),
-				boost::bind(&EntryPasteTest::checkEntry, boost::ref(*this), "")
-			)
-		);
+		queueStep(boost::bind(&EntryPasteTest::cut, boost::ref(*this)));
+		queueStep(boost::bind(&EntryPasteTest::checkEntry, boost::ref(*this), ""));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_entry_entry_set, boost::ref(control_), jibberish_.c_str()),
-				boost::bind(&EntryPasteTest::checkEntry, boost::ref(*this), jibberish_.c_str())
-			)
-		);
+		queueStep(boost::bind(elm_entry_entry_set, boost::ref(control_), jibberish_.c_str()));
+		queueStep(boost::bind(&EntryPasteTest::checkEntry, boost::ref(*this), jibberish_.c_str()));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&EntryPasteTest::paste, boost::ref(*this)),
-				boost::bind(&EntryPasteTest::checkEntry, boost::ref(*this), jibberish_.c_str())
-			)
-		);
-
+		queueStep(boost::bind(&EntryPasteTest::paste, boost::ref(*this)));
+		queueStep(boost::bind(&EntryPasteTest::checkEntry, boost::ref(*this), jibberish_.c_str()));
 	}
 
 	void cut()

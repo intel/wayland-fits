@@ -6,6 +6,7 @@ public:
 	Mapbuf(EvasObject &parent)
 		: EvasObject::EvasObject(elm_mapbuf_add(parent))
 	{
+		return;
 	}
 };
 

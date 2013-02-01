@@ -21,12 +21,11 @@ public:
 };
 
 // TODO: Fileselector controls all share a lot of commonality, so an
-// TODO: aggressive refactor with cpp macros could be leveraged.
+// TODO: aggressive refactor with cpp templates could be leveraged.
 
 class FileselectorExpandableTest : public ElmTestHarness
 {
 public:
-
 	FileselectorExpandableTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("FileselectorExpandableTest", "Fileselector Expandable Test")
@@ -45,14 +44,9 @@ public:
 		window_.show();
 		control_.show();
 
-		foreach (Eina_Bool state, states_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_fileselector_expandable_set, boost::ref(control_), state),
-					boost::bind(&FileselectorExpandableTest::checkExpandable, boost::ref(*this), state)
-				)
-			);
+		foreach (Eina_Bool state, states_) {
+			queueStep(boost::bind(elm_fileselector_expandable_set, boost::ref(control_), state));
+			queueStep(boost::bind(&FileselectorExpandableTest::checkExpandable, boost::ref(*this), state));
 		}
 	}
 
@@ -62,15 +56,14 @@ public:
 	}
 
 private:
-	Window				window_;
-	EvasObject			control_;
+	Window			window_;
+	EvasObject		control_;
 	vector<Eina_Bool>	states_;
 };
 
 class FileselectorFolderOnlyTest : public ElmTestHarness
 {
 public:
-
 	FileselectorFolderOnlyTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("FileselectorFolderOnlyTest", "Fileselector FolderOnly Test")
@@ -89,14 +82,9 @@ public:
 		window_.show();
 		control_.show();
 
-		foreach (Eina_Bool state, states_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_fileselector_folder_only_set, boost::ref(control_), state),
-					boost::bind(&FileselectorFolderOnlyTest::checkFolderOnly, boost::ref(*this), state)
-				)
-			);
+		foreach (Eina_Bool state, states_) {
+			queueStep(boost::bind(elm_fileselector_folder_only_set, boost::ref(control_), state));
+			queueStep(boost::bind(&FileselectorFolderOnlyTest::checkFolderOnly, boost::ref(*this), state));
 		}
 	}
 
@@ -106,15 +94,14 @@ public:
 	}
 
 private:
-	Window				window_;
-	EvasObject			control_;
+	Window			window_;
+	EvasObject		control_;
 	vector<Eina_Bool>	states_;
 };
 
 class FileselectorIsSaveTest : public ElmTestHarness
 {
 public:
-
 	FileselectorIsSaveTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("FileselectorIsSaveTest", "Fileselector IsSave Test")
@@ -133,14 +120,9 @@ public:
 		window_.show();
 		control_.show();
 
-		foreach (Eina_Bool state, states_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_fileselector_is_save_set, boost::ref(control_), state),
-					boost::bind(&FileselectorIsSaveTest::checkIsSave, boost::ref(*this), state)
-				)
-			);
+		foreach (Eina_Bool state, states_) {
+			queueStep(boost::bind(elm_fileselector_is_save_set, boost::ref(control_), state));
+			queueStep(boost::bind(&FileselectorIsSaveTest::checkIsSave, boost::ref(*this), state));
 		}
 	}
 
@@ -150,15 +132,14 @@ public:
 	}
 
 private:
-	Window				window_;
-	EvasObject			control_;
+	Window			window_;
+	EvasObject		control_;
 	vector<Eina_Bool>	states_;
 };
 
 class FileselectorModeTest : public ElmTestHarness
 {
 public:
-
 	FileselectorModeTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("FileselectorModeTest", "Fileselector Mode Test")
@@ -178,14 +159,9 @@ public:
 		window_.show();
 		control_.show();
 
-		foreach (Elm_Fileselector_Mode state, states_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_fileselector_mode_set, boost::ref(control_), state),
-					boost::bind(&FileselectorModeTest::checkMode, boost::ref(*this), state)
-				)
-			);
+		foreach (Elm_Fileselector_Mode state, states_) {
+			queueStep(boost::bind(elm_fileselector_mode_set, boost::ref(control_), state));
+			queueStep(boost::bind(&FileselectorModeTest::checkMode, boost::ref(*this), state));
 		}
 	}
 
@@ -195,15 +171,14 @@ public:
 	}
 
 private:
-	Window							window_;
-	EvasObject						control_;
+	Window				window_;
+	EvasObject			control_;
 	vector<Elm_Fileselector_Mode>	states_;
 };
 
 class FileselectorOkCancelTest : public ElmTestHarness
 {
 public:
-
 	FileselectorOkCancelTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("FileselectorOkCancelTest", "Fileselector OkCancel Test")
@@ -222,14 +197,9 @@ public:
 		window_.show();
 		control_.show();
 
-		foreach (Eina_Bool state, states_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_fileselector_buttons_ok_cancel_set, boost::ref(control_), state),
-					boost::bind(&FileselectorOkCancelTest::checkOkCancel, boost::ref(*this), state)
-				)
-			);
+		foreach (Eina_Bool state, states_) {
+			queueStep(boost::bind(elm_fileselector_buttons_ok_cancel_set, boost::ref(control_), state));
+			queueStep(boost::bind(&FileselectorOkCancelTest::checkOkCancel, boost::ref(*this), state));
 		}
 	}
 
@@ -239,8 +209,8 @@ public:
 	}
 
 private:
-	Window				window_;
-	EvasObject			control_;
+	Window			window_;
+	EvasObject		control_;
 	vector<Eina_Bool>	states_;
 };
 
@@ -256,4 +226,3 @@ WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorFolderOnlyTest, "FileSelector")
 WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorIsSaveTest, "FileSelector")
 WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorModeTest, "FileSelector")
 WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorOkCancelTest, "FileSelector")
-

@@ -8,6 +8,7 @@ public:
 	Panel(EvasObject &parent)
 		: EvasObject::EvasObject(elm_panel_add(parent))
 	{
+		return;
 	}
 };
 
@@ -41,14 +42,9 @@ public:
 		content_.show();
 		control_.show();
 
-		foreach (const Elm_Panel_Orient orient, orients_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_panel_orient_set, boost::ref(control_), orient),
-					boost::bind(&PanelOrientTest::checkOrient, boost::ref(*this), orient)
-				)
-			);
+		foreach (const Elm_Panel_Orient orient, orients_) {
+			queueStep(boost::bind(elm_panel_orient_set, boost::ref(control_), orient));
+			queueStep(boost::bind(&PanelOrientTest::checkOrient, boost::ref(*this), orient));
 		}
 	}
 
@@ -65,7 +61,6 @@ private:
 	EvasObject			content_;
 	std::vector<Elm_Panel_Orient>	orients_;
 };
-
 
 // TODO - PanelToggleTest - needs callbacks
 class PanelToggleTest : public ElmTestHarness
@@ -90,26 +85,14 @@ public:
 		content_.show();
 		control_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_panel_toggle, boost::ref(control_)),
-				boost::bind(&EvasObject::checkVisible, boost::ref(control_), EINA_FALSE)
-			)
-		);
+		queueStep(boost::bind(elm_panel_toggle, boost::ref(control_)));
+		queueStep(boost::bind(&EvasObject::checkVisible, boost::ref(control_), EINA_FALSE));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&PanelToggleTest::yield, boost::ref(*this)),
-				boost::bind(&PanelToggleTest::yield, boost::ref(*this))
-			)
-		);
+		queueStep(boost::bind(&PanelToggleTest::yield, boost::ref(*this)));
+		queueStep(boost::bind(&PanelToggleTest::yield, boost::ref(*this)));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_panel_toggle, boost::ref(control_)),
-				boost::bind(&EvasObject::checkVisible, boost::ref(control_), EINA_TRUE)
-			)
-		);
+		queueStep(boost::bind(elm_panel_toggle, boost::ref(control_)));
+		queueStep(boost::bind(&EvasObject::checkVisible, boost::ref(control_), EINA_TRUE));
 	}
 
 	void yield(void)

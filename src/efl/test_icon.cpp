@@ -72,14 +72,9 @@ public:
 		window_.show();
 		control_.show();
 
-		foreach (const std::string& name, icons_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(&IconStandardTest::setStandard, boost::ref(*this), boost::cref(name)),
-					boost::bind(&IconStandardTest::checkStandard, boost::ref(*this), boost::cref(name))
-				)
-			);
+		foreach (const std::string& name, icons_) {
+			queueStep(boost::bind(&IconStandardTest::setStandard, boost::ref(*this), boost::cref(name)));
+			queueStep(boost::bind(&IconStandardTest::checkStandard, boost::ref(*this), boost::cref(name)));
 		}
 	}
 
@@ -97,11 +92,10 @@ public:
 	}
 
 private:
-	Window			window_;
-	Icon			control_;
-	vector<string>		icons_;
+	Window		window_;
+	Icon		control_;
+	vector<string>	icons_;
 };
-
 
 typedef ResizeObjectTest<Icon> IconResizeTest;
 typedef PositionObjectTest<Icon> IconPositionTest;

@@ -23,7 +23,6 @@ public:
 class FileselectorButtonExpandableTest : public ElmTestHarness
 {
 public:
-
 	FileselectorButtonExpandableTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("FileselectorButtonExpandableTest", "Fileselector Button Expandable Test")
@@ -44,14 +43,9 @@ public:
 
 		typedef vector<Eina_Bool>::const_iterator CIterator;
 		const CIterator endIt(states_.end());
-		for (CIterator it(states_.begin()); it != endIt; ++it)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_fileselector_button_expandable_set, boost::ref(control_), *it),
-					boost::bind(&FileselectorButtonExpandableTest::checkExpandable, boost::ref(*this), *it)
-				)
-			);
+		for (CIterator it(states_.begin()); it != endIt; ++it) {
+			queueStep(boost::bind(elm_fileselector_button_expandable_set, boost::ref(control_), *it));
+			queueStep(boost::bind(&FileselectorButtonExpandableTest::checkExpandable, boost::ref(*this), *it));
 		}
 	}
 
@@ -69,7 +63,6 @@ private:
 class FileselectorButtonFolderOnlyTest : public ElmTestHarness
 {
 public:
-
 	FileselectorButtonFolderOnlyTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("FileselectorButtonFolderOnlyTest", "Fileselector Button FolderOnly Test")
@@ -88,14 +81,9 @@ public:
 		window_.show();
 		control_.show();
 
-		foreach (Eina_Bool state, states_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_fileselector_button_folder_only_set, boost::ref(control_), state),
-					boost::bind(&FileselectorButtonFolderOnlyTest::checkFolderOnly, boost::ref(*this), state)
-				)
-			);
+		foreach (Eina_Bool state, states_) {
+			queueStep(boost::bind(elm_fileselector_button_folder_only_set, boost::ref(control_), state));
+			queueStep(boost::bind(&FileselectorButtonFolderOnlyTest::checkFolderOnly, boost::ref(*this), state));
 		}
 	}
 
@@ -113,7 +101,6 @@ private:
 class FileselectorButtonIsSaveTest : public ElmTestHarness
 {
 public:
-
 	FileselectorButtonIsSaveTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("FileselectorButtonIsSaveTest", "Fileselector Button IsSave Test")
@@ -132,14 +119,9 @@ public:
 		window_.show();
 		control_.show();
 
-		foreach (Eina_Bool state, states_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_fileselector_button_is_save_set, boost::ref(control_), state),
-					boost::bind(&FileselectorButtonIsSaveTest::checkIsSave, boost::ref(*this), state)
-				)
-			);
+		foreach (Eina_Bool state, states_) {
+			queueStep(boost::bind(elm_fileselector_button_is_save_set, boost::ref(control_), state));
+			queueStep(boost::bind(&FileselectorButtonIsSaveTest::checkIsSave, boost::ref(*this), state));
 		}
 	}
 
@@ -157,7 +139,6 @@ private:
 class FileselectorButtonInwinTest : public ElmTestHarness
 {
 public:
-
 	FileselectorButtonInwinTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("FileselectorButtonInwinTest", "Fileselector Button Inwin Test")
@@ -176,14 +157,9 @@ public:
 		window_.show();
 		control_.show();
 
-		foreach (Eina_Bool state, states_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_fileselector_button_inwin_mode_set, boost::ref(control_), state),
-					boost::bind(&FileselectorButtonInwinTest::checkInwin, boost::ref(*this), state)
-				)
-			);
+		foreach (Eina_Bool state, states_) {
+			queueStep(boost::bind(elm_fileselector_button_inwin_mode_set, boost::ref(control_), state));
+			queueStep(boost::bind(&FileselectorButtonInwinTest::checkInwin, boost::ref(*this), state));
 		}
 	}
 

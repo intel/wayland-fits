@@ -37,8 +37,6 @@ public:
 		strings_.push_back("Eigth");
 		strings_.push_back("Ninth");
 		strings_.push_back("Tenth");
-
-		return;
 	}
 
 	void setup()
@@ -53,12 +51,10 @@ public:
 		
 		vector<Elm_Object_Item*> items;
 
-		foreach (const std::string& label, strings_)
-		{
+		foreach (const std::string& label, strings_) {
 			Elm_Object_Item* item = elm_flipselector_item_append(control_, label.c_str(), NULL, NULL);
 			FAIL_IF_EQUAL(item, static_cast<Elm_Object_Item*>(NULL));
-			if (item != NULL)
-			{
+			if (item != NULL) {
 				items.push_back(item);
 			}
 		}
@@ -69,26 +65,15 @@ public:
 		control_.setSize(200, 200);
 		control_.setPosition(50, 10);
 
-		foreach_reverse (Elm_Object_Item* item, items)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_flipselector_item_selected_set, item, EINA_TRUE),
-					boost::bind(&FlipSelectorItemTest::checkItem, boost::ref(*this), item, pivot, EINA_TRUE)
-				)
-			);
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_flipselector_item_selected_set, pivot, EINA_TRUE),
-					boost::bind(&FlipSelectorItemTest::checkItem, boost::ref(*this), item, pivot, EINA_FALSE)
-				)
-			);
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_flipselector_item_selected_set, item, EINA_TRUE),
-					boost::bind(&FlipSelectorItemTest::checkItem, boost::ref(*this), item, pivot, EINA_TRUE)
-				)
-			);
+		foreach_reverse (Elm_Object_Item* item, items) {
+			queueStep(boost::bind(elm_flipselector_item_selected_set, item, EINA_TRUE));
+			queueStep(boost::bind(&FlipSelectorItemTest::checkItem, boost::ref(*this), item, pivot, EINA_TRUE));
+
+			queueStep(boost::bind(elm_flipselector_item_selected_set, pivot, EINA_TRUE));
+			queueStep(boost::bind(&FlipSelectorItemTest::checkItem, boost::ref(*this), item, pivot, EINA_FALSE));
+
+			queueStep(boost::bind(elm_flipselector_item_selected_set, item, EINA_TRUE));
+			queueStep(boost::bind(&FlipSelectorItemTest::checkItem, boost::ref(*this), item, pivot, EINA_TRUE));
 		}
 
 	}
@@ -100,7 +85,7 @@ public:
 	}
 
 private:
-	Window			window_;
+	Window		window_;
 	Flipselector	control_;
 	vector<string>	strings_;
 };

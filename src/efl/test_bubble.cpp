@@ -38,8 +38,6 @@ public:
 		positions_.push_back(ELM_BUBBLE_POS_TOP_LEFT);
 		positions_.push_back(ELM_BUBBLE_POS_BOTTOM_RIGHT);
 		positions_.push_back(ELM_BUBBLE_POS_TOP_LEFT);
-
-		return;
 	}
 
 	void setup()
@@ -49,14 +47,9 @@ public:
 
 		bubble_.setSize(200, 100);
 
-		foreach (Elm_Bubble_Pos p, positions_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(&elm_bubble_pos_set, boost::ref(bubble_), p),
-					boost::bind(&BubbleCornerTest::checkPos, boost::ref(*this), p)
-				)
-			);
+		foreach (Elm_Bubble_Pos p, positions_) {
+			queueStep(boost::bind(&elm_bubble_pos_set, boost::ref(bubble_), p));
+			queueStep(boost::bind(&BubbleCornerTest::checkPos, boost::ref(*this), p));
 		}
 	}
 
@@ -82,8 +75,6 @@ public:
 	{
 		sentinels_.push_back("default");
 		sentinels_.push_back("DEFAULT");
-
-		return;
 	}
 
 	void setup()
@@ -93,12 +84,8 @@ public:
 
 		bubble_.setSize(200, 100);
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_object_part_text_set, boost::ref(bubble_), sentinels_[0].c_str(), sentinels_[1].c_str()),
-				boost::bind(&BubbleTextTest::checkText, boost::ref(*this), sentinels_[0], sentinels_[1])
-			)
-		);
+		queueStep(boost::bind(elm_object_part_text_set, boost::ref(bubble_), sentinels_[0].c_str(), sentinels_[1].c_str()));
+		queueStep(boost::bind(&BubbleTextTest::checkText, boost::ref(*this), sentinels_[0], sentinels_[1]));
 	}
 
 	void checkText(const string& part, const std::string& expected)

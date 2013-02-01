@@ -6,13 +6,13 @@ public:
 	Progressbar(EvasObject &parent)
 		: EvasObject::EvasObject(elm_progressbar_add(parent))
 	{
+		return;
 	}
 };
 
 class ProgressbarValueTest : public ElmTestHarness
 {
 public:
-
 	ProgressbarValueTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("ProgressbarValueTest", "Progressbar Value Test")
@@ -30,12 +30,8 @@ public:
 		window_.show();
 		control_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_progressbar_value_set, boost::ref(control_), 0.67f),
-				boost::bind(&ProgressbarValueTest::checkValue, boost::ref(*this), time(NULL) + 2, 0.67f)
-			)
-		);
+		queueStep(boost::bind(elm_progressbar_value_set, boost::ref(control_), 0.67f));
+		queueStep(boost::bind(&ProgressbarValueTest::checkValue, boost::ref(*this), time(NULL) + 2, 0.67f));
 	}
 
 	void checkValue(const time_t max, const double expected)
@@ -43,18 +39,12 @@ public:
 		// if taking too long, fail the test
 		FAIL_UNLESS(time(NULL) < max);
 
-		if (not timedout_)
-		{
+		if (not timedout_) {
 			// prevent a hot loop, yield
 			Application::yield();
 
-			// awaiting the "changed" signal, so queue another noOp
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(&ProgressbarValueTest::noOp, boost::ref(*this)),
-					boost::bind(&ProgressbarValueTest::checkValue, boost::ref(*this), max, expected)
-				)
-			);
+			// awaiting the "changed" signal
+			queueStep(boost::bind(&ProgressbarValueTest::checkValue, boost::ref(*this), max, expected));
 
 			return;
 		}
@@ -67,20 +57,15 @@ public:
 		Application::yield();
 	}
 
-	void noOp(void)
-	{
-		// no op
-	}
-
 	static void changedReached(void* data, Evas_Object *obj, void* event_info)
 	{
 		static_cast<ProgressbarValueTest*>(data)->timedout_ = true;
 	}
 
 private:
-	Window			window_;
-	Progressbar		control_;
-	bool			timedout_;
+	Window		window_;
+	Progressbar	control_;
+	bool		timedout_;
 };
 
 class ProgressbarInvertedTest : public ElmTestHarness
@@ -102,39 +87,17 @@ public:
 		window_.show();
 		control_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_progressbar_inverted_set, boost::ref(control_), EINA_TRUE),
-				boost::bind(&ProgressbarInvertedTest::checkInverted, boost::ref(*this), EINA_TRUE)
-			)
-		);
+		queueStep(boost::bind(elm_progressbar_inverted_set, boost::ref(control_), EINA_TRUE));
+		queueStep(boost::bind(&ProgressbarInvertedTest::checkInverted, boost::ref(*this), EINA_TRUE));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&ProgressbarInvertedTest::noOp, boost::ref(*this)),
-				boost::bind(&ProgressbarInvertedTest::noOp, boost::ref(*this))
-			)
-		);
+// 		queueStep(boost::bind(&ProgressbarInvertedTest::noOp, boost::ref(*this)));
+// 		queueStep(boost::bind(&ProgressbarInvertedTest::noOp, boost::ref(*this)));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_progressbar_inverted_set, boost::ref(control_), EINA_FALSE),
-				boost::bind(&ProgressbarInvertedTest::checkInverted, boost::ref(*this), EINA_FALSE)
-			)
-		);
+		queueStep(boost::bind(elm_progressbar_inverted_set, boost::ref(control_), EINA_FALSE));
+		queueStep(boost::bind(&ProgressbarInvertedTest::checkInverted, boost::ref(*this), EINA_FALSE));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&ProgressbarInvertedTest::noOp, boost::ref(*this)),
-				boost::bind(&ProgressbarInvertedTest::noOp, boost::ref(*this))
-			)
-		);
-
-	}
-
-	void noOp(void)
-	{
-		// no op
+// 		queueStep(boost::bind(&ProgressbarInvertedTest::noOp, boost::ref(*this)));
+// 		queueStep(boost::bind(&ProgressbarInvertedTest::noOp, boost::ref(*this)));
 	}
 
 	void checkInverted(const Eina_Bool expected)
@@ -143,14 +106,13 @@ public:
 	}
 
 private:
-	Window			window_;
-	Progressbar		control_;
+	Window		window_;
+	Progressbar	control_;
 };
 
 class ProgressbarPulseTest : public ElmTestHarness
 {
 public:
-
 	ProgressbarPulseTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("ProgressbarPulseTest", "Progressbar Pulse Test")
@@ -165,33 +127,17 @@ public:
 		window_.show();
 		control_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_progressbar_pulse_set, boost::ref(control_), EINA_TRUE),
-				boost::bind(&ProgressbarPulseTest::checkPulse, boost::ref(*this), EINA_TRUE)
-			)
-		);
+		queueStep(boost::bind(elm_progressbar_pulse_set, boost::ref(control_), EINA_TRUE));
+		queueStep(boost::bind(&ProgressbarPulseTest::checkPulse, boost::ref(*this), EINA_TRUE));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_progressbar_pulse, boost::ref(control_), EINA_TRUE),
-				boost::bind(&ProgressbarPulseTest::checkPulse, boost::ref(*this), EINA_TRUE)
-			)
-		);
+		queueStep(boost::bind(elm_progressbar_pulse, boost::ref(control_), EINA_TRUE));
+		queueStep(boost::bind(&ProgressbarPulseTest::checkPulse, boost::ref(*this), EINA_TRUE));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_progressbar_pulse_set, boost::ref(control_), EINA_FALSE),
-				boost::bind(&ProgressbarPulseTest::checkPulse, boost::ref(*this), EINA_FALSE)
-			)
-		);
+		queueStep(boost::bind(elm_progressbar_pulse_set, boost::ref(control_), EINA_FALSE));
+		queueStep(boost::bind(&ProgressbarPulseTest::checkPulse, boost::ref(*this), EINA_FALSE));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_progressbar_pulse, boost::ref(control_), EINA_FALSE),
-				boost::bind(&ProgressbarPulseTest::checkPulse, boost::ref(*this), EINA_FALSE)
-			)
-		);
+		queueStep(boost::bind(elm_progressbar_pulse, boost::ref(control_), EINA_FALSE));
+		queueStep(boost::bind(&ProgressbarPulseTest::checkPulse, boost::ref(*this), EINA_FALSE));
 	}
 
 	void checkPulse(const Eina_Bool expected)
@@ -224,20 +170,11 @@ public:
 		window_.show();
 		control_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_progressbar_horizontal_set, boost::ref(control_), EINA_FALSE),
-				boost::bind(&ProgressbarOrientTest::checkOrient, boost::ref(*this), EINA_FALSE)
-			)
-		);
+		queueStep(boost::bind(elm_progressbar_horizontal_set, boost::ref(control_), EINA_FALSE));
+		queueStep(boost::bind(&ProgressbarOrientTest::checkOrient, boost::ref(*this), EINA_FALSE));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_progressbar_horizontal_set, boost::ref(control_), EINA_TRUE),
-				boost::bind(&ProgressbarOrientTest::checkOrient, boost::ref(*this), EINA_TRUE)
-			)
-		);
-
+		queueStep(boost::bind(elm_progressbar_horizontal_set, boost::ref(control_), EINA_TRUE));
+		queueStep(boost::bind(&ProgressbarOrientTest::checkOrient, boost::ref(*this), EINA_TRUE));
 	}
 
 	void checkOrient(const Eina_Bool expected)
@@ -246,8 +183,8 @@ public:
 	}
 
 private:
-	Window			window_;
-	Progressbar		control_;
+	Window		window_;
+	Progressbar	control_;
 };
 
 typedef ResizeObjectTest<Progressbar> ProgressbarResizeTest;

@@ -6,6 +6,7 @@ public:
 	Inwin(EvasObject &parent)
 		: EvasObject::EvasObject(elm_win_inwin_add(parent))
 	{
+		return;
 	}
 };
 

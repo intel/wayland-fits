@@ -30,27 +30,15 @@ public:
 		control_.setPosition(50, 10);
 
 		FAIL_UNLESS_EQUAL(elm_frame_collapse_get(control_), EINA_FALSE);
-		
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_frame_collapse_go, boost::ref(control_), EINA_TRUE),
-				boost::bind(&FrameGoTest::checkCollapse, boost::ref(*this), EINA_TRUE)
-			)
-		);
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_frame_collapse_go, boost::ref(control_), EINA_FALSE),
-				boost::bind(&FrameGoTest::checkCollapse, boost::ref(*this), EINA_FALSE)
-			)
-		);
+		queueStep(boost::bind(elm_frame_collapse_go, boost::ref(control_), EINA_TRUE));
+		queueStep(boost::bind(&FrameGoTest::checkCollapse, boost::ref(*this), EINA_TRUE));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_frame_collapse_go, boost::ref(control_), EINA_TRUE),
-				boost::bind(&FrameGoTest::checkCollapse, boost::ref(*this), EINA_TRUE)
-			)
-		);
+		queueStep(boost::bind(elm_frame_collapse_go, boost::ref(control_), EINA_FALSE));
+		queueStep(boost::bind(&FrameGoTest::checkCollapse, boost::ref(*this), EINA_FALSE));
+
+		queueStep(boost::bind(elm_frame_collapse_go, boost::ref(control_), EINA_TRUE));
+		queueStep(boost::bind(&FrameGoTest::checkCollapse, boost::ref(*this), EINA_TRUE));
 	}
 
 	void checkCollapse(const Eina_Bool expected)

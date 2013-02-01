@@ -17,7 +17,7 @@ public:
 
 	virtual void queueStep(TestStep);
 
-	void run();
+	virtual void run();
 	virtual void setup() { };
 	virtual void teardown() { };
 

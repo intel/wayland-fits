@@ -11,7 +11,6 @@ using std::vector;
 class WindowResizeTest : public ElmTestHarness
 {
 public:
-
 	WindowResizeTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("WindowResizeTest", "Window Resize Test")
@@ -23,23 +22,14 @@ public:
 	{
 		window_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&Window::setSize, boost::ref(window_), 400, 200),
-				boost::bind(&Window::checkSize, boost::ref(window_), 400, 200)
-			)
-		);
-
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&Window::setSize, boost::ref(window_), 100, 120),
-				boost::bind(&Window::checkSize, boost::ref(window_), 100, 120)
-			)
-		);
+		queueStep(boost::bind(&Window::setSize, boost::ref(window_), 400, 200));
+		queueStep(boost::bind(&Window::checkSize, boost::ref(window_), 400, 200));
+		queueStep(boost::bind(&Window::setSize, boost::ref(window_), 100, 120));
+		queueStep(boost::bind(&Window::checkSize, boost::ref(window_), 100, 120));
 	}
 
 private:
-	Window		window_;
+	Window	window_;
 };
 
 class WindowMoveTest : public ElmTestHarness
@@ -56,23 +46,14 @@ public:
 	{
 		window_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&Window::setPosition, boost::ref(window_), 10, 20),
-				boost::bind(&Window::checkPosition, boost::ref(window_), 10, 20)
-			)
-		);
-
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&Window::setPosition, boost::ref(window_), 15, 25),
-				boost::bind(&Window::checkPosition, boost::ref(window_), 15, 25)
-			)
-		);
+		queueStep(boost::bind(&Window::setPosition, boost::ref(window_), 10, 20));
+		queueStep(boost::bind(&Window::checkPosition, boost::ref(window_), 10, 20));
+		queueStep(boost::bind(&Window::setPosition, boost::ref(window_), 15, 25));
+		queueStep(boost::bind(&Window::checkPosition, boost::ref(window_), 15, 25));
 	}
 
 private:
-	Window		window_;
+	Window	window_;
 };
 
 class WindowIconifyTest : public ElmTestHarness
@@ -89,23 +70,14 @@ public:
 	{
 		window_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&Window::iconify, boost::ref(window_), EINA_TRUE),
-				boost::bind(&Window::checkIconified, boost::ref(window_), EINA_TRUE)
-			)
-		);
-
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&Window::iconify, boost::ref(window_), EINA_FALSE),
-				boost::bind(&Window::checkIconified, boost::ref(window_), EINA_FALSE)
-			)
-		);
+		queueStep(boost::bind(&Window::iconify, boost::ref(window_), EINA_TRUE));
+		queueStep(boost::bind(&Window::checkIconified, boost::ref(window_), EINA_TRUE));
+		queueStep(boost::bind(&Window::iconify, boost::ref(window_), EINA_FALSE));
+		queueStep(boost::bind(&Window::checkIconified, boost::ref(window_), EINA_FALSE));
 	}
 
 private:
-	Window		window_;
+	Window	window_;
 };
 
 class WindowMaximizeTest : public ElmTestHarness
@@ -122,23 +94,14 @@ public:
 	{
 		window_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&Window::maximize, boost::ref(window_), EINA_TRUE),
-				boost::bind(&Window::checkMaximized, boost::ref(window_), EINA_TRUE)
-			)
-		);
-
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&Window::maximize, boost::ref(window_), EINA_FALSE),
-				boost::bind(&Window::checkMaximized, boost::ref(window_), EINA_FALSE)
-			)
-		);
+		queueStep(boost::bind(&Window::maximize, boost::ref(window_), EINA_TRUE));
+		queueStep(boost::bind(&Window::checkMaximized, boost::ref(window_), EINA_TRUE));
+		queueStep(boost::bind(&Window::maximize, boost::ref(window_), EINA_FALSE));
+		queueStep(boost::bind(&Window::checkMaximized, boost::ref(window_), EINA_FALSE));
 	}
 
 private:
-	Window		window_;
+	Window	window_;
 };
 
 class WindowFullscreenTest : public ElmTestHarness
@@ -155,23 +118,14 @@ public:
 	{
 		window_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&Window::fullscreen, boost::ref(window_), EINA_TRUE),
-				boost::bind(&Window::checkFullscreen, boost::ref(window_), EINA_TRUE)
-			)
-		);
-
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&Window::fullscreen, boost::ref(window_), EINA_FALSE),
-				boost::bind(&Window::checkFullscreen, boost::ref(window_), EINA_FALSE)
-			)
-		);
+		queueStep(boost::bind(&Window::fullscreen, boost::ref(window_), EINA_TRUE));
+		queueStep(boost::bind(&Window::checkFullscreen, boost::ref(window_), EINA_TRUE));
+		queueStep(boost::bind(&Window::fullscreen, boost::ref(window_), EINA_FALSE));
+		queueStep(boost::bind(&Window::checkFullscreen, boost::ref(window_), EINA_FALSE));
 	}
 
 private:
-	Window		window_;
+	Window	window_;
 };
 
 class WindowStickyTest : public ElmTestHarness
@@ -188,23 +142,14 @@ public:
 	{
 		window_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&Window::sticky, boost::ref(window_), EINA_TRUE),
-				boost::bind(&Window::checkSticky, boost::ref(window_), EINA_TRUE)
-			)
-		);
-
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&Window::sticky, boost::ref(window_), EINA_FALSE),
-				boost::bind(&Window::checkSticky, boost::ref(window_), EINA_FALSE)
-			)
-		);
+		queueStep(boost::bind(&Window::sticky, boost::ref(window_), EINA_TRUE));
+		queueStep(boost::bind(&Window::checkSticky, boost::ref(window_), EINA_TRUE));
+		queueStep(boost::bind(&Window::sticky, boost::ref(window_), EINA_FALSE));
+		queueStep(boost::bind(&Window::checkSticky, boost::ref(window_), EINA_FALSE));
 	}
 
 private:
-	Window		window_;
+	Window	window_;
 };
 
 class WindowWithdrawnTest : public ElmTestHarness
@@ -221,23 +166,14 @@ public:
 	{
 		window_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&Window::withdrawn, boost::ref(window_), EINA_TRUE),
-				boost::bind(&Window::checkWithdrawn, boost::ref(window_), EINA_TRUE)
-			)
-		);
-
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&Window::withdrawn, boost::ref(window_), EINA_FALSE),
-				boost::bind(&Window::checkWithdrawn, boost::ref(window_), EINA_FALSE)
-			)
-		);
+		queueStep(boost::bind(&Window::withdrawn, boost::ref(window_), EINA_TRUE));
+		queueStep(boost::bind(&Window::checkWithdrawn, boost::ref(window_), EINA_TRUE));
+		queueStep(boost::bind(&Window::withdrawn, boost::ref(window_), EINA_FALSE));
+		queueStep(boost::bind(&Window::checkWithdrawn, boost::ref(window_), EINA_FALSE));
 	}
 
 private:
-	Window		window_;
+	Window	window_;
 };
 
 class WindowRotationTest : public ElmTestHarness
@@ -259,22 +195,15 @@ public:
 		degrees_.push_back(270);
 		degrees_.push_back(0);
 		degrees_.push_back(360);
-
-		return;
 	}
 
 	void setup()
 	{
 		window_.show();
 
-		foreach (const int degree, degrees_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(&Window::rotate, boost::ref(window_), degree),
-					boost::bind(&Window::checkRotation, boost::ref(window_), degree)
-				)
-			);
+		foreach (const int degree, degrees_) {
+			queueStep(boost::bind(&Window::rotate, boost::ref(window_), degree));
+			queueStep(boost::bind(&Window::checkRotation, boost::ref(window_), degree));
 		}
 	}
 
@@ -297,27 +226,12 @@ public:
 	{
 		window_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_win_alpha_set, boost::ref(window_), EINA_TRUE),
-				boost::bind(&WindowAlphaTest::checkAlpha, boost::ref(*this), EINA_TRUE)
-			)
-		);
-
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_win_alpha_set, boost::ref(window_), EINA_FALSE),
-				boost::bind(&WindowAlphaTest::checkAlpha, boost::ref(*this), EINA_FALSE)
-			)
-		);
-
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_win_alpha_set, boost::ref(window_), EINA_TRUE),
-				boost::bind(&WindowAlphaTest::checkAlpha, boost::ref(*this), EINA_TRUE)
-			)
-		);
-
+		queueStep(boost::bind(elm_win_alpha_set, boost::ref(window_), EINA_TRUE));
+		queueStep(boost::bind(&WindowAlphaTest::checkAlpha, boost::ref(*this), EINA_TRUE));
+		queueStep(boost::bind(elm_win_alpha_set, boost::ref(window_), EINA_FALSE));
+		queueStep(boost::bind(&WindowAlphaTest::checkAlpha, boost::ref(*this), EINA_FALSE));
+		queueStep(boost::bind(elm_win_alpha_set, boost::ref(window_), EINA_TRUE));
+		queueStep(boost::bind(&WindowAlphaTest::checkAlpha, boost::ref(*this), EINA_TRUE));
 	}
 
 	void checkAlpha(const Eina_Bool expected)
@@ -326,7 +240,7 @@ public:
 	}
 
 private:
-	Window		window_;
+	Window	window_;
 };
 
 class WindowIndicatorTest : public ElmTestHarness
@@ -343,26 +257,12 @@ public:
 	{
 		window_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_win_indicator_mode_set, boost::ref(window_), ELM_WIN_INDICATOR_SHOW),
-				boost::bind(&WindowIndicatorTest::checkIndicator, boost::ref(*this), ELM_WIN_INDICATOR_SHOW)
-			)
-		);
-
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_win_indicator_mode_set, boost::ref(window_), ELM_WIN_INDICATOR_HIDE),
-				boost::bind(&WindowIndicatorTest::checkIndicator, boost::ref(*this), ELM_WIN_INDICATOR_HIDE)
-			)
-		);
-
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_win_indicator_mode_set, boost::ref(window_), ELM_WIN_INDICATOR_SHOW),
-				boost::bind(&WindowIndicatorTest::checkIndicator, boost::ref(*this), ELM_WIN_INDICATOR_SHOW)
-			)
-		);
+		queueStep(boost::bind(elm_win_indicator_mode_set, boost::ref(window_), ELM_WIN_INDICATOR_SHOW));
+		queueStep(boost::bind(&WindowIndicatorTest::checkIndicator, boost::ref(*this), ELM_WIN_INDICATOR_SHOW));
+		queueStep(boost::bind(elm_win_indicator_mode_set, boost::ref(window_), ELM_WIN_INDICATOR_HIDE));
+		queueStep(boost::bind(&WindowIndicatorTest::checkIndicator, boost::ref(*this), ELM_WIN_INDICATOR_HIDE));
+		queueStep(boost::bind(elm_win_indicator_mode_set, boost::ref(window_), ELM_WIN_INDICATOR_SHOW));
+		queueStep(boost::bind(&WindowIndicatorTest::checkIndicator, boost::ref(*this), ELM_WIN_INDICATOR_SHOW));
 	}
 
 	void checkIndicator(const Elm_Win_Indicator_Mode expected)
@@ -371,7 +271,7 @@ public:
 	}
 
 private:
-	Window		window_;
+	Window	window_;
 };
 
 class WindowIndicatorOpacityTest : public ElmTestHarness
@@ -384,30 +284,19 @@ public:
 		modes_.push_back(ELM_WIN_INDICATOR_OPAQUE);
 		modes_.push_back(ELM_WIN_INDICATOR_TRANSLUCENT);
 		modes_.push_back(ELM_WIN_INDICATOR_TRANSPARENT);
-
-		return;
 	}
 
 	void setup()
 	{
 		window_.show();
 
-		vector<Elm_Win_Indicator_Opacity_Mode>::iterator it;
-		for (it = modes_.begin(); it != modes_.end(); it++)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_win_indicator_opacity_set, boost::ref(window_), *it),
-					boost::bind(&WindowIndicatorOpacityTest::checkOpacity, boost::ref(*this), *it)
-				)
-			);
-
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_win_indicator_opacity_set, boost::ref(window_), ELM_WIN_INDICATOR_OPAQUE),
-					boost::bind(&WindowIndicatorOpacityTest::checkOpacity, boost::ref(*this), ELM_WIN_INDICATOR_OPAQUE)
-				)
-			);
+		typedef vector<Elm_Win_Indicator_Opacity_Mode>::const_iterator CIterator;
+		const CIterator endIt(modes_.end());
+		for (CIterator it(modes_.begin()); it != endIt; ++it) {
+			queueStep(boost::bind(elm_win_indicator_opacity_set, boost::ref(window_), *it));
+			queueStep(boost::bind(&WindowIndicatorOpacityTest::checkOpacity, boost::ref(*this), *it));
+			queueStep(boost::bind(elm_win_indicator_opacity_set, boost::ref(window_), ELM_WIN_INDICATOR_OPAQUE));
+			queueStep(boost::bind(&WindowIndicatorOpacityTest::checkOpacity, boost::ref(*this), ELM_WIN_INDICATOR_OPAQUE));
 		}
 	}
 
@@ -435,12 +324,7 @@ public:
 	{
 		window_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&EcoreWlWindowTest::noop, boost::ref(*this)),
-				boost::bind(&EcoreWlWindowTest::check, boost::ref(*this))
-			)
-		);
+		queueStep(boost::bind(&EcoreWlWindowTest::check, boost::ref(*this)));
 	}
 
 	void check()

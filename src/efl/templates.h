@@ -35,23 +35,17 @@ public:
 		window_.show();
 		object_.show();
 
-		foreach (const int w, widths_)
-		{
-			foreach (const int h, heights_)
-			{
-				queueCallback(
-					ModifyCheckCallback(
-						boost::bind(&T::setSize, boost::ref(object_), w, h),
-						boost::bind(&T::checkSize, boost::ref(object_), w, h)
-					)
-				);
+		foreach (const int w, widths_) {
+			foreach (const int h, heights_) {
+				queueStep(boost::bind(&T::setSize, boost::ref(object_), w, h));
+				queueStep(boost::bind(&T::checkSize, boost::ref(object_), w, h));
 			}
 		}
 	}
 
 private:
-	Window				window_;
-	T					object_;
+	Window			window_;
+	T			object_;
 	std::vector<int>	widths_;
 	std::vector<int>	heights_;
 };
@@ -83,23 +77,17 @@ public:
 		window_.show();
 		object_.show();
 
-		foreach (const int x, xs_)
-		{
-			foreach (const int y, ys_)
-			{
-				queueCallback(
-					ModifyCheckCallback(
-						boost::bind(&T::setPosition, boost::ref(object_), x, y),
-						boost::bind(&T::checkPosition, boost::ref(object_), x, y)
-					)
-				);
+		foreach (const int x, xs_) {
+			foreach (const int y, ys_) {
+				queueStep(boost::bind(&T::setPosition, boost::ref(object_), x, y));
+				queueStep(boost::bind(&T::checkPosition, boost::ref(object_), x, y));
 			}
 		}
 	}
 
 private:
-	Window				window_;
-	T					object_;
+	Window			window_;
+	T			object_;
 	std::vector<int>	xs_;
 	std::vector<int>	ys_;
 };
@@ -126,31 +114,19 @@ public:
 	{
 		window_.show();
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&T::show, boost::ref(object_)),
-				boost::bind(&T::checkVisible, boost::ref(object_), EINA_TRUE)
-			)
-		);
+		queueStep(boost::bind(&T::show, boost::ref(object_)));
+		queueStep(boost::bind(&T::checkVisible, boost::ref(object_), EINA_TRUE));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&T::hide, boost::ref(object_)),
-				boost::bind(&T::checkVisible, boost::ref(object_), EINA_FALSE)
-			)
-		);
+		queueStep(boost::bind(&T::hide, boost::ref(object_)));
+		queueStep(boost::bind(&T::checkVisible, boost::ref(object_), EINA_FALSE));
 
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(&T::show, boost::ref(object_)),
-				boost::bind(&T::checkVisible, boost::ref(object_), EINA_TRUE)
-			)
-		);
+		queueStep(boost::bind(&T::show, boost::ref(object_)));
+		queueStep(boost::bind(&T::checkVisible, boost::ref(object_), EINA_TRUE));
 	}
 
 private:
 	Window	window_;
-	T		object_;
+	T	object_;
 };
 
 /* TODO: evasobject methods for color set/get/check

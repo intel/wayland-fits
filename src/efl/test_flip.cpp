@@ -23,7 +23,6 @@ public:
 class FlipGoTest : public ElmTestHarness
 {
 public:
-
 	FlipGoTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("FlipGoTest", "Flip Go Test")
@@ -82,30 +81,19 @@ public:
 		FlipGoTest* fgt = static_cast<FlipGoTest*>(data);
 		fgt->flipDone_ = true;
 	}
-	
-	void nullOp()
-	{
-		return;
-	}
-	
+
 	void checkFlip(const Eina_Bool visible)
 	{
 		// We would expect the signal to finish within a reasonable number of mainloop iterations.
 		// But, just in case the signal/callback mechanism is broken we don't wait forever.
 		FAIL_UNLESS(nWaitForFlip_ < 100);
 
-		if (not flipDone_)
-		{
+		if (not flipDone_) {
 			// we're still waiting for the "animate,done" signal
 			++nWaitForFlip_;
 
-			// just queue another callback with a nullOp Modify.
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(&FlipGoTest::nullOp, boost::ref(*this)),
-					boost::bind(&FlipGoTest::checkFlip, boost::ref(*this), visible)
-				)
-			);
+			// just queue another callback
+			queueStep(boost::bind(&FlipGoTest::checkFlip, boost::ref(*this), visible));
 
 			return; // Don't check the flip state yet! Maybe next time!
 		}
@@ -117,31 +105,25 @@ public:
 		// verify the flip state
 		FAIL_UNLESS_EQUAL(elm_flip_front_visible_get(control_), visible);
 
-		if (visible == EINA_FALSE)
-		{
+		if (visible == EINA_FALSE) {
 			// move on to the next flip option
 			options_.pop_front();
 		}
 
-		if (options_.size() > 0)
-		{
+		if (options_.size() > 0) {
 			// we still have flip options to process.
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_flip_go, boost::ref(control_), options_.front()),
-					boost::bind(&FlipGoTest::checkFlip, boost::ref(*this), not visible)
-				)
-			);
+			queueStep(boost::bind(elm_flip_go, boost::ref(control_), options_.front()));
+			queueStep(boost::bind(&FlipGoTest::checkFlip, boost::ref(*this), not visible));
 		}
 	}
 
 private:
-	Window			window_;
-	EvasObject		control_;
-	Background		first_, second_;
+	Window				window_;
+	EvasObject			control_;
+	Background			first_, second_;
 	std::deque<Elm_Flip_Mode>	options_;
-	bool			flipDone_;
-	unsigned		nWaitForFlip_;
+	bool				flipDone_;
+	unsigned			nWaitForFlip_;
 };
 
 typedef ResizeObjectTest<Flip> FlipResizeTest;

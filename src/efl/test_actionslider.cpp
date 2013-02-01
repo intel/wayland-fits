@@ -17,7 +17,6 @@ public:
 class ActionsliderIndicatorTest : public ElmTestHarness
 {
 public:
-
 	ActionsliderIndicatorTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("ActionsliderIndicatorTest", "Actionslider Position Test")
@@ -32,8 +31,6 @@ public:
 		positions_.push_back(ELM_ACTIONSLIDER_LEFT);
 		positions_.push_back(ELM_ACTIONSLIDER_RIGHT);
 		positions_.push_back(ELM_ACTIONSLIDER_CENTER);
-
-		return;
 	}
 
 	void setup()
@@ -44,14 +41,9 @@ public:
 		control_.setSize(200, 100);
 		control_.setPosition(50, 10);
 
-		foreach (Elm_Actionslider_Pos p, positions_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_actionslider_indicator_pos_set, boost::ref(control_), p),
-					boost::bind(&ActionsliderIndicatorTest::checkPos, boost::ref(*this), p)
-				)
-			);
+		foreach (Elm_Actionslider_Pos p, positions_) {
+			queueStep(boost::bind(elm_actionslider_indicator_pos_set, boost::ref(control_), p));
+			queueStep(boost::bind(&ActionsliderIndicatorTest::checkPos, boost::ref(*this), p));
 		}
 	}
 
@@ -61,8 +53,8 @@ public:
 	}
 
 private:
-	Window							window_;
-	Actionslider					control_;
+	Window				window_;
+	Actionslider			control_;
 	vector<Elm_Actionslider_Pos>	positions_;
 };
 

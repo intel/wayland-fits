@@ -1,5 +1,4 @@
 #include <ctime>
-
 #include <vector>
 
 #include "templates.h"
@@ -10,6 +9,7 @@ public:
 	Popup(EvasObject &parent)
 		: EvasObject::EvasObject(elm_popup_add(parent))
 	{
+		return;
 	}
 };
 
@@ -39,20 +39,11 @@ public:
 
 		// TODO: Using time(), so smallest units of measure are 'seconds'
 		// TODO: Use a monotonic mechanism instead of time() for better resolution
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_popup_timeout_set, boost::ref(control_), 1.0f),
-				boost::bind(&PopupTimeoutTest::checkTimeout, boost::ref(*this), 1.0f)
-			)
-		);
+		queueStep(boost::bind(elm_popup_timeout_set, boost::ref(control_), 1.0f));
+		queueStep(boost::bind(&PopupTimeoutTest::checkTimeout, boost::ref(*this), 1.0f));
 
 		// If it takes more than 5 seconds for this event to fire, we have a bug
 		checkTimedOut(time(NULL) + 5);
-	}
-
-	void noOp(void)
-	{
-		// no op
 	}
 
 	void checkTimedOut(const time_t max)
@@ -60,18 +51,12 @@ public:
 		// if taking too long, fail the test
 		FAIL_UNLESS(time(NULL) < max);
 
-		if (not timedout_)
-		{
+		if (not timedout_) {
 			// prevent a hot loop, sleep for 100ms
 			Application::yield(100);
 
-			// awaiting the "timedout" signal, so queue another noOp
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(&PopupTimeoutTest::noOp, boost::ref(*this)),
-					boost::bind(&PopupTimeoutTest::checkTimedOut, boost::ref(*this), max)
-				)
-			);
+			// awaiting the "timedout" signal
+			queueStep(boost::bind(&PopupTimeoutTest::checkTimedOut, boost::ref(*this), max));
 
 			return;
 		}
@@ -100,10 +85,10 @@ public:
 	}
 
 private:
-	Window		window_;
-	Popup		control_;
-	bool		timedout_;
-	time_t		clock_;
+	Window	window_;
+	Popup	control_;
+	bool	timedout_;
+	time_t	clock_;
 };
 
 // TODO: add smart callbacks for "timeout" events for each orientation
@@ -138,14 +123,9 @@ public:
 		window_.show();
 		control_.show();
 
-		foreach (const Elm_Popup_Orient orient, orients_)
-		{
-			queueCallback(
-				ModifyCheckCallback(
-					boost::bind(elm_popup_orient_set, boost::ref(control_), orient),
-					boost::bind(&PopupOrientTest::checkOrient, boost::ref(*this), orient)
-				)
-			);
+		foreach (const Elm_Popup_Orient orient, orients_) {
+			queueStep(boost::bind(elm_popup_orient_set, boost::ref(control_), orient));
+			queueStep(boost::bind(&PopupOrientTest::checkOrient, boost::ref(*this), orient));
 		}
 	}
 
