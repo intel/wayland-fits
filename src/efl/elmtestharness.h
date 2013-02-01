@@ -30,7 +30,7 @@ private:
 };
 
 #define WAYLAND_ELM_HARNESS_EGL_TEST_CASE(Harness, suite) \
-TEST(Harness, "EFL/EGL/" suite) \
+TEST(Egl##Harness, "EFL/" suite) \
 { \
 	Application app; \
 	app.setEngine(Application::ENGINE_EGL); \
@@ -38,7 +38,7 @@ TEST(Harness, "EFL/EGL/" suite) \
 }
 
 #define WAYLAND_ELM_HARNESS_SHM_TEST_CASE(Harness, suite) \
-TEST(Harness##_shm_engine, "EFL/SHM/" suite) \
+TEST(Shm##Harness, "EFL/" suite) \
 { \
 	Application app; \
 	app.setEngine(Application::ENGINE_SHM); \
@@ -48,6 +48,7 @@ TEST(Harness##_shm_engine, "EFL/SHM/" suite) \
 #define WAYLAND_ELM_HARNESS_TEST_CASE(Harness, suite) \
 	WAYLAND_ELM_HARNESS_SHM_TEST_CASE(Harness, suite) \
 	WAYLAND_ELM_HARNESS_EGL_TEST_CASE(Harness, suite)
+
 
 #endif
 
