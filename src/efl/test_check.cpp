@@ -50,11 +50,11 @@ private:
 	EvasObject	check_;
 };
 
-class CheckTextTest : public ElmTestHarness
+template <const std::string& part, const std::string& text>
+class CheckPartTextTest : public ElmTestHarness
 {
 public:
-
-	CheckTextTest()
+	CheckPartTextTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("CheckTextTest", "Check Text Test")
 		, check_(elm_check_add(window_))
@@ -67,33 +67,17 @@ public:
 		check_.show();
 		window_.show();
 
-		queueStep(boost::bind(elm_object_part_text_set, boost::ref(check_), "default", "DEFAULT"));
-		queueStep(boost::bind(&CheckTextTest::checkText, boost::ref(*this), "default", "DEFAULT"));
-
-		/* TODO: Why don't these work?
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_object_part_text_set, boost::ref(check_), "on", "ON"),
-				boost::bind(&CheckTextTest::checkText, boost::ref(*this), "on", "ON")
-			)
-		);
-
-		queueCallback(
-			ModifyCheckCallback(
-				boost::bind(elm_object_part_text_set, boost::ref(check_), "off", "OFF"),
-				boost::bind(&CheckTextTest::checkText, boost::ref(*this), "off", "OFF")
-			)
-		);
-		*/
+		queueStep(boost::bind(elm_object_part_text_set, boost::ref(check_), part.c_str(), text.c_str()));
+		queueStep(boost::bind(&CheckPartTextTest::checkPartText, boost::ref(*this)));
 	}
 
-	void checkText(const char* part, const char* expected)
+	void checkPartText()
 	{
-		const char* actual = elm_object_part_text_get(check_, part);
+		const char* actual = elm_object_part_text_get(check_, part.c_str());
 		std::string actual_text(actual == NULL ? "" : actual);
-		std::string expected_text(expected == NULL ? "" : expected);
 
-		FAIL_UNLESS_EQUAL(actual_text, expected_text);
+		std::cout << actual_text << " " << text << std::endl;
+		FAIL_UNLESS_EQUAL(actual_text, text);
 	}
 
 private:
@@ -101,6 +85,13 @@ private:
 	EvasObject	check_;
 };
 
+std::string defaultPart("default"), defaultText("DEFAULT");
+std::string onPart("on"), onText("ON");
+std::string offPart("off"), offText("OFF");
+
+typedef CheckPartTextTest<defaultPart, defaultText> CheckPartTextDefaultTest;
+typedef CheckPartTextTest<onPart, onText> CheckPartTextOnTest;
+typedef CheckPartTextTest<offPart, offText> CheckPartTextOffTest;
 typedef ResizeObjectTest<Check> CheckResizeTest;
 typedef PositionObjectTest<Check> CheckPositionTest;
 typedef VisibleObjectTest<Check> CheckVisibilityTest;
@@ -109,5 +100,7 @@ WAYLAND_ELM_HARNESS_TEST_CASE(CheckResizeTest, "Check")
 WAYLAND_ELM_HARNESS_TEST_CASE(CheckPositionTest, "Check")
 WAYLAND_ELM_HARNESS_TEST_CASE(CheckVisibilityTest, "Check")
 WAYLAND_ELM_HARNESS_TEST_CASE(CheckStateTest, "Check")
-WAYLAND_ELM_HARNESS_TEST_CASE(CheckTextTest, "Check")
+WAYLAND_ELM_HARNESS_TEST_CASE(CheckPartTextDefaultTest, "Check")
+WAYLAND_ELM_HARNESS_TEST_CASE(CheckPartTextOnTest, "Check")
+WAYLAND_ELM_HARNESS_TEST_CASE(CheckPartTextOffTest, "Check")
 

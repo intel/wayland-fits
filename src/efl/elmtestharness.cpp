@@ -19,25 +19,6 @@ void ElmTestHarness::run()
 	elm_run();
 }
 
-// void ElmTestHarness::modify()
-// {
-// 	if (haveMore())
-// 	{
-// 		// TODO: wrap this with try-catch
-// 		callbacks_.front().first();
-// 	}
-// }
-// 
-// void ElmTestHarness::check()
-// {
-// 	if (haveMore())
-// 	{
-// 		// TODO: wrap this with try-catch
-// 		callbacks_.front().second();
-// 		callbacks_.pop_front();
-// 	}
-// }
-
 /*static*/
 Eina_Bool ElmTestHarness::idleSetup(void* data)
 {
@@ -68,37 +49,6 @@ Eina_Bool ElmTestHarness::doSetup(void* data, int, void*)
 
 	return ECORE_CALLBACK_DONE;
 }
-
-// /*static*/
-// Eina_Bool ElmTestHarness::idleModify(void* data)
-// {
-// 	ElmTestHarness* harness = static_cast<ElmTestHarness*>(data);
-// 
-// 	harness->handler_ = ecore_event_handler_add(
-// 		harness->eventType_,
-// 		doTestModify,
-// 		data
-// 	);
-// 	ecore_event_add(harness->eventType_, NULL, NULL, NULL);
-// 
-// 	return ECORE_CALLBACK_CANCEL;
-// }
-// 
-// /*static*/
-// Eina_Bool ElmTestHarness::doTestModify(void* data, int, void*)
-// {
-// 	ElmTestHarness* harness = static_cast<ElmTestHarness*>(data);
-// 
-// 	ecore_event_handler_del(harness->handler_);
-// 
-// 	harness->modify();
-// 	
-// 	Application::yield();
-// 
-// 	ecore_idler_add(idleCheck, data);
-// 
-// 	return ECORE_CALLBACK_DONE;
-// }
 
 /*static*/
 Eina_Bool ElmTestHarness::idleStep(void* data)

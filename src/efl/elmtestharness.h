@@ -29,37 +29,25 @@ private:
 	Ecore_Event_Handler*	handler_;
 };
 
-#define WAYLAND_ELM_HARNESS_TEST_CASE(Harness, suite) \
-\
-TEST(Harness##_shm_engine, "EFL/" suite) \
-{ \
-	Application app; \
-	app.setEngine(Application::ENGINE_SHM); \
-	Harness().run(); \
-} \
-\
-TEST(Harness##_egl_engine, "EFL/" suite) \
-{ \
-	Application app; \
-	app.setEngine(Application::ENGINE_EGL); \
-	Harness().run(); \
-} \
-
 #define WAYLAND_ELM_HARNESS_EGL_TEST_CASE(Harness, suite) \
-TEST(Harness##_egl_engine, "EFL/" suite) \
+TEST(Harness, "EFL/EGL/" suite) \
 { \
 	Application app; \
 	app.setEngine(Application::ENGINE_EGL); \
 	Harness().run(); \
-} \
+}
 
 #define WAYLAND_ELM_HARNESS_SHM_TEST_CASE(Harness, suite) \
-TEST(Harness##_shm_engine, "EFL/" suite) \
+TEST(Harness##_shm_engine, "EFL/SHM/" suite) \
 { \
 	Application app; \
 	app.setEngine(Application::ENGINE_SHM); \
 	Harness().run(); \
-} \
+}
+
+#define WAYLAND_ELM_HARNESS_TEST_CASE(Harness, suite) \
+	WAYLAND_ELM_HARNESS_SHM_TEST_CASE(Harness, suite) \
+	WAYLAND_ELM_HARNESS_EGL_TEST_CASE(Harness, suite)
 
 #endif
 

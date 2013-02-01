@@ -3,9 +3,7 @@
 using boost::filesystem::path;
 
 Background::Background(EvasObject& parent)
-	: EvasObject::EvasObject(
-		elm_bg_add(parent)
-	)
+	: EvasObject::EvasObject(elm_bg_add(parent))
 {
 	return;
 }
