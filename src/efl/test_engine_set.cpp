@@ -1,7 +1,7 @@
 #include <Elementary.h>
 #include "common/test.h"
 
-TEST(elm_engine_set_wayland_shm, "EFL/Engine")
+TEST(ShmSetEngineTest, "EFL/Engine")
 {
 	const std::string engine("wayland_shm");
 
@@ -18,7 +18,7 @@ TEST(elm_engine_set_wayland_shm, "EFL/Engine")
 	elm_shutdown();
 }
 
-TEST(elm_engine_set_wayland_egl, "EFL/Engine")
+TEST(EglSetEngineTest, "EFL/Engine")
 {
 	const std::string engine("wayland_egl");
 
