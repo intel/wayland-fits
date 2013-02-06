@@ -33,6 +33,7 @@ bool TestHarness::haveStep() const
 
 void TestHarness::runNextStep()
 {
-	steps_.front()();
+	TestStep step(steps_.front());
 	steps_.pop_front();
+	step();
 }

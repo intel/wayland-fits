@@ -24,7 +24,7 @@ public:
 	void runNextStep();
 	bool haveStep() const;
 
-private:
+protected:
 	TestSteps	steps_;
 };
 

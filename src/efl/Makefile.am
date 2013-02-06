@@ -10,6 +10,7 @@ libwfits_efl_la_SOURCES = \
 	elmtestharness.cpp		\
 	evasobject.cpp			\
 	window.cpp			\
+	wayland-fits.cpp		\
 	test_actionslider.cpp		\
 	test_background.cpp		\
 	test_bubble.cpp			\
@@ -40,7 +41,8 @@ libwfits_efl_la_SOURCES = \
 	test_panel.cpp			\
 	test_popup.cpp			\
 	test_progressbar.cpp		\
-	test_window.cpp
+	test_window.cpp			\
+	$(top_srcdir)/src/extensions/protocol/wayland-fits-protocol.c
 
 libwfits_efl_la_LIBADD = \
 	$(top_builddir)/src/common/libwfits-common.la \

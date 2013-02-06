@@ -14,6 +14,8 @@ public:
 	WindowResizeTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("WindowResizeTest", "Window Resize Test")
+		, sizes_()
+		, resizeDone_(false)
 	{
 		return;
 	}
@@ -22,14 +24,71 @@ public:
 	{
 		window_.show();
 
-		queueStep(boost::bind(&Window::setSize, boost::ref(window_), 400, 200));
-		queueStep(boost::bind(&Window::checkSize, boost::ref(window_), 400, 200));
-		queueStep(boost::bind(&Window::setSize, boost::ref(window_), 100, 120));
-		queueStep(boost::bind(&Window::checkSize, boost::ref(window_), 100, 120));
+		sizes_.push_back(Size(-10, -10));
+		sizes_.push_back(Size(-1, 10));
+		sizes_.push_back(Size(10, -1));
+		sizes_.push_back(Size(0, 0));
+
+		for (int w(1); w <= 400; w += 89)
+			for (int h(3); h <= 400; h += 91)
+				sizes_.push_back(Size(w, h));
+
+		sizes_.push_back(Size(3000, 3000));
+
+		evas_object_event_callback_add(window_, EVAS_CALLBACK_RESIZE, &onResize, this);
+
+		nextResize();
+	}
+
+	static void onResize(void *data, Evas*, Evas_Object*, void*)
+	{
+		WindowResizeTest *test = static_cast<WindowResizeTest*>(data);
+		test->resizeDone_ = true;
+	}
+
+	void nextResize() {
+		resizeDone_ = false;
+		if (not sizes_.empty()) {
+			Size size(sizes_.front());
+			sizes_.pop_front();
+			queueStep(boost::bind(&Window::setSize, boost::ref(window_), size.first, size.second));
+			queueStep(boost::bind(&WindowResizeTest::checkResize, boost::ref(*this), size.first, size.second, 20));
+		}
+	}
+
+	void checkResize(int w, int h, unsigned tries)
+	{
+		if (not resizeDone_) {
+			ASSERT(tries != 0);
+			queueStep(boost::bind(&WindowResizeTest::checkResize, boost::ref(*this), w, h, --tries));
+		} else {
+			window_.checkSize(std::max(1, w), std::max(1, h));
+			checkServerSize(Geometry(), 20);
+		}
+	}
+
+	void checkServerSize(Geometry geometry, unsigned tries) {
+		bool sizeMatch(
+			window_.getWidth() == geometry.width
+			and window_.getHeight() == geometry.height);
+
+		if (not sizeMatch) {
+			ASSERT(tries != 0);
+			GeometryCallback cb = boost::bind(&WindowResizeTest::checkServerSize, boost::ref(*this), _1, --tries);
+			getSurfaceGeometry(elm_win_wl_window_get(window_)->surface, cb);
+		} else {
+			FAIL_UNLESS(sizeMatch);
+			nextResize();
+		}
 	}
 
 private:
+	typedef std::pair<int, int> Size;
+	typedef std::deque<Size> Sizes;
+
 	Window	window_;
+	Sizes	sizes_;
+	bool	resizeDone_;
 };
 
 class WindowMoveTest : public ElmTestHarness

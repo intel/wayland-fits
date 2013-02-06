@@ -6,6 +6,7 @@ ElmTestHarness::ElmTestHarness()
 	: TestHarness::TestHarness()
 	, eventType_(ecore_event_type_new())
 	, handler_(NULL)
+	, wfits_()
 {
 	return;
 }
@@ -17,6 +18,26 @@ void ElmTestHarness::run()
 
 	ecore_idler_add(idleSetup, this);
 	elm_run();
+}
+
+
+
+void ElmTestHarness::geometryDone(QueryRequest* request, GeometryCallback callback)
+{
+	if (not request->done) {
+		steps_.push_front(boost::bind(&ElmTestHarness::geometryDone, boost::ref(*this), request, callback));
+	} else {
+		Geometry *geometry = static_cast<Geometry*>(request->data);
+		steps_.push_front(boost::bind(callback, *geometry));
+		delete request;
+		delete geometry;
+	}
+}
+
+void ElmTestHarness::getSurfaceGeometry(wl_surface* surface, GeometryCallback callback)
+{
+	QueryRequest* request = wfits_.makeGeometryRequest(surface);
+	geometryDone(request, callback);
 }
 
 /*static*/

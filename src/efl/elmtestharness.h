@@ -4,16 +4,24 @@
 #include <Elementary.h>
 #include "common/harness.h"
 #include "application.h"
+#include "wayland-fits.h"
 
 class ElmTestHarness : public TestHarness
 {
 public:
+	typedef WaylandFits::Geometry Geometry;
+	typedef WaylandFits::QueryRequest QueryRequest;
+
+	typedef boost::function<void (Geometry)> GeometryCallback;
+
 	/**
 	 * Construct the test harness.
 	 **/
 	ElmTestHarness();
 
 	void run();
+
+	void getSurfaceGeometry(wl_surface*, GeometryCallback);
 
 private:
 	static Eina_Bool idleSetup(void*);
@@ -25,8 +33,11 @@ private:
 	static Eina_Bool idleTeardown(void*);
 	static Eina_Bool doTeardown(void*, int, void*);
 
+	void geometryDone(QueryRequest*, GeometryCallback);
+
 	int			eventType_; /// custom event type
 	Ecore_Event_Handler*	handler_;
+	WaylandFits		wfits_;
 };
 
 #define WAYLAND_ELM_HARNESS_EGL_TEST_CASE(Harness, suite) \
