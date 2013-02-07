@@ -59,11 +59,15 @@ public:
 	void checkResize(int w, int h, unsigned tries)
 	{
 		if (not resizeDone_) {
-			ASSERT(tries != 0);
+			ASSERT_MSG(tries != 0,
+				"failed to get EVAS_CALLBACK_RESIZE event ("
+				<< w << ","
+				<< h << ")"
+			);
 			queueStep(boost::bind(&WindowResizeTest::checkResize, boost::ref(*this), w, h, --tries));
 		} else {
 			window_.checkSize(std::max(1, w), std::max(1, h));
-			checkServerSize(Geometry(), 20);
+			checkServerSize(Geometry(), 100);
 		}
 	}
 
@@ -73,7 +77,14 @@ public:
 			and window_.getHeight() == geometry.height);
 
 		if (not sizeMatch) {
-			ASSERT(tries != 0);
+			ASSERT_MSG(tries != 0, ""
+				<< "client size ("
+				<< window_.getWidth() << ","
+				<< window_.getHeight() << ") != "
+				<< "server size ("
+				<< geometry.width << ","
+				<< geometry.height << ")"
+			);
 			GeometryCallback cb = boost::bind(&WindowResizeTest::checkServerSize, boost::ref(*this), _1, --tries);
 			getSurfaceGeometry(elm_win_wl_window_get(window_)->surface, cb);
 		} else {

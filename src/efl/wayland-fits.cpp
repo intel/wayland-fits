@@ -75,8 +75,8 @@ query_result_surface_geometry(void *data, wfits_query_result *result,
 
 WaylandFits::QueryRequest* WaylandFits::makeGeometryRequest(wl_surface* surface) const
 {
-	QueryRequest* request(new QueryRequest);
-	request->data = new Geometry;
+	QueryRequest* request(new QueryRequest); // caller responsible for deleting
+	request->data = new Geometry; // caller responsible for deleting
 
 	static const wfits_query_result_listener listener = {
 		query_result_surface_geometry,

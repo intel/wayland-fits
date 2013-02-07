@@ -47,3 +47,17 @@ std::vector<std::string> GlobalTestSuite::testNames(const std::string& testPatte
 	}
 	return result;
 }
+
+TEST(MacroTest, "Common/Sanity")
+{
+	FAIL_UNLESS(1);
+	FAIL_UNLESS(1 == 1);
+	FAIL_UNLESS_EQUAL(0, 0);
+	FAIL_IF(0);
+	FAIL_IF(0 == 1);
+	FAIL_IF_EQUAL(0, 1);
+	FAIL_UNLESS_GE(1, 1);
+	FAIL_UNLESS_GE(1, 0);
+	ASSERT(1);
+	ASSERT_MSG(1, "sanity failed");
+}

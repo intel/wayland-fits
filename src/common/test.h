@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <boost/foreach.hpp>
+#include <boost/test/utils/wrap_stringstream.hpp>
 #include <map>
 #include <vector>
 #include <check.h> // Check unit testing framework... see http://check.sourceforge.net
@@ -46,6 +47,13 @@ typedef Singleton<GlobalTestSuite> TheGlobalTestSuite;
 #ifndef ASSERT
 	#define ASSERT(expr) fail_unless(expr)
 #endif
+
+#define ASSERT_MSG(expr, msg) \
+{ \
+	boost::wrap_stringstream s; \
+	s.ref() << msg; \
+	ck_assert_msg(expr, s.str().c_str()); \
+}
 
 #define TEST(name, suite) \
 	class class_ ## name { \
