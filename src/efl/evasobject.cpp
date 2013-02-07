@@ -85,14 +85,20 @@ const Eina_Bool EvasObject::isVisible()
 
 void EvasObject::checkSize(const int width, const int height)
 {
-	FAIL_UNLESS_EQUAL(this->getWidth(), width);
-	FAIL_UNLESS_EQUAL(this->getHeight(), height);
+	ASSERT_MSG(getWidth() == width, "width: " << getWidth() << " != " << width);
+	ASSERT_MSG(getHeight() == height, "height: " << getHeight() << " != " << height);
+
+// 	FAIL_UNLESS_EQUAL(this->getWidth(), width);
+// 	FAIL_UNLESS_EQUAL(this->getHeight(), height);
 }
 
 void EvasObject::checkPosition(const int xcoord, const int ycoord)
 {
-	FAIL_UNLESS_EQUAL(this->getX(), xcoord);
-	FAIL_UNLESS_EQUAL(this->getY(), ycoord);
+	ASSERT_MSG(getX() == xcoord, "x: " << getX() << " != " << xcoord);
+	ASSERT_MSG(getY() == ycoord, "y: " << getY() << " != " << ycoord);
+
+// 	FAIL_UNLESS_EQUAL(this->getX(), xcoord);
+// 	FAIL_UNLESS_EQUAL(this->getY(), ycoord);
 }
 
 void EvasObject::checkVisible(const Eina_Bool isVisible)
