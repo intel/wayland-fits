@@ -32,7 +32,7 @@
 #include <X11/Xlib-xcb.h>
 
 #include <wayland-server.h>
-#include <weston/src/compositor.h>
+#include <weston/compositor.h>
 
 #include "extensions/protocol/wayland-fits-server-protocol.h"
 
