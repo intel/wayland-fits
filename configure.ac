@@ -23,9 +23,10 @@ LDFLAGS="-Wl,--no-as-needed"
 
 PKG_CHECK_MODULES([CHECK], [check >= 0.9.8])
 PKG_CHECK_MODULES(CAIRO, [cairo >= 1.10.0])
-PKG_CHECK_MODULES(WAYLAND, [wayland-client wayland-egl])
+PKG_CHECK_MODULES(WAYLAND, [wayland-client wayland-egl wayland-cursor])
 PKG_CHECK_MODULES(WAYLAND_SERVER, [wayland-server])
-PKG_CHECK_MODULES(EFL, [elementary ecore-wayland evas-wayland-egl evas-wayland-shm])
+PKG_CHECK_MODULES(WESTON, [weston >= 1.0.6])
+PKG_CHECK_MODULES(EFL, [elementary >= 1.7.6 ecore-wayland >= 1.7.6 evas-wayland-egl >= 1.7.6 evas-wayland-shm >= 1.7.6])
 PKG_CHECK_MODULES(PIXMAN, [pixman-1])
 
 # TODO: Add support to conditionally build EFL suite, Core suite, etc...
