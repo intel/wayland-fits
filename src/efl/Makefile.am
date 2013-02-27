@@ -1,3 +1,5 @@
+if BUILD_EFL_TESTS
+
 MEDIA = \"$(abs_top_srcdir)/media\"
 
 INCLUDES = -I$(top_srcdir)/src
@@ -46,16 +48,16 @@ libwfits_efl_la_SOURCES = \
 
 libwfits_efl_la_LIBADD = \
 	$(top_builddir)/src/common/libwfits-common.la \
-	$(CAIRO_LIBS)		\
 	$(WAYLAND_LIBS)		\
-	@EFL_LIBS@		\
-	@CHECK_LIBS@
+	$(EFL_LIBS)		\
+	$(CHECK_LIBS)
 
 AM_CXXFLAGS = \
-	$(CAIRO_CFLAGS)		\
-	$(WAYLAND_CFLAGS)	\
 	-DMEDIA_PATH=$(MEDIA)	\
-	@EFL_CFLAGS@		\
-	@CHECK_CFLAGS@
+	$(WAYLAND_CFLAGS)	\
+	$(EFL_CFLAGS)		\
+	$(CHECK_CFLAGS)		\
 	-lboost_system		\
 	-lboost_filesystem
+
+endif

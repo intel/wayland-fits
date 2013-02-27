@@ -20,13 +20,11 @@ libwfits_core_la_SOURCES =						\
 	test_surface.cpp						\
 	$(top_srcdir)/src/extensions/protocol/wayland-fits-protocol.c
 
-libwfits_core_la_LIBADD = \
-	$(top_builddir)/src/common/libwfits-common.la \
-	$(CAIRO_LIBS)		\
-	$(WAYLAND_LIBS)		\
-	@CHECK_LIBS@
+libwfits_core_la_LIBADD =						\
+	$(top_builddir)/src/common/libwfits-common.la			\
+	$(WAYLAND_LIBS)							\
+	$(CHECK_LIBS)
 
 AM_CXXFLAGS = \
-	$(CAIRO_CFLAGS)		\
 	$(WAYLAND_CFLAGS)	\
-	@CHECK_CFLAGS@
+	$(CHECK_CFLAGS)
