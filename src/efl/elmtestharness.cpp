@@ -40,6 +40,39 @@ void ElmTestHarness::getSurfaceGeometry(wl_surface* surface, GeometryCallback ca
 	geometryDone(request, callback);
 }
 
+ElmTestHarness::Position ElmTestHarness::getGlobalPointerPosition() const
+{
+	QueryRequest* request = wfits_.makeGlobalPointerPositionRequest();
+	Position result;
+
+	while (not request->done) {
+		Application::yield();
+	}
+
+	Position *data(static_cast<Position*>(request->data));
+	result = *data;
+
+	delete data;
+	delete request;
+
+	return result;
+}
+
+void ElmTestHarness::expectGlobalPointerPosition(int32_t x, int32_t y) const
+{
+	Position actual(getGlobalPointerPosition());
+	while (actual.x != x or actual.y != y)
+	{
+		actual = getGlobalPointerPosition();
+	}
+}
+
+void ElmTestHarness::setGlobalPointerPosition(int32_t x, int32_t y) const
+{
+	wfits_.setGlobalPointerPosition(x, y);
+	expectGlobalPointerPosition(x, y);
+}
+
 /*static*/
 Eina_Bool ElmTestHarness::idleSetup(void* data)
 {

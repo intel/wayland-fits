@@ -22,6 +22,14 @@ public:
 		int32_t height;
 	};
 
+	class Position
+	{
+	public:
+		Position();
+		int32_t x;
+		int32_t y;
+	};
+
 	class QueryRequest
 	{
 	public:
@@ -31,6 +39,10 @@ public:
 	};
 
 	QueryRequest* makeGeometryRequest(wl_surface*) const;
+	QueryRequest* makeGlobalPointerPositionRequest() const;
+
+	void setGlobalPointerPosition(int32_t, int32_t) const;
+
 private:
 	wfits_input*		wfits_input_;
 	wfits_query*		wfits_query_;

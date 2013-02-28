@@ -10,6 +10,7 @@ class ElmTestHarness : public TestHarness
 {
 public:
 	typedef WaylandFits::Geometry Geometry;
+	typedef WaylandFits::Position Position;
 	typedef WaylandFits::QueryRequest QueryRequest;
 
 	typedef boost::function<void (Geometry)> GeometryCallback;
@@ -22,6 +23,10 @@ public:
 	void run();
 
 	void getSurfaceGeometry(wl_surface*, GeometryCallback);
+
+	void setGlobalPointerPosition(int32_t, int32_t) const;
+	Position getGlobalPointerPosition() const;
+	void expectGlobalPointerPosition(int32_t, int32_t) const;
 
 private:
 	static Eina_Bool idleSetup(void*);

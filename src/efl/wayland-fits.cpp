@@ -51,6 +51,13 @@ WaylandFits::Geometry::Geometry()
 	return;
 }
 
+WaylandFits::Position::Position()
+	: x(-1)
+	, y(-1)
+{
+	return;
+}
+
 WaylandFits::QueryRequest::QueryRequest()
 	: done(false)
 	, data(NULL)
@@ -87,3 +94,40 @@ WaylandFits::QueryRequest* WaylandFits::makeGeometryRequest(wl_surface* surface)
 
 	return request;
 }
+
+static void
+query_result_global_pointer_position(void *data, wfits_query_result *result,
+	wl_fixed_t x, wl_fixed_t y)
+{
+	WaylandFits::QueryRequest* qr = static_cast<WaylandFits::QueryRequest*>(data);
+	WaylandFits::Position* g = static_cast<WaylandFits::Position*>(qr->data);
+	g->x = wl_fixed_to_int(x);
+	g->y = wl_fixed_to_int(y);
+	qr->done = true;
+
+	wfits_query_result_destroy(result);
+}
+
+WaylandFits::QueryRequest* WaylandFits::makeGlobalPointerPositionRequest() const
+{
+	QueryRequest* request(new QueryRequest); // caller responsible for deleting
+	request->data = new Position; // caller responsible for deleting
+
+	static const wfits_query_result_listener listener = {
+		NULL,
+		query_result_global_pointer_position,
+	};
+
+	wfits_query_result* result = wfits_query_global_pointer_position(wfits_query_);
+	wfits_query_result_add_listener(result, &listener, request);
+
+	return request;
+}
+
+void WaylandFits::setGlobalPointerPosition(int32_t x, int32_t y) const
+{
+	wfits_input_move_pointer(wfits_input_, x, y);
+}
+
+
+
