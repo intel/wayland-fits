@@ -12,11 +12,11 @@ public:
 
 //TODO: more rigorous tests
 
-typedef ResizeObjectTest<Inwin> InwinResizeTest;
+// NOTE: inwin's cannot be resized explicitly
+
 typedef PositionObjectTest<Inwin> InwinPositionTest;
 typedef VisibleObjectTest<Inwin> InwinVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(InwinResizeTest, "Inwin")
 WAYLAND_ELM_HARNESS_TEST_CASE(InwinPositionTest, "Inwin")
 WAYLAND_ELM_HARNESS_TEST_CASE(InwinVisibilityTest, "Inwin")
 
