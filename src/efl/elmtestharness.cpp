@@ -20,37 +20,33 @@ void ElmTestHarness::run()
 	elm_run();
 }
 
-
-
-void ElmTestHarness::geometryDone(QueryRequest* request, GeometryCallback callback)
+ElmTestHarness::Geometry ElmTestHarness::getSurfaceGeometry(wl_surface* surface)
 {
-	if (not request->done) {
-		steps_.push_front(boost::bind(&ElmTestHarness::geometryDone, boost::ref(*this), request, callback));
-	} else {
-		Geometry *geometry = static_cast<Geometry*>(request->data);
-		steps_.push_front(boost::bind(callback, *geometry));
-		delete request;
-		delete geometry;
+	WaylandFits::QueryRequest* request = wfits_.makeGeometryRequest(surface);
+
+	while (not request->done) {
+		Application::yield();
 	}
-}
 
-void ElmTestHarness::getSurfaceGeometry(wl_surface* surface, GeometryCallback callback)
-{
-	QueryRequest* request = wfits_.makeGeometryRequest(surface);
-	geometryDone(request, callback);
+	Geometry *data(static_cast<Geometry*>(request->data));
+	Geometry result = *data;
+
+	delete data;
+	delete request;
+
+	return result;
 }
 
 ElmTestHarness::Position ElmTestHarness::getGlobalPointerPosition() const
 {
-	QueryRequest* request = wfits_.makeGlobalPointerPositionRequest();
-	Position result;
+	WaylandFits::QueryRequest* request = wfits_.makeGlobalPointerPositionRequest();
 
 	while (not request->done) {
 		Application::yield();
 	}
 
 	Position *data(static_cast<Position*>(request->data));
-	result = *data;
+	Position result = *data;
 
 	delete data;
 	delete request;

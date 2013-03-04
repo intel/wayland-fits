@@ -24,6 +24,13 @@ public:
 	{
 		window_.show();
 
+		// This will flush out the window titlebar animation.
+		// However, this is highly dependent on the default animation
+		// and if that changes, then this may not work.  But currently
+		// 20 yields seems to do the trick.
+		for (unsigned i(0); i < 20; ++i)
+			queueStep(boost::bind(&Application::yield, 0.001*1e6));
+
 		sizes_.push_back(Size(-10, -10));
 		sizes_.push_back(Size(-1, 10));
 		sizes_.push_back(Size(10, -1));
@@ -46,7 +53,8 @@ public:
 		test->resizeDone_ = true;
 	}
 
-	void nextResize() {
+	void nextResize()
+	{
 		resizeDone_ = false;
 		if (not sizes_.empty()) {
 			Size size(sizes_.front());
@@ -67,11 +75,13 @@ public:
 			queueStep(boost::bind(&WindowResizeTest::checkResize, boost::ref(*this), w, h, --tries));
 		} else {
 			window_.checkSize(std::max(1, w), std::max(1, h));
-			checkServerSize(Geometry(), 100);
+			checkServerSize(100);
 		}
 	}
 
-	void checkServerSize(Geometry geometry, unsigned tries) {
+	void checkServerSize(unsigned tries)
+	{
+		Geometry geometry(getSurfaceGeometry(elm_win_wl_window_get(window_)->surface));
 		bool sizeMatch(
 			window_.getWidth() == geometry.width
 			and window_.getHeight() == geometry.height);
@@ -85,8 +95,7 @@ public:
 				<< geometry.width << ","
 				<< geometry.height << ")"
 			);
-			GeometryCallback cb = boost::bind(&WindowResizeTest::checkServerSize, boost::ref(*this), _1, --tries);
-			getSurfaceGeometry(elm_win_wl_window_get(window_)->surface, cb);
+			queueStep(boost::bind(&WindowResizeTest::checkServerSize, boost::ref(*this), --tries));
 		} else {
 			FAIL_UNLESS(sizeMatch);
 			nextResize();
@@ -153,11 +162,12 @@ public:
 			queueStep(boost::bind(&WindowMoveTest::checkPosition, boost::ref(*this), x, y, --tries));
 		} else {
 			window_.checkPosition(x, y);
-			checkServerPosition(Geometry(), 2);
+			checkServerPosition(2);
 		}
 	}
 
-	void checkServerPosition(Geometry geometry, unsigned tries) {
+	void checkServerPosition(unsigned tries) {
+		Geometry geometry(getSurfaceGeometry(elm_win_wl_window_get(window_)->surface));
 		bool positionMatch(
 			window_.getX() == geometry.x
 			and window_.getY() == geometry.y);
@@ -171,8 +181,7 @@ public:
 				<< geometry.x << ","
 				<< geometry.y << ")"
 			);
-			GeometryCallback cb = boost::bind(&WindowMoveTest::checkServerPosition, boost::ref(*this), _1, --tries);
-			getSurfaceGeometry(elm_win_wl_window_get(window_)->surface, cb);
+			queueStep(boost::bind(&WindowMoveTest::checkServerPosition, boost::ref(*this), --tries));
 		} else {
 			FAIL_UNLESS(positionMatch);
 			nextPosition();

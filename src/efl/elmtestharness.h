@@ -11,9 +11,6 @@ class ElmTestHarness : public TestHarness
 public:
 	typedef WaylandFits::Geometry Geometry;
 	typedef WaylandFits::Position Position;
-	typedef WaylandFits::QueryRequest QueryRequest;
-
-	typedef boost::function<void (Geometry)> GeometryCallback;
 
 	/**
 	 * Construct the test harness.
@@ -22,7 +19,7 @@ public:
 
 	void run();
 
-	void getSurfaceGeometry(wl_surface*, GeometryCallback);
+	Geometry getSurfaceGeometry(wl_surface*);
 
 	void setGlobalPointerPosition(int32_t, int32_t) const;
 	Position getGlobalPointerPosition() const;
@@ -37,8 +34,6 @@ private:
 
 	static Eina_Bool idleTeardown(void*);
 	static Eina_Bool doTeardown(void*, int, void*);
-
-	void geometryDone(QueryRequest*, GeometryCallback);
 
 	int			eventType_; /// custom event type
 	Ecore_Event_Handler*	handler_;
