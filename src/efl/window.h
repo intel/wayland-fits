@@ -5,6 +5,8 @@
 
 #include "evasobject.h"
 
+struct wl_surface;
+
 class Window : public EvasObject
 {
 public:
@@ -30,6 +32,9 @@ public:
 	void checkSticky(const Eina_Bool isSticky);
 	void checkWithdrawn(const Eina_Bool isWithdrawn);
 	void checkRotation(const int expected);
+
+	wl_surface* get_wl_surface();
+	
 };
 
 #endif

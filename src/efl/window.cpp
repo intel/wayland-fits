@@ -1,4 +1,5 @@
 #include <Elementary.h>
+#include <Ecore_Wayland.h>
 
 #include "window.h"
 #include "application.h"
@@ -11,6 +12,10 @@ Window::Window(const std::string& name, const std::string& title, const unsigned
 	setSize(width, height);
 }
 
+wl_surface* Window::get_wl_surface()
+{
+	return elm_win_wl_window_get(*this)->surface;
+}
 
 void Window::iconify(const Eina_Bool iconify)
 {
