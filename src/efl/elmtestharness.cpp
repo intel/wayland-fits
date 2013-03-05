@@ -20,6 +20,42 @@ void ElmTestHarness::run()
 	elm_run();
 }
 
+static void runStepWithMessage(TestHarness::TestStep step, std::string message)
+{
+	std::cout << "..." << message << std::endl;
+	step();
+}
+
+void ElmTestHarness::queueStep(TestHarness::TestStep step, const std::string& message)
+{
+	queueStep(
+		boost::bind(&runStepWithMessage, step, message)
+	);
+}
+
+void ElmTestHarness::stepUntilCondition(Condition condition)
+{
+	if (not condition()) {
+		steps_.push_front(
+			boost::bind(
+				&ElmTestHarness::stepUntilCondition,
+				boost::ref(*this),
+				condition
+			)
+		);
+	}
+}
+
+void ElmTestHarness::assertCondition(Condition condition)
+{
+	ASSERT(condition());
+}
+
+void ElmTestHarness::assertCondition(Condition condition, const std::string& message)
+{
+	ASSERT_MSG(condition(), message);
+}
+
 ElmTestHarness::Geometry ElmTestHarness::getSurfaceGeometry(wl_surface* surface)
 {
 	WaylandFits::QueryRequest* request = wfits_.makeGeometryRequest(surface);

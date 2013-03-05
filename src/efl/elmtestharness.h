@@ -11,6 +11,7 @@ class ElmTestHarness : public TestHarness
 public:
 	typedef WaylandFits::Geometry Geometry;
 	typedef WaylandFits::Position Position;
+	typedef boost::function<bool (void)> Condition;
 
 	/**
 	 * Construct the test harness.
@@ -19,11 +20,19 @@ public:
 
 	void run();
 
+	using TestHarness::queueStep;
+
+	void queueStep(TestHarness::TestStep, const std::string&);
+
 	Geometry getSurfaceGeometry(wl_surface*);
 
 	void setGlobalPointerPosition(int32_t, int32_t) const;
 	Position getGlobalPointerPosition() const;
 	void expectGlobalPointerPosition(int32_t, int32_t) const;
+
+	void stepUntilCondition(Condition condition);
+	void assertCondition(Condition condition);
+	void assertCondition(Condition condition, const std::string&);
 
 private:
 	static Eina_Bool idleSetup(void*);
