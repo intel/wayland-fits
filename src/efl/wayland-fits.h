@@ -44,8 +44,9 @@ public:
 	void setGlobalPointerPosition(int32_t, int32_t) const;
 
 private:
-	wfits_input*		wfits_input_;
-	wfits_query*		wfits_query_;
+	void ensureBound() const;
+	mutable wfits_input*	wfits_input_;
+	mutable wfits_query*	wfits_query_;
 };
 
 #endif

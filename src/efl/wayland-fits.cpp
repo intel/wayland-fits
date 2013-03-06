@@ -5,41 +5,48 @@ WaylandFits::WaylandFits()
 	: wfits_input_(NULL)
 	, wfits_query_(NULL)
 {
-	ecore_wl_init(NULL);
-
-	Ecore_Wl_Global *global;
-	wl_registry *registry = ecore_wl_registry_get();
-	wl_list *globals = ecore_wl_globals_get();
-
-	ASSERT(registry != NULL);
-	ASSERT(globals != NULL);
-
-	wl_list_for_each(global, globals, link) {
-		if (std::string(global->interface) == "wfits_input") {
-			wfits_input_ = static_cast<wfits_input*>(
-				wl_registry_bind(
-					registry,
-					global->id,
-					&wfits_input_interface,
-					global->version));
-		} else if (std::string(global->interface) == "wfits_query") {
-			wfits_query_ = static_cast<wfits_query*>(
-				wl_registry_bind(
-					registry,
-					global->id,
-					&wfits_query_interface,
-					global->version));
-		}
-	}
-	ASSERT(wfits_input_ != NULL);
-	ASSERT(wfits_query_ != NULL);
+// 	ecore_wl_init(NULL);
 }
 
 /*virtual*/ WaylandFits::~WaylandFits()
 {
-	wfits_input_destroy(wfits_input_);
-	wfits_query_destroy(wfits_query_);
-	ecore_wl_shutdown();
+	if (wfits_input_ != NULL)
+		wfits_input_destroy(wfits_input_);
+	if (wfits_query_ != NULL)
+		wfits_query_destroy(wfits_query_);
+// 	ecore_wl_shutdown();
+}
+
+void WaylandFits::ensureBound() const
+{
+	if (wfits_input_ == NULL or wfits_query_ == NULL) {
+		Ecore_Wl_Global *global;
+		wl_registry *registry = ecore_wl_registry_get();
+		wl_list *globals = ecore_wl_globals_get();
+
+		ASSERT(registry != NULL);
+		ASSERT(globals != NULL);
+
+		wl_list_for_each(global, globals, link) {
+			if (std::string(global->interface) == "wfits_input") {
+				wfits_input_ = static_cast<wfits_input*>(
+					wl_registry_bind(
+						registry,
+						global->id,
+						&wfits_input_interface,
+						global->version));
+			} else if (std::string(global->interface) == "wfits_query") {
+				wfits_query_ = static_cast<wfits_query*>(
+					wl_registry_bind(
+						registry,
+						global->id,
+						&wfits_query_interface,
+						global->version));
+			}
+		}
+	}
+	ASSERT(wfits_input_ != NULL);
+	ASSERT(wfits_query_ != NULL);
 }
 
 WaylandFits::Geometry::Geometry()
@@ -85,6 +92,8 @@ WaylandFits::QueryRequest* WaylandFits::makeGeometryRequest(wl_surface* surface)
 	QueryRequest* request(new QueryRequest); // caller responsible for deleting
 	request->data = new Geometry; // caller responsible for deleting
 
+	ensureBound();
+
 	static const wfits_query_result_listener listener = {
 		query_result_surface_geometry,
 	};
@@ -113,6 +122,8 @@ WaylandFits::QueryRequest* WaylandFits::makeGlobalPointerPositionRequest() const
 	QueryRequest* request(new QueryRequest); // caller responsible for deleting
 	request->data = new Position; // caller responsible for deleting
 
+	ensureBound();
+
 	static const wfits_query_result_listener listener = {
 		NULL,
 		query_result_global_pointer_position,
@@ -126,6 +137,7 @@ WaylandFits::QueryRequest* WaylandFits::makeGlobalPointerPositionRequest() const
 
 void WaylandFits::setGlobalPointerPosition(int32_t x, int32_t y) const
 {
+	ensureBound();
 	wfits_input_move_pointer(wfits_input_, x, y);
 }
 
