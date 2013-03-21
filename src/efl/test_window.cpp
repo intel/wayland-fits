@@ -5,30 +5,6 @@
 
 using std::vector;
 
-class WindowFullscreenTest : public ElmTestHarness
-{
-public:
-	WindowFullscreenTest()
-		: ElmTestHarness::ElmTestHarness()
-		, window_("WindowFullscreenTest", "Window Fullscreen Test")
-	{
-		return;
-	}
-
-	void setup()
-	{
-		window_.show();
-
-		queueStep(boost::bind(&Window::fullscreen, boost::ref(window_), EINA_TRUE));
-		queueStep(boost::bind(&Window::checkFullscreen, boost::ref(window_), EINA_TRUE));
-		queueStep(boost::bind(&Window::fullscreen, boost::ref(window_), EINA_FALSE));
-		queueStep(boost::bind(&Window::checkFullscreen, boost::ref(window_), EINA_FALSE));
-	}
-
-private:
-	Window	window_;
-};
-
 class WindowIconifyTest : public ElmTestHarness
 {
 public:
@@ -262,7 +238,6 @@ private:
 };
 
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowIconifyTest, "Window")
-WAYLAND_ELM_HARNESS_TEST_CASE(WindowFullscreenTest, "Window")
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowStickyTest, "Window")
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowWithdrawnTest, "Window")
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowRotationTest, "Window")
