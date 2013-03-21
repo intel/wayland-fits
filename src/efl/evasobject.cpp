@@ -1,5 +1,3 @@
-#include <Evas.h>
-
 #include "evasobject.h"
 #include "common/test.h"
 

@@ -44,6 +44,9 @@ libwfits_efl_la_SOURCES = \
 	test_popup.cpp			\
 	test_progressbar.cpp		\
 	test_window.cpp			\
+	test_window_resize.cpp		\
+	test_window_move.cpp		\
+	test_window_maximize.cpp	\
 	$(top_srcdir)/src/extensions/protocol/wayland-fits-protocol.c
 
 libwfits_efl_la_LIBADD = \

@@ -1,6 +1,8 @@
 #ifndef __WAYLAND_EFL_EVAS_OBJECT_H__
 #define __WAYLAND_EFL_EVAS_OBJECT_H__
 
+#include <Evas.h>
+
 class EvasObject
 {
 public:

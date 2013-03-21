@@ -1,9 +1,9 @@
 #ifndef __WFITS_COMMON_HARNESS_H__
 #define __WFITS_COMMON_HARNESS_H__
 
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
 #include <deque>
+
+#include "util.h"
 
 class TestHarness
 {
