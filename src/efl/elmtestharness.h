@@ -30,6 +30,8 @@ public:
 	Position getGlobalPointerPosition() const;
 	void expectGlobalPointerPosition(int32_t, int32_t) const;
 
+	void pointerKeyPress(int32_t, int32_t) const;
+
 	void stepUntilCondition(Condition condition);
 	void assertCondition(Condition condition);
 	void assertCondition(Condition condition, const std::string&);

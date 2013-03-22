@@ -105,6 +105,11 @@ void ElmTestHarness::setGlobalPointerPosition(int32_t x, int32_t y) const
 	expectGlobalPointerPosition(x, y);
 }
 
+void ElmTestHarness::pointerKeyPress(int32_t key, int32_t state) const
+{
+	wfits_.pointerKeyPress(key, state);
+}
+
 /*static*/
 Eina_Bool ElmTestHarness::idleSetup(void* data)
 {

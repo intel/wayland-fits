@@ -42,6 +42,8 @@ public:
 	QueryRequest* makeGlobalPointerPositionRequest() const;
 
 	void setGlobalPointerPosition(int32_t, int32_t) const;
+	
+	void pointerKeyPress(uint32_t, uint32_t) const;
 
 private:
 	void ensureBound() const;
