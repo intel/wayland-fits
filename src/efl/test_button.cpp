@@ -177,89 +177,94 @@ public:
 
 	void setup()
 	{
-		//place button in the center of window
-// 		button_.setPosition(
-// 			(window_.getWidth() / 2 - button_.getWidth() / 2),
-// 			(window_.getHeight() / 2 - button_.getHeight() / 2)
-// 		);
-// 		
-		//BUG: Exposes window decoration bug
-  		button_.setPosition(0, 0);
+		button_.setPosition(0, 0);
 		button_.show();
 		window_.show();
 		
 		Application::yield(0.01*1e6);
-		for (unsigned i(0); i < 20; ++i)
-			queueStep(boost::bind(&Application::yield, 0.001*1e6));
 
 		Geometry geo = getSurfaceGeometry(elm_win_wl_window_get(window_)->surface);
 		Geometry geoFS = window_.getFramespaceGeometry();
+		
 		geo.y += geoFS.y;
 		geo.x += geoFS.x;
 		
-		//upper left
+		geo.y += button_.getY();
+		geo.x += button_.getX();
+		
+		int bw(button_.getWidth());
+		int bh(button_.getHeight());
+		
+		//upper left (vertical)
 		addInOutEventsTest(
-			button_.getX() + geo.x,	//inside widget
-			button_.getY() + geo.y,
-			button_.getX() + geo.x,	//outside widget
- 			button_.getY() + geo.y - 5
+			geo.x, geo.y,
+			geo.x, geo.y - 1
 		);
-
+		
+		//upper left (horizontal)
+		addInOutEventsTest(
+			geo.x, geo.y,
+			geo.x - 1, geo.y
+		);
+		
 		//upper mid
 		addInOutEventsTest(
- 			button_.getX() + button_.getWidth() / 2 + geo.x,
- 			button_.getY() + geo.y,
- 			button_.getX() + button_.getWidth() / 2 + geo.x,
- 			button_.getY() + geo.y - 5
- 		);
+			bw / 2 + geo.x, geo.y,
+			bw / 2 + geo.x, geo.y - 1
+		);
 		
-		//upper right
+		//upper right (vertical)
 		addInOutEventsTest(
-			button_.getX() + button_.getWidth() + geo.x - 1,
- 			button_.getY() + geo.y,
- 			button_.getX() + button_.getWidth() + geo.x,
-			button_.getY() + geo.y - 5
- 			
+			bw + geo.x - 1, geo.y,
+			bw + geo.x,geo.y - 1
+		);
+		
+		//upper right (horizontal)
+		addInOutEventsTest( 
+			 bw + geo.x - 1, geo.y,
+ 			 bw + geo.x, geo.y //This coord is 1px to the right outside of the widget
 		);
 		
 		//mid left
 		addInOutEventsTest(
-			button_.getX() + geo.x,
-			button_.getY() + button_.getHeight() / 2 + geo.y,
-			button_.getX() + geo.x - 5,
-			button_.getY() + button_.getHeight() / 2 + geo.y			
+			geo.x, bh / 2 + geo.y,
+			geo.x - 1, bh / 2 + geo.y
 		);
 		
 		//mid right
-		addInOutEventsTest(
-			button_.getX() + button_.getWidth() + geo.x - 1,
-			button_.getY() + button_.getHeight() / 2 + geo.y,
-			button_.getX() + button_.getWidth() + geo.x + 5,
-			button_.getY() + button_.getHeight() / 2 + geo.y				   
+		addInOutEventsTest(//a button at 0,0 and 10x10 would fill pixels 0-9x0-9
+			 bw + geo.x - 1, bh / 2 + geo.y,
+			 bw + geo.x + 1, bh / 2 + geo.y
 		);
 		
-		//lower left
+		//lower left (vertical)
 		addInOutEventsTest(
-			button_.getX() + geo.x,
-			button_.getY() + button_.getHeight() + geo.y - 5,
- 			button_.getX() + geo.x,
- 			button_.getY() + button_.getHeight() + geo.y + 5
+			geo.x, bh + geo.y - 1,
+			geo.x, bh + geo.y + 1
+		);
+		
+		//lower left (horizontal)
+		addInOutEventsTest(
+			geo.x, bh + geo.y - 1,
+			geo.x - 1, bh + geo.y - 1
 		);
 		
 		//lower mid
 		addInOutEventsTest(
-			button_.getX() + button_.getWidth() / 2 + geo.x,
-			button_.getY() + button_.getHeight() + geo.y - 5,
-			button_.getX() + button_.getWidth() / 2 + geo.x,
-			button_.getY() + button_.getHeight() + geo.y + 5			
+			bw / 2 + geo.x, bh + geo.y - 1,
+			bw / 2 + geo.x,bh + geo.y + 1
 		);
 		
-		//lower right
+		//lower right (vertical)
 		addInOutEventsTest(
-			button_.getX() + button_.getWidth() + geo.x - 1,
-			button_.getY() + button_.getHeight() + geo.y - 5,
- 			button_.getX() + button_.getWidth() + geo.x,
- 			button_.getY() + button_.getHeight() + geo.y + 5				   
+			bw + geo.x - 1, bh + geo.y - 1,
+ 			bw + geo.x - 1, bh + geo.y
+		);
+		
+		//lower right (horizontal)
+		addInOutEventsTest(
+			 bw + geo.x - 1, bh + geo.y - 1,
+ 			 bw + geo.x, bh + geo.y + 1
 		);
 	}
 	
