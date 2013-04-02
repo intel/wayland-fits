@@ -49,22 +49,6 @@ void WaylandFits::ensureBound() const
 	ASSERT(wfits_query_ != NULL);
 }
 
-WaylandFits::Geometry::Geometry()
-	: x(-1)
-	, y(-1)
-	, width(-1)
-	, height(-1)
-{
-	return;
-}
-
-WaylandFits::Position::Position()
-	: x(-1)
-	, y(-1)
-{
-	return;
-}
-
 WaylandFits::QueryRequest::QueryRequest()
 	: done(false)
 	, data(NULL)
@@ -77,7 +61,7 @@ query_result_surface_geometry(void *data, wfits_query_result *result,
 	wl_fixed_t x, wl_fixed_t y, int32_t w, int32_t h)
 {
 	WaylandFits::QueryRequest* qr = static_cast<WaylandFits::QueryRequest*>(data);
-	WaylandFits::Geometry* g = static_cast<WaylandFits::Geometry*>(qr->data);
+	Geometry* g = static_cast<Geometry*>(qr->data);
 	g->x = wl_fixed_to_int(x);
 	g->y = wl_fixed_to_int(y);
 	g->width = w;
@@ -109,7 +93,7 @@ query_result_global_pointer_position(void *data, wfits_query_result *result,
 	wl_fixed_t x, wl_fixed_t y)
 {
 	WaylandFits::QueryRequest* qr = static_cast<WaylandFits::QueryRequest*>(data);
-	WaylandFits::Position* g = static_cast<WaylandFits::Position*>(qr->data);
+	Position* g = static_cast<Position*>(qr->data);
 	g->x = wl_fixed_to_int(x);
 	g->y = wl_fixed_to_int(y);
 	qr->done = true;

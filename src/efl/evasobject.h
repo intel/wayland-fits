@@ -2,6 +2,7 @@
 #define __WAYLAND_EFL_EVAS_OBJECT_H__
 
 #include <Evas.h>
+#include "common/util.h"
 
 class EvasObject
 {
@@ -15,15 +16,20 @@ public:
 	void show();
 	void hide();
 
-	const int getWidth();
-	const int getHeight();
-	const int getX();
-	const int getY();
-	const Eina_Bool isVisible();
+	int getWidth() const;
+	int getHeight() const;
+	int getX() const;
+	int getY() const;
+	Geometry getGeometry() const;
+	Position getPosition() const;
+
+	Eina_Bool isVisible() const;
+
 
 // 	operator Evas*();
 	
 	operator Evas_Object*();
+	operator const Evas_Object*() const;
 
 	void checkSize(const int width, const int height);
 	void checkPosition(const int x, const int y);

@@ -56,7 +56,7 @@ void ElmTestHarness::assertCondition(Condition condition, const std::string& mes
 	ASSERT_MSG(condition(), message);
 }
 
-ElmTestHarness::Geometry ElmTestHarness::getSurfaceGeometry(wl_surface* surface)
+Geometry ElmTestHarness::getSurfaceGeometry(wl_surface* surface)
 {
 	WaylandFits::QueryRequest* request = wfits_.makeGeometryRequest(surface);
 
@@ -73,7 +73,7 @@ ElmTestHarness::Geometry ElmTestHarness::getSurfaceGeometry(wl_surface* surface)
 	return result;
 }
 
-ElmTestHarness::Position ElmTestHarness::getGlobalPointerPosition() const
+Position ElmTestHarness::getGlobalPointerPosition() const
 {
 	WaylandFits::QueryRequest* request = wfits_.makeGlobalPointerPositionRequest();
 

@@ -26,6 +26,11 @@ EvasObject::operator Evas_Object*()
 	return obj_;
 }
 
+EvasObject::operator const Evas_Object*() const
+{
+	return obj_;
+}
+
 void EvasObject::setSize(int w, int h)
 {
 	evas_object_resize(*this, w, h);
@@ -46,21 +51,35 @@ void EvasObject::hide()
 	evas_object_hide(*this);
 }
 
-const int EvasObject::getX()
+Geometry EvasObject::getGeometry() const
+{
+	Geometry g;
+	evas_object_geometry_get(*this, &g.x, &g.y, &g.width, &g.height);
+	return g;
+}
+
+Position EvasObject::getPosition() const
+{
+	Position p;
+	evas_object_geometry_get(*this, &p.x, &p.y, NULL, NULL);
+	return p;
+}
+
+int EvasObject::getX() const
 {
 	int x;
 	evas_object_geometry_get(*this, &x, NULL, NULL, NULL);
 	return x;
 }
 
-const int EvasObject::getY()
+int EvasObject::getY() const
 {
 	int y;
 	evas_object_geometry_get(*this, NULL, &y, NULL, NULL);
 	return y;
 }
 
-const int EvasObject::getWidth()
+int EvasObject::getWidth() const
 {
 	int w;
 	evas_object_geometry_get(*this, NULL, NULL, &w, NULL);
@@ -68,7 +87,7 @@ const int EvasObject::getWidth()
 	return w;
 }
 
-const int EvasObject::getHeight()
+int EvasObject::getHeight() const
 {
 	int h;
 	evas_object_geometry_get(*this, NULL, NULL, NULL, &h);
@@ -76,7 +95,7 @@ const int EvasObject::getHeight()
 	return h;
 }
 
-const Eina_Bool EvasObject::isVisible()
+Eina_Bool EvasObject::isVisible() const
 {
 	return evas_object_visible_get(*this);
 }

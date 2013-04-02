@@ -9,8 +9,6 @@
 class ElmTestHarness : public TestHarness
 {
 public:
-	typedef WaylandFits::Geometry Geometry;
-	typedef WaylandFits::Position Position;
 	typedef boost::function<bool (void)> Condition;
 
 	/**

@@ -4,6 +4,7 @@
 #include <Ecore.h>
 #include <Ecore_Wayland.h>
 #include "extensions/protocol/wayland-fits-client-protocol.h"
+#include "common/util.h"
 
 class WaylandFits
 {
@@ -11,24 +12,6 @@ public:
 	WaylandFits();
 
 	virtual ~WaylandFits();
-
-	class Geometry
-	{
-	public:
-		Geometry();
-		int32_t x;
-		int32_t y;
-		int32_t width;
-		int32_t height;
-	};
-
-	class Position
-	{
-	public:
-		Position();
-		int32_t x;
-		int32_t y;
-	};
 
 	class QueryRequest
 	{
