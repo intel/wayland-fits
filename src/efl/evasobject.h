@@ -7,7 +7,7 @@
 class EvasObject
 {
 public:
-	EvasObject(Evas_Object* = NULL);
+	EvasObject(Evas_Object* = NULL, bool autodel = true);
 
 	virtual ~EvasObject();
 
@@ -37,7 +37,7 @@ public:
 
 private:
 	Evas_Object*	obj_;
-
+	bool		autodel_;
 };
 
 #endif

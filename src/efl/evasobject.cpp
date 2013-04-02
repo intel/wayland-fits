@@ -1,15 +1,16 @@
 #include "evasobject.h"
 #include "common/test.h"
 
-EvasObject::EvasObject(Evas_Object* o)
+EvasObject::EvasObject(Evas_Object* o, bool autodel)
 	: obj_(o)
+	, autodel_(autodel)
 {
 	return;
 }
 
 EvasObject::~EvasObject()
 {
-	if (obj_)
+	if (obj_ and autodel_)
 	{
 		evas_object_del(obj_);
 	}
