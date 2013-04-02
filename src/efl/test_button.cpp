@@ -43,6 +43,7 @@ public:
 
 	void setup()
 	{
+		Geometry geoFS = window_.getFramespaceGeometry();
 		//place button in the center of window
 		button_.setPosition(
 			(window_.getWidth() / 2 - button_.getWidth() / 2),
@@ -59,7 +60,7 @@ public:
 			boost::bind(
 				&ElmTestHarness::setGlobalPointerPosition, boost::ref(*this),
 				(geo.x + button_.getX() + button_.getWidth() / 2),
-				(geo.y + button_.getY() + button_.getHeight() / 2)
+				(geo.y + button_.getY() + button_.getHeight() / 2 + geoFS.height)
 				)
 		);
 		
@@ -188,14 +189,16 @@ public:
 		window_.show();
 		
 		Application::yield(0.01*1e6);
-		Application::yield(1000000);
+
 		Geometry geo = getSurfaceGeometry(elm_win_wl_window_get(window_)->surface);
+		Geometry geoFS = window_.getFramespaceGeometry();
+		geo.y += geoFS.height;		//Add framespace height to y value to 'move down' mouse cursor by framespace size
 		
 		//upper left
 		addInOutEventsTest(
-			button_.getX() + geo.x,
+			button_.getX() + geo.x,	//inside widget
 			button_.getY() + geo.y,
-			button_.getX() + geo.x,
+			button_.getX() + geo.x,	//outside widget
  			button_.getY() + geo.y - 5
 		);
 
@@ -235,7 +238,7 @@ public:
 		//lower left
 		addInOutEventsTest(
 			button_.getX() + geo.x,
-			button_.getY() + button_.getHeight() + geo.y - 1,
+			button_.getY() + button_.getHeight() + geo.y - 5,
  			button_.getX() + geo.x,
  			button_.getY() + button_.getHeight() + geo.y + 5
 		);
@@ -243,7 +246,7 @@ public:
 		//lower mid
 		addInOutEventsTest(
 			button_.getX() + button_.getWidth() / 2 + geo.x,
-			button_.getY() + button_.getHeight() + geo.y - 1,
+			button_.getY() + button_.getHeight() + geo.y - 5,
 			button_.getX() + button_.getWidth() / 2 + geo.x,
 			button_.getY() + button_.getHeight() + geo.y + 5			
 		);
@@ -251,7 +254,7 @@ public:
 		//lower right
 		addInOutEventsTest(
 			button_.getX() + button_.getWidth() + geo.x - 1,
-			button_.getY() + button_.getHeight() + geo.y - 1,
+			button_.getY() + button_.getHeight() + geo.y - 5,
  			button_.getX() + button_.getWidth() + geo.x,
  			button_.getY() + button_.getHeight() + geo.y + 5				   
 		);
