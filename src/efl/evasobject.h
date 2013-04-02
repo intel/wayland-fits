@@ -20,6 +20,8 @@ public:
 	int getHeight() const;
 	int getX() const;
 	int getY() const;
+	
+	Geometry getFramespaceGeometry() const;
 	Geometry getGeometry() const;
 	Position getPosition() const;
 

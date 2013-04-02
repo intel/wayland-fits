@@ -52,6 +52,18 @@ void EvasObject::hide()
 	evas_object_hide(*this);
 }
 
+Geometry EvasObject::getFramespaceGeometry() const
+{
+	Geometry g;
+	
+	evas_output_framespace_get(
+		evas_object_evas_get(*this),
+		&g.x, &g.y, &g.width, &g.height
+	);
+	return g;
+}
+
+
 Geometry EvasObject::getGeometry() const
 {
 	Geometry g;
