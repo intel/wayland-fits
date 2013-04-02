@@ -60,7 +60,7 @@ public:
 			boost::bind(
 				&ElmTestHarness::setGlobalPointerPosition, boost::ref(*this),
 				(geo.x + button_.getX() + button_.getWidth() / 2),
-				(geo.y + button_.getY() + button_.getHeight() / 2 + geoFS.height)
+				(geo.y + button_.getY() + button_.getHeight() / 2 + geoFS.y)
 				)
 		);
 		
@@ -189,10 +189,13 @@ public:
 		window_.show();
 		
 		Application::yield(0.01*1e6);
+		for (unsigned i(0); i < 20; ++i)
+			queueStep(boost::bind(&Application::yield, 0.001*1e6));
 
 		Geometry geo = getSurfaceGeometry(elm_win_wl_window_get(window_)->surface);
 		Geometry geoFS = window_.getFramespaceGeometry();
-		geo.y += geoFS.height;		//Add framespace height to y value to 'move down' mouse cursor by framespace size
+		geo.y += geoFS.y;
+		geo.x += geoFS.x;
 		
 		//upper left
 		addInOutEventsTest(
