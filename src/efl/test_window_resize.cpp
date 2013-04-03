@@ -91,10 +91,11 @@ public:
 
 	bool serverSizeIsEqual()
 	{
-		Geometry geometry(getSurfaceGeometry(window_.get_wl_surface()));
+		const Geometry geometry(getSurfaceGeometry(window_.get_wl_surface()));
+		const Geometry fg(window_.getFramespaceGeometry());
 
-		return window_.getWidth() == geometry.width
-			and window_.getHeight() == geometry.height;
+		return window_.getWidth() + fg.width == geometry.width
+			and window_.getHeight() + fg.height == geometry.height;
 	}
 
 private:

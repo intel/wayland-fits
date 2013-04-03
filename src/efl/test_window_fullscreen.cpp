@@ -23,9 +23,9 @@ public:
 		Application::yield(0.01*1e6);
 		initialGeometry_ = getSurfaceGeometry(window_.get_wl_surface());
 		std::cout << "...initial server geometry is: "
-			<< initialGeometry_.x << " "
+			<< initialGeometry_.x << ","
 			<< initialGeometry_.y << " "
-			<< initialGeometry_.width << " "
+			<< initialGeometry_.width << "x"
 			<< initialGeometry_.height << std::endl;
 
 		evas_object_smart_callback_add(window_, "fullscreen", onFullscreen, this);
@@ -57,6 +57,14 @@ public:
 				&WindowFullscreenTest::resizeDone_,
 				boost::ref(*this)
 			) = EINA_FALSE
+		);
+		queueStep(
+			boost::bind(
+				&WindowFullscreenTest::stepUntilCondition,
+				boost::ref(*this),
+				boost::lambda::bind(&WindowFullscreenTest::isInitialGeometry, boost::ref(*this))
+			),
+			"checking client geometry == initial server geometry"
 		);
 		queueStep(
 			boost::bind(
@@ -168,20 +176,21 @@ public:
 				boost::ref(*this),
 				boost::lambda::bind(&WindowFullscreenTest::isInitialGeometry, boost::ref(*this))
 			),
-			"checking client geometry == initial server geometry"
+			"checking client geometry == server geometry == initial server geometry"
 		);
 	}
 
 	bool isInitialGeometry()
 	{
-		const Geometry g(getSurfaceGeometry(window_.get_wl_surface()));
-
-		return g.x == initialGeometry_.x
-			and g.y == initialGeometry_.y
-			and g.width == initialGeometry_.width
-			and g.height == initialGeometry_.height
-			and window_.getWidth() == initialGeometry_.width
-			and window_.getHeight() == initialGeometry_.height
+		const Geometry sg(getSurfaceGeometry(window_.get_wl_surface()));
+		const Geometry fg(window_.getFramespaceGeometry());
+	
+		return sg.x == initialGeometry_.x
+			and sg.y == initialGeometry_.y
+			and sg.width == initialGeometry_.width
+			and sg.height == initialGeometry_.height
+			and window_.getWidth() + fg.width == initialGeometry_.width
+			and window_.getHeight() + fg.height == initialGeometry_.height
 		;
 		// NOTE: server does not support client side positioning
 	}
@@ -210,9 +219,9 @@ public:
 		Ecore_Wl_Event_Window_Configure *ev = static_cast<Ecore_Wl_Event_Window_Configure *>(event);
 
 		std::cout << "...got configure event: "
-			<< ev->x << " "
+			<< ev->x << ","
 			<< ev->y << " "
-			<< ev->w << " "
+			<< ev->w << "x"
 			<< ev->h << std::endl;
 		return ECORE_CALLBACK_PASS_ON;
 	}

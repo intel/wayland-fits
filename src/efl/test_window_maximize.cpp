@@ -87,15 +87,18 @@ public:
 			),
 			"checking resize event"
 		);
+
+		// TODO: How do we test if the window is actually maximized (i.e. what should the size be)?
+
 		queueStep(
 			boost::bind(
 				&WindowMaximizeTest::stepUntilCondition,
 				boost::ref(*this),
-				boost::lambda::bind(&Window::getWidth, boost::ref(window_)) > geometry_.width
-				and boost::lambda::bind(&Window::getHeight, boost::ref(window_)) > geometry_.height
+				not boost::lambda::bind(&WindowMaximizeTest::serverGeometryIsInitial, boost::ref(*this))
 			),
-			"checking client size > initial server size"
+			"checking server geometry != initial server geometry"
 		);
+
 		queueStep(
 			boost::bind(
 				&WindowMaximizeTest::stepUntilCondition,
@@ -153,39 +156,39 @@ public:
 			boost::bind(
 				&WindowMaximizeTest::stepUntilCondition,
 				boost::ref(*this),
-				boost::lambda::bind(&Window::getWidth, boost::ref(window_)) == geometry_.width
-				and boost::lambda::bind(&Window::getHeight, boost::ref(window_)) == geometry_.height
+				boost::lambda::bind(&WindowMaximizeTest::isInitialGeometry, boost::ref(*this))
 			),
-			"checking client size == initial server size"
-		);
-		queueStep(
-			boost::bind(
-				&WindowMaximizeTest::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&WindowMaximizeTest::serverSizeIsEqual, boost::ref(*this))
-			),
-			"checking client size == server size"
-		);
-		queueStep(
-			boost::bind(
-				&WindowMaximizeTest::serverGeometryIsInitial,
-				boost::ref(*this)
-			),
-			"checking server geometry == initial server geometry"
+			"checking client geometry == server geometry == initial server geometry"
 		);
 	}
 
+	bool isInitialGeometry()
+	{
+		const Geometry sg(getSurfaceGeometry(window_.get_wl_surface()));
+		const Geometry fg(window_.getFramespaceGeometry());
+
+		return sg.x == geometry_.x
+			and sg.y == geometry_.y
+			and sg.width == geometry_.width
+			and sg.height == geometry_.height
+			and window_.getWidth() + fg.width == geometry_.width
+			and window_.getHeight() + fg.height == geometry_.height
+		;
+		// NOTE: server does not support client side positioning
+	}
+	
 	bool serverSizeIsEqual()
 	{
-		Geometry g(getSurfaceGeometry(window_.get_wl_surface()));
+		const Geometry g(getSurfaceGeometry(window_.get_wl_surface()));
+		const Geometry fg(window_.getFramespaceGeometry());
 
-		return window_.getWidth() == g.width
-			and window_.getHeight() == g.height;
+		return window_.getWidth() + fg.width == g.width
+			and window_.getHeight() + fg.height == g.height;
 	}
 
 	bool serverGeometryIsInitial()
 	{
-		Geometry g(getSurfaceGeometry(window_.get_wl_surface()));
+		const Geometry g(getSurfaceGeometry(window_.get_wl_surface()));
 
 		return geometry_.x == g.x
 			and geometry_.y == g.y
