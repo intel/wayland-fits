@@ -19,22 +19,22 @@ public:
 	void withdrawn(const Eina_Bool withdraw);
 	void rotate(const int degrees);
 
-	const Eina_Bool isIconified();
-	const Eina_Bool isMaximized();
-	const Eina_Bool isFullscreen();
-	const Eina_Bool isSticky();
-	const Eina_Bool isWithdrawn();
-	const int getRotation();
+	Eina_Bool isIconified() const;
+	Eina_Bool isMaximized() const;
+	Eina_Bool isFullscreen() const;
+	Eina_Bool isSticky() const;
+	Eina_Bool isWithdrawn() const;
 
-	void checkIconified(const Eina_Bool isIconified);
-	void checkMaximized(const Eina_Bool isMaximized);
-	void checkFullscreen(const Eina_Bool isFullscreen);
-	void checkSticky(const Eina_Bool isSticky);
-	void checkWithdrawn(const Eina_Bool isWithdrawn);
-	void checkRotation(const int expected);
+	int getRotation() const;
+	
+	void checkIconified(const Eina_Bool isIconified) const;
+	void checkMaximized(const Eina_Bool isMaximized) const;
+	void checkFullscreen(const Eina_Bool isFullscreen) const;
+	void checkSticky(const Eina_Bool isSticky) const;
+	void checkWithdrawn(const Eina_Bool isWithdrawn) const;
+	void checkRotation(const int expected) const;
 
 	wl_surface* get_wl_surface();
-	
 };
 
 #endif

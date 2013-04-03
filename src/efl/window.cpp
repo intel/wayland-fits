@@ -22,7 +22,7 @@ void Window::iconify(const Eina_Bool iconify)
 	elm_win_iconified_set(*this, iconify);
 }
 
-const Eina_Bool Window::isIconified()
+Eina_Bool Window::isIconified() const
 {
 	return elm_win_iconified_get(*this);
 }
@@ -32,7 +32,7 @@ void Window::maximize(const Eina_Bool maximize)
 	elm_win_maximized_set(*this, maximize);
 }
 
-const Eina_Bool Window::isMaximized()
+Eina_Bool Window::isMaximized() const
 {
 	return elm_win_maximized_get(*this);
 }
@@ -42,7 +42,7 @@ void Window::fullscreen(const Eina_Bool fullscreen)
 	elm_win_fullscreen_set(*this, fullscreen);
 }
 
-const Eina_Bool Window::isFullscreen()
+Eina_Bool Window::isFullscreen() const
 {
 	return elm_win_fullscreen_get(*this);
 }
@@ -52,7 +52,7 @@ void Window::sticky(const Eina_Bool sticky)
 	elm_win_sticky_set(*this, sticky);
 }
 
-const Eina_Bool Window::isSticky()
+Eina_Bool Window::isSticky() const
 {
 	return elm_win_sticky_get(*this);
 }
@@ -62,7 +62,7 @@ void Window::withdrawn(const Eina_Bool withdraw)
 	elm_win_withdrawn_set(*this, withdraw);
 }
 
-const Eina_Bool Window::isWithdrawn()
+Eina_Bool Window::isWithdrawn() const
 {
 	return elm_win_withdrawn_get(*this);
 }
@@ -72,37 +72,37 @@ void Window::rotate(const int degrees)
 	elm_win_rotation_set(*this, degrees);
 }
 
-const int Window::getRotation()
+int Window::getRotation() const
 {
 	return elm_win_rotation_get(*this);
 }
 
-void Window::checkIconified(const Eina_Bool isIconified)
+void Window::checkIconified(const Eina_Bool isIconified) const
 {
 	FAIL_UNLESS_EQUAL(this->isIconified(), isIconified);
 }
 
-void Window::checkMaximized(const Eina_Bool isMaximized)
+void Window::checkMaximized(const Eina_Bool isMaximized) const
 {
 	FAIL_UNLESS_EQUAL(this->isMaximized(), isMaximized);
 }
 
-void Window::checkFullscreen(const Eina_Bool isFullscreen)
+void Window::checkFullscreen(const Eina_Bool isFullscreen) const
 {
 	FAIL_UNLESS_EQUAL(this->isFullscreen(), isFullscreen);
 }
 
-void Window::checkSticky(const Eina_Bool isSticky)
+void Window::checkSticky(const Eina_Bool isSticky) const
 {
 	FAIL_UNLESS_EQUAL(this->isSticky(), isSticky);
 }
 
-void Window::checkWithdrawn(const Eina_Bool isWithdrawn)
+void Window::checkWithdrawn(const Eina_Bool isWithdrawn) const
 {
 	FAIL_UNLESS_EQUAL(this->isWithdrawn(), isWithdrawn);
 }
 
-void Window::checkRotation(const int expected)
+void Window::checkRotation(const int expected) const
 {
 	FAIL_UNLESS_EQUAL(this->getRotation(), expected);
 }
