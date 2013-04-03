@@ -119,12 +119,13 @@ public:
 		Application::yield(0.01*1e6);
 
 		Geometry gw(getSurfaceGeometry(window_.get_wl_surface()));
+		Geometry gf(window_.getFramespaceGeometry());
 		Geometry gb(slider_.getButtonGeometry());
 		Geometry gs(slider_.getGeometry());
 
 		setGlobalPointerPosition(
-			gw.x + gb.x + gb.width / 2,
-			gw.y + gb.y + gb.height / 2
+			gw.x + gf.x + gb.x + gb.width / 2,
+			gw.y + gf.y + gb.y + gb.height / 2
 		);
 		pointerKeyPress(BTN_LEFT, 1);
 
@@ -135,21 +136,21 @@ public:
 			case ELM_ACTIONSLIDER_LEFT:
 				position = "left";
 				selection = "Left";
-				x = gw.x + gs.x + gb.width / 2;
+				x = gw.x + gf.x + gs.x + gb.width / 2;
 				break;
 			case ELM_ACTIONSLIDER_CENTER:
 				position = "center";
 				selection = "Center";
-				x = gw.x + gs.x + gs.width / 2;
+				x = gw.x + gf.x + gs.x + gs.width / 2;
 				break;
 			default:
 				position = "right";
 				selection = "Right";
-				x = gw.x + gs.x + gs.width - gb.width / 2;
+				x = gw.x + gf.x + gs.x + gs.width - gb.width / 2;
 				break;
 		}
 
-		setGlobalPointerPosition(x, gw.y + gb.y + gb.height / 2);
+		setGlobalPointerPosition(x, gw.y + gf.y + gb.y + gb.height / 2);
 
 		std::cout << "...checking for position changed event on '"
 			<< position << "'" << std::endl;
