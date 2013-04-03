@@ -237,12 +237,66 @@ private:
 	Window	window_;
 };
 
+class WindowOutputTest : public ElmTestHarness
+{
+public:
+	void setup()
+	{
+		window_ = elm_win_util_standard_add("WindowOutputTest", "Window Output Test");
+
+		evas_object_resize(window_, 67, 39);
+		evas_object_show(window_);
+
+		queueStep(boost::bind(&WindowOutputTest::test, boost::ref(*this)));
+	}
+
+	void test()
+	{
+		Evas* evas;
+		Ecore_Wl_Window* wlwin;
+		Geometry server, window, viewport, framespace;
+		int width, height;
+		const int cwidth = 67;	// control width
+		const int cheight = 39;	// control height
+
+		evas = evas_object_evas_get(window_);
+		wlwin = elm_win_wl_window_get(window_);
+		server = getSurfaceGeometry(wlwin->surface);
+		evas_output_size_get(evas, &width, &height);
+		evas_output_viewport_get(evas, &viewport.x, &viewport.y, &viewport.width, &viewport.height);
+		evas_output_framespace_get(evas, &framespace.x, &framespace.y, &framespace.width, &framespace.height);
+		evas_object_geometry_get(window_, &window.x, &window.y, &window.width, &window.height);
+
+		FAIL_UNLESS_EQUAL(width, cwidth + framespace.width);
+		FAIL_UNLESS_EQUAL(height, cheight + framespace.height);
+		FAIL_UNLESS_EQUAL(width, server.width);
+		FAIL_UNLESS_EQUAL(height, server.height);
+		FAIL_UNLESS_EQUAL(viewport.width, server.width);
+		FAIL_UNLESS_EQUAL(viewport.height, server.height);
+		FAIL_UNLESS_EQUAL(window.width, cwidth);
+		FAIL_UNLESS_EQUAL(window.height, cheight);
+		FAIL_UNLESS_EQUAL(window.width + framespace.width, server.width);
+		FAIL_UNLESS_EQUAL(window.height + framespace.height, server.height);
+	}
+
+	void teardown()
+	{
+		evas_object_del(window_);
+	}
+
+private:
+	Evas_Object* window_;
+};
+
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowIconifyTest, "Window")
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowStickyTest, "Window")
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowWithdrawnTest, "Window")
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowRotationTest, "Window")
+WAYLAND_ELM_HARNESS_TEST_CASE(EcoreWlWindowTest, "Window")
+WAYLAND_ELM_HARNESS_TEST_CASE(WindowOutputTest, "Window")
+
 //TODO: These three below need work still
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowAlphaTest, "Window")
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowIndicatorTest, "Window")
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowIndicatorOpacityTest, "Window")
-WAYLAND_ELM_HARNESS_TEST_CASE(EcoreWlWindowTest, "Window")
+
