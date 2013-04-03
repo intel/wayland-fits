@@ -194,77 +194,79 @@ public:
 		
 		int bw(button_.getWidth());
 		int bh(button_.getHeight());
-		
-		//upper left (vertical)
+
+		//NOTE: a button at 0,0 and 10x10 would fill pixels 0-9x0-9
+
+		//top left (vertical)
 		addInOutEventsTest(
-			geo.x, geo.y,
-			geo.x, geo.y - 1
+			geo.x    , geo.y,
+			geo.x    , geo.y - 1		//1px outside top
 		);
 		
-		//upper left (horizontal)
+		//top left (horizontal)
 		addInOutEventsTest(
-			geo.x, geo.y,
-			geo.x - 1, geo.y
+			geo.x    , geo.y,
+			geo.x - 1, geo.y		//1px outside left
 		);
 		
-		//upper mid
+		//top mid
 		addInOutEventsTest(
 			bw / 2 + geo.x, geo.y,
-			bw / 2 + geo.x, geo.y - 1
+			bw / 2 + geo.x, geo.y - 1	//1px outside top
 		);
 		
-		//upper right (vertical)
+		//top right (vertical)
 		addInOutEventsTest(
 			bw + geo.x - 1, geo.y,
-			bw + geo.x,geo.y - 1
+			bw + geo.x - 1, geo.y - 1	//1px outside top
 		);
 		
-		//upper right (horizontal)
+		//top right (horizontal)
 		addInOutEventsTest( 
-			 bw + geo.x - 1, geo.y,
- 			 bw + geo.x, geo.y //This coord is 1px to the right outside of the widget
+			bw + geo.x - 1, geo.y,
+ 			bw + geo.x    , geo.y		//1px outside right
 		);
 		
 		//mid left
 		addInOutEventsTest(
-			geo.x, bh / 2 + geo.y,
-			geo.x - 1, bh / 2 + geo.y
+			geo.x    , bh / 2 + geo.y,
+			geo.x - 1, bh / 2 + geo.y	//1px outside left
 		);
 		
 		//mid right
-		addInOutEventsTest(//a button at 0,0 and 10x10 would fill pixels 0-9x0-9
-			 bw + geo.x - 1, bh / 2 + geo.y,
-			 bw + geo.x + 1, bh / 2 + geo.y
-		);
-		
-		//lower left (vertical)
 		addInOutEventsTest(
-			geo.x, bh + geo.y - 1,
-			geo.x, bh + geo.y + 1
+			bw + geo.x - 1, bh / 2 + geo.y,
+			bw + geo.x    , bh / 2 + geo.y	//1px outside right
 		);
 		
-		//lower left (horizontal)
+		//bottom left (vertical)
 		addInOutEventsTest(
-			geo.x, bh + geo.y - 1,
-			geo.x - 1, bh + geo.y - 1
+			geo.x    , bh + geo.y - 1,
+			geo.x    , bh + geo.y		//1px outside bottom
 		);
 		
-		//lower mid
+		//bottom left (horizontal)
+		addInOutEventsTest(
+			geo.x    , bh + geo.y - 1,
+			geo.x - 1, bh + geo.y - 1	//1px outside left
+		);
+		
+		//bottom mid
 		addInOutEventsTest(
 			bw / 2 + geo.x, bh + geo.y - 1,
-			bw / 2 + geo.x,bh + geo.y + 1
+			bw / 2 + geo.x, bh + geo.y	//1px outside bottom
 		);
 		
-		//lower right (vertical)
+		//bottom right (vertical)
 		addInOutEventsTest(
 			bw + geo.x - 1, bh + geo.y - 1,
- 			bw + geo.x - 1, bh + geo.y
+			bw + geo.x - 1, bh + geo.y	//1px outside bottom
 		);
 		
-		//lower right (horizontal)
+		//bottom right (horizontal)
 		addInOutEventsTest(
-			 bw + geo.x - 1, bh + geo.y - 1,
- 			 bw + geo.x, bh + geo.y + 1
+			bw + geo.x - 1, bh + geo.y - 1,
+			bw + geo.x    , bh + geo.y - 1	//1px outside right
 		);
 	}
 	
