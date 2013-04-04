@@ -53,6 +53,16 @@ if test "x$want_weston_extensions" != "xno"; then
 		[
 			AC_DEFINE(HAVE_WESTON, 1, [Support for Weston extensions])
 			have_weston="yes"
+			PKG_CHECK_MODULES([WESTON_SDK2],
+				[
+					weston >= 1.0.90
+				],
+				[
+					AC_DEFINE(HAVE_WESTON_SDK2, 1, [Support for Weston 1.1.0 extensions])
+					have_weston_sdk2="yes"
+				],
+				[have_weston_sdk2="no"]
+			)
 		],
 		[have_weston="no"]
 	)

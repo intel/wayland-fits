@@ -34,6 +34,7 @@
 #include <wayland-server.h>
 #include <weston/compositor.h>
 
+#include "config.h"
 #include "extensions/protocol/wayland-fits-server-protocol.h"
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
@@ -351,9 +352,14 @@ compositor_destroy(struct wl_listener *listener, void *data)
 	}
 }
 
+#ifdef HAVE_WESTON_SDK2
 WL_EXPORT int
 module_init(struct weston_compositor *compositor,
 	int *argc, char *argv[], const char *config_file)
+#else
+WL_EXPORT int
+module_init(struct weston_compositor *compositor)
+#endif
 {
 	struct wfits *wfits;
 	struct wl_event_loop *loop;
