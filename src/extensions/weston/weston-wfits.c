@@ -212,7 +212,8 @@ create_pointer(struct wfits* wfits)
 	struct weston_output *output = get_output(wfits);
 	int32_t width;
 	int32_t height;
-
+	int32_t i;
+	
 	weston_log("weston-wfits: creating uinput device\n");
 
 	wfits->pointer_fd = open("/dev/uinput", O_WRONLY | O_NDELAY);
@@ -224,7 +225,13 @@ create_pointer(struct wfits* wfits)
 	if (ioctl(wfits->pointer_fd, UI_SET_EVBIT, EV_KEY) < 0) {
 		exit(EXIT_FAILURE);
 	}
-
+	
+	for (i = 0; i < 255; i++){
+		if (ioctl(wfits->pointer_fd, UI_SET_KEYBIT, i) < 0) {
+			exit(EXIT_FAILURE);
+		}
+	}
+	
 	if (ioctl(wfits->pointer_fd, UI_SET_KEYBIT, BTN_LEFT) < 0) {
 		exit(EXIT_FAILURE);
 	}
