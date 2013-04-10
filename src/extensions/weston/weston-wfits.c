@@ -54,7 +54,7 @@ struct x11_output {
 struct wfits {
 	struct weston_compositor *compositor;
 	struct wl_listener compositor_destroy_listener;
-	int pointer_fd;
+	int input_fd;
 };
 
 static struct weston_seat *
@@ -158,17 +158,17 @@ input_move_pointer(struct wl_client *client, struct wl_resource *resource,
 	event.type = EV_ABS;
 	event.code = ABS_X;
 	event.value = x;
-	write(wfits->pointer_fd, &event, sizeof(event));
+	write(wfits->input_fd, &event, sizeof(event));
 
 	event.type = EV_ABS;
 	event.code = ABS_Y;
 	event.value = y;
-	write(wfits->pointer_fd, &event, sizeof(event));
+	write(wfits->input_fd, &event, sizeof(event));
 
 	event.type = EV_SYN;
 	event.code = SYN_REPORT;
 	event.value = 0;
-	write(wfits->pointer_fd, &event, sizeof(event));
+	write(wfits->input_fd, &event, sizeof(event));
 }
 static void
 input_key_press(struct wl_client *client, struct wl_resource *resource,
@@ -182,12 +182,12 @@ input_key_press(struct wl_client *client, struct wl_resource *resource,
 	event.type = EV_KEY;
 	event.code = key;
 	event.value = state;
-	write(wfits->pointer_fd, &event, sizeof(event));
+	write(wfits->input_fd, &event, sizeof(event));
 
 	event.type = EV_SYN;
 	event.code = SYN_REPORT;
 	event.value = 0;
-	write(wfits->pointer_fd, &event, sizeof(event));
+	write(wfits->input_fd, &event, sizeof(event));
 }
 
 static const struct wfits_input_interface wfits_input_implementation = {
@@ -206,7 +206,7 @@ bind_input(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 }
 
 static void
-create_pointer(struct wfits* wfits)
+create_input(struct wfits* wfits)
 {
 	struct uinput_user_dev device;
 	struct weston_output *output = get_output(wfits);
@@ -216,48 +216,48 @@ create_pointer(struct wfits* wfits)
 	
 	weston_log("weston-wfits: creating uinput device\n");
 
-	wfits->pointer_fd = open("/dev/uinput", O_WRONLY | O_NDELAY);
-	if (wfits->pointer_fd < 0) {
+	wfits->input_fd = open("/dev/uinput", O_WRONLY | O_NDELAY);
+	if (wfits->input_fd < 0) {
 		weston_log("weston-wfits: failed to create uinput device\n");
 		exit(EXIT_FAILURE);
 	}
 
-	if (ioctl(wfits->pointer_fd, UI_SET_EVBIT, EV_KEY) < 0) {
+	if (ioctl(wfits->input_fd, UI_SET_EVBIT, EV_KEY) < 0) {
 		exit(EXIT_FAILURE);
 	}
 	
 	for (i = 0; i < 255; i++){
-		if (ioctl(wfits->pointer_fd, UI_SET_KEYBIT, i) < 0) {
+		if (ioctl(wfits->input_fd, UI_SET_KEYBIT, i) < 0) {
 			exit(EXIT_FAILURE);
 		}
 	}
 	
-	if (ioctl(wfits->pointer_fd, UI_SET_KEYBIT, BTN_LEFT) < 0) {
+	if (ioctl(wfits->input_fd, UI_SET_KEYBIT, BTN_LEFT) < 0) {
 		exit(EXIT_FAILURE);
 	}
 
-	if (ioctl(wfits->pointer_fd, UI_SET_KEYBIT, BTN_RIGHT) < 0) {
+	if (ioctl(wfits->input_fd, UI_SET_KEYBIT, BTN_RIGHT) < 0) {
 		exit(EXIT_FAILURE);
 	}
 
-	if (ioctl(wfits->pointer_fd, UI_SET_KEYBIT, BTN_MIDDLE) < 0) {
+	if (ioctl(wfits->input_fd, UI_SET_KEYBIT, BTN_MIDDLE) < 0) {
 		exit(EXIT_FAILURE);
 	}
 
-	if (ioctl(wfits->pointer_fd, UI_SET_EVBIT, EV_ABS) < 0) {
+	if (ioctl(wfits->input_fd, UI_SET_EVBIT, EV_ABS) < 0) {
 		exit(EXIT_FAILURE);
 	}
 
-	if (ioctl(wfits->pointer_fd, UI_SET_ABSBIT, ABS_X) < 0) {
+	if (ioctl(wfits->input_fd, UI_SET_ABSBIT, ABS_X) < 0) {
 		exit(EXIT_FAILURE);
 	}
 
-	if (ioctl(wfits->pointer_fd, UI_SET_ABSBIT, ABS_Y) < 0) {
+	if (ioctl(wfits->input_fd, UI_SET_ABSBIT, ABS_Y) < 0) {
 		exit(EXIT_FAILURE);
 	}
 
 	memset(&device, 0, sizeof(device));
-	snprintf(device.name, UINPUT_MAX_NAME_SIZE, "WFITS ABS POINTER");
+	snprintf(device.name, UINPUT_MAX_NAME_SIZE, "WFITS INPUT");
 	device.id.bustype = BUS_USB;
 	device.id.vendor  = 0x1;
 	device.id.product = 0x1;
@@ -273,11 +273,11 @@ create_pointer(struct wfits* wfits)
 	device.absmin[ABS_Y] = 0;
 	device.absmax[ABS_Y] = height;
 
-	if (write(wfits->pointer_fd, &device, sizeof(device)) < 0) {
+	if (write(wfits->input_fd, &device, sizeof(device)) < 0) {
 		exit(EXIT_FAILURE);
 	}
 
-	if (ioctl(wfits->pointer_fd, UI_DEV_CREATE) < 0) {
+	if (ioctl(wfits->input_fd, UI_DEV_CREATE) < 0) {
 		exit(EXIT_FAILURE);
 	}
 }
@@ -354,7 +354,7 @@ compositor_destroy(struct wl_listener *listener, void *data)
 
 	weston_log("weston-wfits: destroying uinput device\n");
 
-	if (ioctl(wfits->pointer_fd, UI_DEV_DESTROY) < 0) {
+	if (ioctl(wfits->input_fd, UI_DEV_DESTROY) < 0) {
 		weston_log("weston-wfits: failed to destroy uinput device\n");
 	}
 }
@@ -388,7 +388,7 @@ module_init(struct weston_compositor *compositor)
 				  wfits, bind_query) == NULL)
 		return -1;
 	
-	create_pointer(wfits);
+	create_input(wfits);
 
 	wfits->compositor_destroy_listener.notify = compositor_destroy;
 	wl_signal_add(&compositor->destroy_signal,
