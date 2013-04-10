@@ -144,11 +144,9 @@ compositor_to_global(struct wfits* wfits, int32_t *x, int32_t *y)
 	}
 }
 
-static void
-input_move_pointer(struct wl_client *client, struct wl_resource *resource,
-		   int32_t x, int32_t y)
+void
+move_pointer(struct wfits *wfits, int32_t x, int32_t y)
 {
-	struct wfits *wfits = resource->data;
 	struct input_event event;
 
 	compositor_to_global(wfits, &x, &y);
@@ -170,6 +168,15 @@ input_move_pointer(struct wl_client *client, struct wl_resource *resource,
 	event.value = 0;
 	write(wfits->input_fd, &event, sizeof(event));
 }
+
+static void
+input_move_pointer(struct wl_client *client, struct wl_resource *resource,
+		   int32_t x, int32_t y)
+{
+	struct wfits *wfits = resource->data;
+	move_pointer(wfits, x, y);
+}
+
 static void
 input_key_press(struct wl_client *client, struct wl_resource *resource,
 		  int32_t key, uint32_t state)
@@ -370,6 +377,7 @@ module_init(struct weston_compositor *compositor)
 {
 	struct wfits *wfits;
 	struct wl_event_loop *loop;
+	struct weston_seat *seat;
 
 	wfits = malloc(sizeof *wfits);
 	if (wfits == NULL)
@@ -389,6 +397,11 @@ module_init(struct weston_compositor *compositor)
 		return -1;
 	
 	create_input(wfits);
+
+	/* sync our input pointer device with weston */
+	seat = get_seat(wfits);
+	move_pointer(wfits, wl_fixed_to_int(seat->pointer.x),
+		     wl_fixed_to_int(seat->pointer.y));
 
 	wfits->compositor_destroy_listener.notify = compositor_destroy;
 	wl_signal_add(&compositor->destroy_signal,
