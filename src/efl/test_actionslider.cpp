@@ -1,4 +1,12 @@
+//---- The following set of defines/includes make this work for 1.7.x ----//
+#define ELM_INTERNAL_API_ARGESFSDFEFC
+#include <Evas.h>
+#include <Elementary.h>
+#include <elm_widget.h>
+//-----------------------------------------------------------------------//
+
 #include <elm_widget_actionslider.h>
+
 #include <vector>
 #include <linux/input.h>
 
