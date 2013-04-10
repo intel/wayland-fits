@@ -23,7 +23,7 @@ LDFLAGS="-Wl,--no-as-needed"
 
 # Required minimum versions for dependencies
 m4_define([check_req_version],		[0.9.8])
-m4_define([pixman1_req_version],	[0.29.3])
+# m4_define([pixman1_req_version],	[0.29.3])
 m4_define([wayland_req_version],	[1.0.6])
 m4_define([weston_req_version],		[1.0.6])
 m4_define([efl_req_version],		[1.7.6])
@@ -48,7 +48,7 @@ if test "x$want_weston_extensions" != "xno"; then
 	PKG_CHECK_MODULES([WESTON],
 		[
 			weston >= weston_req_version
-			pixman-1 >= pixman1_req_version
+			pixman-1
 		],
 		[
 			AC_DEFINE(HAVE_WESTON, 1, [Support for Weston extensions])
@@ -76,7 +76,7 @@ if test "x$want_weston_extensions" = "xyes" -a "x$have_weston" = "xno"; then
 		weston extension support requested, but one of the following dependency requirements were not met:
 
 		weston >= weston_req_version
-		pixman >= pixman1_req_version
+		pixman
 	])
 fi
 AM_CONDITIONAL([BUILD_WESTON_EXTENSIONS], [test x${have_weston} = xyes])
