@@ -31,7 +31,7 @@
       <arg name="x" type="int"/>
       <arg name="y" type="int"/>
     </request>
-    <request name="key_press">
+    <request name="key_send">
       <arg name="key" type="uint"/>
       <arg name="state" type="uint"/>
     </request>

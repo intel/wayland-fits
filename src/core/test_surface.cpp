@@ -100,21 +100,21 @@ TEST(SurfacePointer, "Core/Input")
 	client.movePointer(5, 5);
 	client.checkFocus(true);
 	
-	wfits_input_key_press(client.input, BTN_LEFT, 1);
+	wfits_input_key_send(client.input, BTN_LEFT, 1);
 	client.checkButton(BTN_LEFT, 1);
 
-	wfits_input_key_press(client.input, BTN_LEFT, 0);
+	wfits_input_key_send(client.input, BTN_LEFT, 0);
 	client.checkButton(BTN_LEFT, 0);
 
-	wfits_input_key_press(client.input, BTN_RIGHT, 1);
+	wfits_input_key_send(client.input, BTN_RIGHT, 1);
 	client.checkButton(BTN_RIGHT, 1);
 
-	wfits_input_key_press(client.input, BTN_RIGHT, 0);
+	wfits_input_key_send(client.input, BTN_RIGHT, 0);
 	client.checkButton(BTN_RIGHT, 0);
 
-	wfits_input_key_press(client.input, BTN_MIDDLE, 1);
+	wfits_input_key_send(client.input, BTN_MIDDLE, 1);
 	client.checkButton(BTN_MIDDLE, 1);
 
-	wfits_input_key_press(client.input, BTN_MIDDLE, 0);
+	wfits_input_key_send(client.input, BTN_MIDDLE, 0);
 	client.checkButton(BTN_MIDDLE, 0);
 }

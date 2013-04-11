@@ -125,10 +125,10 @@ void WaylandFits::setGlobalPointerPosition(int32_t x, int32_t y) const
 	wfits_input_move_pointer(wfits_input_, x, y);
 }
 
-void WaylandFits::pointerKeyPress(uint32_t key, uint32_t state) const
+void WaylandFits::inputKeySend(uint32_t key, uint32_t state) const
 {
 	ensureBound();
-	wfits_input_key_press(wfits_input_, key, state);
+	wfits_input_key_send(wfits_input_, key, state);
 }
 
 

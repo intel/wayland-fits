@@ -73,7 +73,7 @@ public:
 	{
 		queueStep(
 			boost::bind(
-				&ElmTestHarness::pointerKeyPress,
+				&ElmTestHarness::inputKeySend,
 				boost::ref(*this), BTN_LEFT, 1
 			),
 			"sending button left click down"
@@ -96,7 +96,7 @@ public:
 		);
 		queueStep(
 			boost::bind(
-				&ElmTestHarness::pointerKeyPress,
+				&ElmTestHarness::inputKeySend,
 				boost::ref(*this), BTN_LEFT, 0
 			),
 			"sending button left click up"

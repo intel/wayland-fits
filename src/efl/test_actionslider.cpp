@@ -135,7 +135,7 @@ public:
 			gw.x + gf.x + gb.x + gb.width / 2,
 			gw.y + gf.y + gb.y + gb.height / 2
 		);
-		pointerKeyPress(BTN_LEFT, 1);
+		inputKeySend(BTN_LEFT, 1);
 
 		std::string position, selection;
 		int32_t x;
@@ -166,7 +166,7 @@ public:
 			Application::yield();
 		}
 
-		pointerKeyPress(BTN_LEFT, 0);
+		inputKeySend(BTN_LEFT, 0);
 
 		std::cout << "...checking for selected event on '"
 			<< selection << "'" << std::endl;

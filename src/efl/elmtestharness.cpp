@@ -105,9 +105,9 @@ void ElmTestHarness::setGlobalPointerPosition(int32_t x, int32_t y) const
 	expectGlobalPointerPosition(x, y);
 }
 
-void ElmTestHarness::pointerKeyPress(int32_t key, int32_t state) const
+void ElmTestHarness::inputKeySend(int32_t key, int32_t state) const
 {
-	wfits_.pointerKeyPress(key, state);
+	wfits_.inputKeySend(key, state);
 }
 
 /*static*/
