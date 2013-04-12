@@ -35,10 +35,12 @@
 #include <wayland-server.h>
 #include <weston/compositor.h>
 
+#include <set>
+
 #include "config.h"
 #include "extensions/protocol/wayland-fits-server-protocol.h"
 
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+/** TODO: Convert this code to C++-style classes, methods, etc... **/
 
 struct x11_compositor {
 	struct weston_compositor base;
@@ -56,6 +58,11 @@ struct wfits {
 	struct weston_compositor *compositor;
 	struct wl_listener compositor_destroy_listener;
 	int input_fd;
+};
+
+struct wfits_input_client {
+	struct wfits *wfits;
+	std::set<uint32_t> *active_keys;
 };
 
 static struct weston_seat *
@@ -174,15 +181,14 @@ static void
 input_move_pointer(struct wl_client *client, struct wl_resource *resource,
 		   int32_t x, int32_t y)
 {
-	struct wfits *wfits = static_cast<struct wfits*>(resource->data);
-	move_pointer(wfits, x, y);
+	struct wfits_input_client *wfits_input_client =
+		static_cast<struct wfits_input_client*>(resource->data);
+	move_pointer(wfits_input_client->wfits, x, y);
 }
 
 static void
-input_key_send(struct wl_client *client, struct wl_resource *resource,
-		  uint32_t key, uint32_t state)
+key_send(struct wfits *wfits, uint32_t key, uint32_t state)
 {
-	struct wfits *wfits = static_cast<struct wfits*>(resource->data);
 	struct input_event event;
 
 	memset(&event, 0, sizeof(event));
@@ -198,19 +204,59 @@ input_key_send(struct wl_client *client, struct wl_resource *resource,
 	write(wfits->input_fd, &event, sizeof(event));
 }
 
+static void
+input_key_send(struct wl_client *client, struct wl_resource *resource,
+		  uint32_t key, uint32_t state)
+{
+	struct wfits_input_client *wfits_input_client =
+		static_cast<struct wfits_input_client*>(resource->data);
+
+	key_send(wfits_input_client->wfits, key, state);
+
+	if (state) {
+		wfits_input_client->active_keys->insert(key);
+	} else {
+		wfits_input_client->active_keys->erase(key);
+	}
+}
+
 static const struct wfits_input_interface wfits_input_implementation = {
 	input_move_pointer,
 	input_key_send,
 };
 
 static void
+unbind_input_client(struct wl_resource *resource)
+{
+	struct wfits_input_client *wfits_input_client =
+		static_cast<struct wfits_input_client*>(resource->data);
+
+	typedef std::set<uint32_t>::const_iterator CIterator;
+	const CIterator endIt(wfits_input_client->active_keys->end());
+	for ( CIterator curIt(wfits_input_client->active_keys->begin());
+		curIt != endIt; ++curIt)
+	{
+		key_send(wfits_input_client->wfits, *curIt, 0);
+	}
+
+	free(wfits_input_client);
+	free(resource);
+}
+
+static void
 bind_input(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 {
-	struct wfits *wfits = static_cast<struct wfits*>(data);
 	struct wl_resource *resource;
+	struct wfits_input_client *wfits_input_client(
+		new struct wfits_input_client);
+
+	wfits_input_client->wfits = static_cast<struct wfits*>(data);
+	wfits_input_client->active_keys = new std::set<uint32_t>;
 
 	resource = wl_client_add_object(client, &wfits_input_interface,
-					&wfits_input_implementation, id, wfits);
+					&wfits_input_implementation, id,
+					wfits_input_client);
+	resource->destroy = unbind_input_client;
 }
 
 static void
