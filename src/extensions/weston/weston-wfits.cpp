@@ -246,7 +246,8 @@ unbind_input_client(struct wl_resource *resource)
 		key_send(wfits_input_client->wfits, key, 0);
 	}
 
-	free(wfits_input_client);
+	delete wfits_input_client->active_keys;
+	delete wfits_input_client;
 	free(resource);
 }
 
