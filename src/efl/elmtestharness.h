@@ -25,8 +25,10 @@ public:
 	Geometry getSurfaceGeometry(wl_surface*);
 
 	void setGlobalPointerPosition(int32_t, int32_t) const;
+	void setGlobalPointerPosition(const Position&) const;
 	Position getGlobalPointerPosition() const;
 	void expectGlobalPointerPosition(int32_t, int32_t) const;
+	void expectGlobalPointerPosition(const Position&) const;
 
 	void inputKeySend(int32_t, int32_t) const;
 

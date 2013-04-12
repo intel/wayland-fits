@@ -99,10 +99,20 @@ void ElmTestHarness::expectGlobalPointerPosition(int32_t x, int32_t y) const
 	}
 }
 
+void ElmTestHarness::expectGlobalPointerPosition(const Position& p) const
+{
+	expectGlobalPointerPosition(p.x, p.y);
+}
+
 void ElmTestHarness::setGlobalPointerPosition(int32_t x, int32_t y) const
 {
 	wfits_.setGlobalPointerPosition(x, y);
 	expectGlobalPointerPosition(x, y);
+}
+
+void ElmTestHarness::setGlobalPointerPosition(const Position& p) const
+{
+	setGlobalPointerPosition(p.x, p.y);
 }
 
 void ElmTestHarness::inputKeySend(int32_t key, int32_t state) const
