@@ -179,7 +179,7 @@ input_move_pointer(struct wl_client *client, struct wl_resource *resource,
 }
 
 static void
-input_key_press(struct wl_client *client, struct wl_resource *resource,
+input_key_send(struct wl_client *client, struct wl_resource *resource,
 		  uint32_t key, uint32_t state)
 {
 	struct wfits *wfits = static_cast<struct wfits*>(resource->data);
@@ -200,7 +200,7 @@ input_key_press(struct wl_client *client, struct wl_resource *resource,
 
 static const struct wfits_input_interface wfits_input_implementation = {
 	input_move_pointer,
-	input_key_press,
+	input_key_send,
 };
 
 static void
