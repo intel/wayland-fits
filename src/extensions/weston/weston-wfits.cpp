@@ -26,6 +26,7 @@
 #include <linux/uinput.h>
 #include <fcntl.h>
 #include <assert.h>
+#include <unistd.h>
 
 #include <xcb/xcb.h>
 #include <X11/Xlib.h>
@@ -173,15 +174,15 @@ static void
 input_move_pointer(struct wl_client *client, struct wl_resource *resource,
 		   int32_t x, int32_t y)
 {
-	struct wfits *wfits = resource->data;
+	struct wfits *wfits = static_cast<struct wfits*>(resource->data);
 	move_pointer(wfits, x, y);
 }
 
 static void
 input_key_press(struct wl_client *client, struct wl_resource *resource,
-		  int32_t key, uint32_t state)
+		  uint32_t key, uint32_t state)
 {
-	struct wfits *wfits = resource->data;
+	struct wfits *wfits = static_cast<struct wfits*>(resource->data);
 	struct input_event event;
 
 	memset(&event, 0, sizeof(event));
@@ -205,7 +206,7 @@ static const struct wfits_input_interface wfits_input_implementation = {
 static void
 bind_input(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 {
-	struct wfits *wfits = data;
+	struct wfits *wfits = static_cast<struct wfits*>(data);
 	struct wl_resource *resource;
 
 	resource = wl_client_add_object(client, &wfits_input_interface,
@@ -294,8 +295,9 @@ query_surface_geometry(struct wl_client *client, struct wl_resource *resource,
 		       struct wl_resource *surface_resource, uint32_t result_id)
 {
 	struct wl_resource result;
-	struct wfits *wfits = resource->data;
-	struct weston_surface *surface = surface_resource->data;
+	struct wfits *wfits = static_cast<struct wfits*>(resource->data);
+	struct weston_surface *surface =
+		static_cast<struct weston_surface*>(surface_resource->data);
 
 	memset(&result, 0, sizeof(result));
 	result.object.interface = &wfits_query_result_interface;
@@ -321,7 +323,7 @@ query_global_pointer_position(struct wl_client *client,
 			      uint32_t result_id)
 {
 	struct wl_resource result;
-	struct wfits *wfits = resource->data;
+	struct wfits *wfits = static_cast<struct wfits*>(resource->data);
 	struct weston_seat *seat = get_seat(wfits);
 
 	memset(&result, 0, sizeof(result));
@@ -346,7 +348,7 @@ static const struct wfits_query_interface wfits_query_implementation = {
 static void
 bind_query(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 {
-	struct wfits *wfits = data;
+	struct wfits *wfits = static_cast<struct wfits*>(data);
 	struct wl_resource *resource;
 
 	resource = wl_client_add_object(client, &wfits_query_interface,
@@ -379,7 +381,7 @@ module_init(struct weston_compositor *compositor)
 	struct wl_event_loop *loop;
 	struct weston_seat *seat;
 
-	wfits = malloc(sizeof *wfits);
+	wfits = static_cast<struct wfits*>(malloc(sizeof *wfits));
 	if (wfits == NULL)
 		return -1;
 
