@@ -38,9 +38,11 @@
  * Weston SDK 1.0.x workaround for
  * https://bugs.freedesktop.org/show_bug.cgi?id=63485
  **/
+extern "C" {
 #define private configure_private
 #include <weston/compositor.h>
 #undef private
+}
 
 #include <set>
 
