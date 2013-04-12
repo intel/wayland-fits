@@ -6,10 +6,14 @@
 #include <boost/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <boost/foreach.hpp>
 
 boost::lambda::placeholder1_type _1_;
 boost::lambda::placeholder2_type _2_;
 boost::lambda::placeholder3_type _3_;
+
+#define foreach BOOST_FOREACH
+#define foreach_reverse BOOST_REVERSE_FOREACH
 
 struct Geometry
 {

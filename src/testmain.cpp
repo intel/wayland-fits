@@ -8,6 +8,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 
+#include "common/util.h"
 #include "common/test.h"
 
 namespace po = boost::program_options;
@@ -124,7 +125,7 @@ public:
 	}
 	
 	test_result	result;
-	int			lineno;
+	int		lineno;
 	std::string	message;
 	std::string	file;
 

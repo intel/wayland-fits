@@ -39,6 +39,7 @@
 
 #include "config.h"
 #include "extensions/protocol/wayland-fits-server-protocol.h"
+#include "common/util.h"
 
 /** TODO: Convert this code to C++-style classes, methods, etc... **/
 
@@ -231,12 +232,9 @@ unbind_input_client(struct wl_resource *resource)
 	struct wfits_input_client *wfits_input_client =
 		static_cast<struct wfits_input_client*>(resource->data);
 
-	typedef std::set<uint32_t>::const_iterator CIterator;
-	const CIterator endIt(wfits_input_client->active_keys->end());
-	for ( CIterator curIt(wfits_input_client->active_keys->begin());
-		curIt != endIt; ++curIt)
+	foreach (uint32_t key, *wfits_input_client->active_keys)
 	{
-		key_send(wfits_input_client->wfits, *curIt, 0);
+		key_send(wfits_input_client->wfits, key, 0);
 	}
 
 	free(wfits_input_client);

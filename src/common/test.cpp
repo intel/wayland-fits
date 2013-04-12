@@ -1,5 +1,6 @@
 #include <boost/regex.hpp>
 
+#include "util.h"
 #include "test.h"
 
 GlobalTestSuite::GlobalTestSuite()

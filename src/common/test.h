@@ -2,16 +2,12 @@
 #define _WAYLAND_TEST_TEST_H_
 
 #include <iostream>
-#include <boost/foreach.hpp>
-#include <boost/test/utils/wrap_stringstream.hpp>
 #include <map>
 #include <vector>
 #include <check.h> // Check unit testing framework... see http://check.sourceforge.net
+#include <boost/test/utils/wrap_stringstream.hpp>
 
 #include "singleton.h"
-
-#define foreach BOOST_FOREACH
-#define foreach_reverse BOOST_REVERSE_FOREACH
 
 class GlobalTestSuite
 {
