@@ -1,11 +1,8 @@
-#include <Elementary.h>
-#include <boost/bind.hpp>
-
 #include <vector>
 #include <string>
+#include <linux/input.h>
 
 #include "window.h"
-
 #include "elmtestharness.h"
 #include "templates.h"
 
@@ -102,6 +99,62 @@ private:
 	vector<string>	sentinels_;
 };
 
+class BubbleUserClickTest : public ElmTestHarness
+{
+public:
+
+	BubbleUserClickTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("BubbleClickTest", "Bubble Click Test")
+		, bubble_(elm_bubble_add(window_))
+		, clicked_(false)
+	{
+		evas_object_smart_callback_add(bubble_, "clicked", onClick, this);
+	}
+
+	void setup()
+	{
+		window_.show();
+		bubble_.show();
+
+		bubble_.setSize(200, 100);
+
+		queueStep(boost::bind(&BubbleUserClickTest::clickBubble, boost::ref(*this)));
+		queueStep(boost::lambda::bind(&BubbleUserClickTest::clicked_, boost::ref(*this)));
+	}
+
+	void clickBubble()
+	{
+		Application::yield(0.01*1e6);
+
+		Geometry gw(getSurfaceGeometry(window_.get_wl_surface()));
+		Geometry gf(window_.getFramespaceGeometry());
+		Geometry gb(bubble_.getGeometry());
+
+		setGlobalPointerPosition(
+			gw.x + gf.x + gb.x + gb.width / 2,
+			gw.y + gf.y + gb.y + gb.height / 2
+		);
+
+		ASSERT(clicked_ == false);
+
+		inputKeySend(BTN_LEFT, 1);
+		inputKeySend(BTN_LEFT, 0);
+	}
+
+	static void onClick(void* data, Evas_Object*, void*)
+	{
+		BubbleUserClickTest *test = static_cast<BubbleUserClickTest*>(data);
+		test->clicked_ = true;
+		std::cout << "...received click event" << std::endl;
+	}
+
+private:
+	Window		window_;
+	EvasObject	bubble_;
+	bool		clicked_;
+};
+
 typedef ResizeObjectTest<Bubble> BubbleResizeTest;
 typedef PositionObjectTest<Bubble> BubblePositionTest;
 typedef VisibleObjectTest<Bubble> BubbleVisibilityTest;
@@ -111,4 +164,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(BubblePositionTest, "Bubble")
 WAYLAND_ELM_HARNESS_TEST_CASE(BubbleVisibilityTest, "Bubble")
 WAYLAND_ELM_HARNESS_TEST_CASE(BubbleCornerTest, "Bubble")
 WAYLAND_ELM_HARNESS_TEST_CASE(BubbleTextTest, "Bubble")
+
+WAYLAND_ELM_HARNESS_TEST_CASE(BubbleUserClickTest, "Bubble")
 
