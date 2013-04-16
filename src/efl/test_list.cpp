@@ -314,6 +314,7 @@ public:
 
 		elm_config_scroll_thumbscroll_enabled_set(EINA_TRUE);
 
+		setGlobalPointerPosition(center);
 		std::cout << "...checking for edge,bottom callback" << std::endl;
 		ASSERT(not edgeBottom_);
 		while (not edgeBottom_) {
