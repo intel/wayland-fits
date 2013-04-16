@@ -126,7 +126,7 @@ public:
 				boost::ref(*this),
 				boost::lambda::bind(&BubbleUserClickTest::clicked_, boost::ref(*this))
 			),
-			"checking EVAS_CALLBACK_MOUSE_IN event"
+			"checking clicked_ event"
 		);
 	}
 
