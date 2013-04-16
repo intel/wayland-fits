@@ -120,7 +120,14 @@ public:
 		bubble_.setSize(200, 100);
 
 		queueStep(boost::bind(&BubbleUserClickTest::clickBubble, boost::ref(*this)));
-		queueStep(boost::lambda::bind(&BubbleUserClickTest::clicked_, boost::ref(*this)));
+		queueStep(
+			boost::bind(
+				&ElmTestHarness::stepUntilCondition,
+				boost::ref(*this),
+				boost::lambda::bind(&BubbleUserClickTest::clicked_, boost::ref(*this))
+			),
+			"checking EVAS_CALLBACK_MOUSE_IN event"
+		);
 	}
 
 	void clickBubble()
