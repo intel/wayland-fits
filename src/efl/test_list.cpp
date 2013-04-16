@@ -253,20 +253,12 @@ class ListUserKeyScrollTest : public ListTestHarness
 public:
 	void runTest()
 	{
-		/*
-		 * FIXME: On some systems, it doesn't appear that the scroller
-		 * bounce animation works.  This test is strictly dependent on
-		 * that feature and thus should be refactored so it's not
-		 * dependent on it.
-		 */
 		inputKeySend(BTN_LEFT, 1);
 		inputKeySend(BTN_LEFT, 0);
 
-		std::cout << "...checking for edge,top callback" << std::endl;
-		ASSERT(not edgeTop_);
-		while (not edgeTop_) {
-			inputKeySend(KEY_UP, 1);
-			inputKeySend(KEY_UP, 0);
+		std::cout << "...checking for firstSelected callback" << std::endl;
+		ASSERT(not firstItemSelected_);
+		while (not firstItemSelected_) {
 			Application::yield();
 		}
 
@@ -278,21 +270,29 @@ public:
 			Application::yield();
 		}
 
-		elm_list_horizontal_set(list_, EINA_TRUE);
-
-		std::cout << "...checking for edge,left callback" << std::endl;
-		ASSERT(not edgeLeft_);
-		while (not edgeLeft_) {
-			inputKeySend(KEY_LEFT, 1);
-			inputKeySend(KEY_LEFT, 0);
+		std::cout << "...checking for edge,top callback" << std::endl;
+		ASSERT(not edgeTop_);
+		while (not edgeTop_) {
+			inputKeySend(KEY_UP, 1);
+			inputKeySend(KEY_UP, 0);
 			Application::yield();
 		}
+
+		elm_list_horizontal_set(list_, EINA_TRUE);
 
 		std::cout << "...checking for edge,right callback" << std::endl;
 		ASSERT(not edgeRight_);
 		while (not edgeRight_) {
 			inputKeySend(KEY_RIGHT, 1);
 			inputKeySend(KEY_RIGHT, 0);
+			Application::yield();
+		}
+
+		std::cout << "...checking for edge,left callback" << std::endl;
+		ASSERT(not edgeLeft_);
+		while (not edgeLeft_) {
+			inputKeySend(KEY_LEFT, 1);
+			inputKeySend(KEY_LEFT, 0);
 			Application::yield();
 		}
 
@@ -305,21 +305,24 @@ class ListUserMouseScrollTest : public ListTestHarness
 public:
 	void runTest()
 	{
-		/*
-		 * FIXME: On some systems, it doesn't appear that you can
-		 * scroll the list with a mouse left-button down and move
-		 * action.  Investigate why to determine if it's an actual
-		 * system-related thing or some toolkit config is missing.
-		 * If it's system-dependent, then we don't want this test.
-		 * Also, appears to depend on the bounce animation which
-		 * may not be available on some setups.
-		 */
 		int delta(40);
 
 		Position center;
 		Geometry geo = getSurfaceGeometry(window_.get_wl_surface());
 		center.x = geo.x + window_.getWidth() / 2;
 		center.y = geo.y + window_.getHeight() / 2;
+
+		elm_config_scroll_thumbscroll_enabled_set(EINA_TRUE);
+
+		std::cout << "...checking for edge,bottom callback" << std::endl;
+		ASSERT(not edgeBottom_);
+		while (not edgeBottom_) {
+			inputKeySend(BTN_LEFT, 1);
+			setGlobalPointerPosition(center.x, center.y - delta);
+			inputKeySend(BTN_LEFT, 0);
+			setGlobalPointerPosition(center);
+			Application::yield(500000);
+		}
 
 		std::cout << "...checking for edge,top callback" << std::endl;
 		setGlobalPointerPosition(center);
@@ -332,27 +335,7 @@ public:
 			Application::yield(500000); //animation has to be displayed before callback is made :-/
 		}
 
-		std::cout << "...checking for edge,bottom callback" << std::endl;
-		ASSERT(not edgeBottom_);
-		while (not edgeBottom_) {
-			inputKeySend(BTN_LEFT, 1);
-			setGlobalPointerPosition(center.x, center.y - delta);
-			inputKeySend(BTN_LEFT, 0);
-			setGlobalPointerPosition(center);
-			Application::yield(500000);
-		}
-
 		elm_list_horizontal_set(list_, EINA_TRUE);
-
-		std::cout << "...checking for edge,left callback" << std::endl;
-		ASSERT(not edgeLeft_);
-		while (not edgeLeft_) {
-			inputKeySend(BTN_LEFT, 1);
-			setGlobalPointerPosition(center.x + delta, center.y);
-			inputKeySend(BTN_LEFT, 0);
-			setGlobalPointerPosition(center);
-			Application::yield(500000);
-		}
 
 		std::cout << "...checking for edge,right callback" << std::endl;
 		ASSERT(not edgeRight_);
@@ -364,6 +347,15 @@ public:
 			Application::yield(500000);
 		}
 
+		std::cout << "...checking for edge,left callback" << std::endl;
+		ASSERT(not edgeLeft_);
+		while (not edgeLeft_) {
+			inputKeySend(BTN_LEFT, 1);
+			setGlobalPointerPosition(center.x + delta, center.y);
+			inputKeySend(BTN_LEFT, 0);
+			setGlobalPointerPosition(center);
+			Application::yield(500000);
+		}
 		elm_list_horizontal_set(list_, EINA_FALSE);
 	}
 };
