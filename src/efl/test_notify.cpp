@@ -160,15 +160,17 @@ public:
 		: ElmTestHarness::ElmTestHarness()
 		, window_("NotifyUserClickTest", "Notify User Click Test")
 		, notify_(elm_notify_add(window_))
-		, notifyLabel_(elm_label_add(window_))
+		, notifyButton_(elm_button_add(window_))
 		, blockClicked_(false)
+		, buttonClicked_(false)
 	{
-		elm_object_text_set(notifyLabel_, "Notification");
-		elm_object_content_set(notify_, notifyLabel_);
+		elm_object_text_set(notifyButton_, "Notification");
+		elm_object_content_set(notify_, notifyButton_);
 
 		elm_notify_allow_events_set(notify_, EINA_FALSE);
 		evas_object_size_hint_weight_set(notify_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
+		evas_object_smart_callback_add(notifyButton_, "clicked", onButtonClick, this);
 		evas_object_smart_callback_add(notify_, "block,clicked", onBlockClick, this);
 
 	}
@@ -176,7 +178,7 @@ public:
 	void setup()
 	{
 		window_.show();
-		notifyLabel_.show();
+		notifyButton_.show();
 		notify_.show();
 
 		// This will flush out the notify sliding animation.
@@ -186,41 +188,42 @@ public:
 		for (unsigned i(0); i < 40; ++i)
 			queueStep(boost::bind(&Application::yield, 0.001*1e6));
 
-		queueStep(boost::bind(&NotifyUserClickTest::clickNotifyLabel, boost::ref(*this)));
+		queueStep(boost::bind(&NotifyUserClickTest::clickNotifyButton, boost::ref(*this)));
 		queueStep(
 			boost::bind(
-				&NotifyUserClickTest::testNotifyState,
+				&ElmTestHarness::stepUntilCondition,
 				boost::ref(*this),
-				false
+				boost::lambda::bind(&NotifyUserClickTest::buttonClicked_, boost::ref(*this))
 			),
-			"Testing blockClicked_ == false"
+			"checking clicked event on notifyButton_"
 		);
 
 		queueStep(boost::bind(&NotifyUserClickTest::clickNotify, boost::ref(*this)));
 		queueStep(
 			boost::bind(
-				&NotifyUserClickTest::testNotifyState,
+				&ElmTestHarness::stepUntilCondition,
 				boost::ref(*this),
-				true
+				boost::lambda::bind(&NotifyUserClickTest::blockClicked_, boost::ref(*this))
 			),
-			"Testing blockClicked_ == true"
+			"checking blockClicked_ event == true"
 		);
+
 	}
 
-	void clickNotifyLabel()
+	void clickNotifyButton()
 	{
 		Application::yield(0.01*1e6);
 
 		Geometry gw(getSurfaceGeometry(window_.get_wl_surface()));
 		Geometry gf(window_.getFramespaceGeometry());
-		Geometry gnl(notifyLabel_.getGeometry());
+		Geometry gb(notifyButton_.getGeometry());
 
 		setGlobalPointerPosition(
-			gw.x + gf.x + gnl.x + gnl.width / 2,
-			gw.y + gf.y + gnl.y + gnl.height / 2
+			gw.x + gf.x + gb.x + gb.width / 2,
+			gw.y + gf.y + gb.y + gb.height / 2
 		);
 
-		ASSERT(blockClicked_ == false);
+		ASSERT(buttonClicked_ == false);
 
 		inputKeySend(BTN_LEFT, 1);
 		inputKeySend(BTN_LEFT, 0);
@@ -252,6 +255,13 @@ public:
 		std::cout << "...received block,clicked event" << std::endl;
 	}
 
+	static void onButtonClick(void* data, Evas_Object*, void*)
+	{
+		NotifyUserClickTest *test = static_cast<NotifyUserClickTest*>(data);
+		test->buttonClicked_ = true;
+		std::cout << "...received clicked event on notifyButton_" << std::endl;
+	}
+
 	void testNotifyState(bool clicked)
 	{
 		FAIL_UNLESS_EQUAL(blockClicked_, clicked);
@@ -260,8 +270,9 @@ public:
 private:
 	Window		window_;
 	EvasObject	notify_;
-	EvasObject	notifyLabel_;
+	EvasObject	notifyButton_;
 	bool		blockClicked_;
+	bool		buttonClicked_;
 };
 
 typedef ResizeObjectTest<Notify> NotifyResizeTest;
