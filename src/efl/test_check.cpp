@@ -122,7 +122,7 @@ public:
 			"Testing state == EINA_TRUE"
 		);
 
-		queueStep(boost::bind(&CheckUserStateTest::setClickedFalse, boost::ref(*this)));
+		queueStep(boost::bind(&CheckUserStateTest::setChangedFalse, boost::ref(*this)));
 		queueStep(boost::bind(&CheckUserStateTest::clickCheck, boost::ref(*this)));
 		queueStep(
 			boost::bind(
@@ -148,11 +148,11 @@ public:
 
 		Geometry gw(getSurfaceGeometry(window_.get_wl_surface()));
 		Geometry gf(window_.getFramespaceGeometry());
-		Geometry gb(check_.getGeometry());
+		Geometry gc(check_.getGeometry());
 
 		setGlobalPointerPosition(
-			gw.x + gf.x + gb.x + gb.width / 2,
-			gw.y + gf.y + gb.y + gb.height / 2
+			gw.x + gf.x + gc.x + gc.width / 2,
+			gw.y + gf.y + gc.y + gc.height / 2
 		);
 
 		ASSERT(changed_ == false);
@@ -173,7 +173,7 @@ public:
 		FAIL_UNLESS_EQUAL(elm_check_state_get(check_), checked);
 	}
 
-	void setClickedFalse(){
+	void setChangedFalse(){
 		changed_ = false;
 	}
 
