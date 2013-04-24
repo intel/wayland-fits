@@ -1,4 +1,5 @@
 #include <ctime>
+#include <linux/input.h>
 
 #include <vector>
 
@@ -152,6 +153,117 @@ private:
 	std::vector<Elm_Notify_Orient>	orients_;
 };
 
+class NotifyUserClickTest : public ElmTestHarness
+{
+public:
+	NotifyUserClickTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("NotifyUserClickTest", "Notify User Click Test")
+		, notify_(elm_notify_add(window_))
+		, notifyLabel_(elm_label_add(window_))
+		, blockClicked_(false)
+	{
+		elm_object_text_set(notifyLabel_, "Notification");
+		elm_object_content_set(notify_, notifyLabel_);
+
+		elm_notify_allow_events_set(notify_, EINA_FALSE);
+		evas_object_size_hint_weight_set(notify_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
+		evas_object_smart_callback_add(notify_, "block,clicked", onBlockClick, this);
+
+	}
+
+	void setup()
+	{
+		window_.show();
+		notifyLabel_.show();
+		notify_.show();
+
+		// This will flush out the notify sliding animation.
+		// However, this is highly dependent on the default animation
+		// and if that changes, then this may not work.  But currently
+		// 40 yields seems to do the trick. Same trick as in WindowResizeTest
+		for (unsigned i(0); i < 40; ++i)
+			queueStep(boost::bind(&Application::yield, 0.001*1e6));
+
+		queueStep(boost::bind(&NotifyUserClickTest::clickNotifyLabel, boost::ref(*this)));
+		queueStep(
+			boost::bind(
+				&NotifyUserClickTest::testNotifyState,
+				boost::ref(*this),
+				false
+			),
+			"Testing blockClicked_ == false"
+		);
+
+		queueStep(boost::bind(&NotifyUserClickTest::clickNotify, boost::ref(*this)));
+		queueStep(
+			boost::bind(
+				&NotifyUserClickTest::testNotifyState,
+				boost::ref(*this),
+				true
+			),
+			"Testing blockClicked_ == true"
+		);
+	}
+
+	void clickNotifyLabel()
+	{
+		Application::yield(0.01*1e6);
+
+		Geometry gw(getSurfaceGeometry(window_.get_wl_surface()));
+		Geometry gf(window_.getFramespaceGeometry());
+		Geometry gnl(notifyLabel_.getGeometry());
+
+		setGlobalPointerPosition(
+			gw.x + gf.x + gnl.x + gnl.width / 2,
+			gw.y + gf.y + gnl.y + gnl.height / 2
+		);
+
+		ASSERT(blockClicked_ == false);
+
+		inputKeySend(BTN_LEFT, 1);
+		inputKeySend(BTN_LEFT, 0);
+	}
+
+	void clickNotify()
+	{
+		Application::yield(0.01*1e6);
+
+		Geometry gw(getSurfaceGeometry(window_.get_wl_surface()));
+		Geometry gf(window_.getFramespaceGeometry());
+		Geometry gn(notify_.getGeometry());
+
+		setGlobalPointerPosition(
+			gw.x + gf.x + gn.x + gn.width / 2,
+			gw.y + gf.y + gn.y + gn.height / 2
+		);
+
+		ASSERT(blockClicked_ == false);
+
+		inputKeySend(BTN_LEFT, 1);
+		inputKeySend(BTN_LEFT, 0);
+	}
+
+	static void onBlockClick(void* data, Evas_Object*, void*)
+	{
+		NotifyUserClickTest *test = static_cast<NotifyUserClickTest*>(data);
+		test->blockClicked_ = true;
+		std::cout << "...received block,clicked event" << std::endl;
+	}
+
+	void testNotifyState(bool clicked)
+	{
+		FAIL_UNLESS_EQUAL(blockClicked_, clicked);
+	}
+
+private:
+	Window		window_;
+	EvasObject	notify_;
+	EvasObject	notifyLabel_;
+	bool		blockClicked_;
+};
+
 typedef ResizeObjectTest<Notify> NotifyResizeTest;
 typedef PositionObjectTest<Notify> NotifyPositionTest;
 typedef VisibleObjectTest<Notify> NotifyVisibilityTest;
@@ -161,4 +273,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(NotifyPositionTest, "Notify")
 WAYLAND_ELM_HARNESS_TEST_CASE(NotifyVisibilityTest, "Notify")
 WAYLAND_ELM_HARNESS_TEST_CASE(NotifyTimeoutTest, "Notify")
 WAYLAND_ELM_HARNESS_TEST_CASE(NotifyOrientTest, "Notify")
+
+WAYLAND_ELM_HARNESS_TEST_CASE(NotifyUserClickTest, "Notify")
 
