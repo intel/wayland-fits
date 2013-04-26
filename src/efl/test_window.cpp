@@ -242,7 +242,13 @@ class WindowOutputTest : public ElmTestHarness
 public:
 	void setup()
 	{
+		Evas *evas;
+
+		rendered_ = false;
 		window_ = elm_win_util_standard_add("WindowOutputTest", "Window Output Test");
+		evas = evas_object_evas_get(window_);
+
+		evas_event_callback_add(evas, EVAS_CALLBACK_RENDER_POST, onPostRender, this);
 
 		evas_object_resize(window_, 67, 39);
 		evas_object_show(window_);
@@ -252,8 +258,10 @@ public:
 
 	void test()
 	{
-		Evas* evas;
-		Ecore_Wl_Window* wlwin;
+		YIELD_UNTIL(rendered_);
+
+		Evas *evas;
+		Ecore_Wl_Window *wlwin;
 		Geometry server, window, viewport, framespace;
 		int width, height;
 		const int cwidth = 67;	// control width
@@ -284,8 +292,18 @@ public:
 		evas_object_del(window_);
 	}
 
+	static void onPostRender(void *data, Evas *e, void *info)
+	{
+		evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, onPostRender);
+
+		WindowOutputTest *test = static_cast<WindowOutputTest*>(data);
+		test->rendered_ = true;
+		std::cout << "...got post render event" << std::endl;
+	}
+
 private:
-	Evas_Object* window_;
+	Evas_Object	*window_;
+	bool		rendered_;
 };
 
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowIconifyTest, "Window")
