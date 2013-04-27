@@ -11,155 +11,77 @@ public:
 		, isMaximized_(false)
 		, configureDone_(false)
 		, resizeDone_(false)
+		, rendered_(false)
 	{
-		return;
+ 		return;
 	}
 
 	void setup()
 	{
-		window_.show();
-		Application::yield(0.01*1e6);
-		geometry_ = getSurfaceGeometry(window_.get_wl_surface());
-		std::cout << "...initial server geometry is: "
-			<< geometry_.x << " "
-			<< geometry_.y << " "
-			<< geometry_.width << " "
-			<< geometry_.height << std::endl;
+		evas_event_callback_add(evas_object_evas_get(window_), EVAS_CALLBACK_RENDER_POST, onPostRender, this);
+		evas_object_event_callback_add(window_, EVAS_CALLBACK_RESIZE, onResize, this);
+		ecore_event_handler_add(ECORE_WL_EVENT_WINDOW_CONFIGURE, onConfigure, this);
 
 		evas_object_smart_callback_add(window_, "maximized", onMaximize, this);
 		evas_object_smart_callback_add(window_, "unmaximized", onUnMaximize, this);
-		evas_object_event_callback_add(window_, EVAS_CALLBACK_RESIZE, &onResize, this);
-		ecore_event_handler_add(ECORE_WL_EVENT_WINDOW_CONFIGURE, onConfigure, this);
 
-		for(unsigned i(0); i < 5; ++i)
-			addMaximizeTest();
+		window_.show();
+
+		for(unsigned i(0); i < 5; ++i) {
+			queueStep(boost::bind(&WindowMaximizeTest::test, boost::ref(*this)));
+		}
 	}
 
-	void addMaximizeTest()
+	void test()
 	{
-		// Maximize
-		queueStep(
-			boost::lambda::bind(
-				&WindowMaximizeTest::isMaximized_,
-				boost::ref(*this)
-			) = false
-		);
-		queueStep(
-			boost::lambda::bind(
-				&WindowMaximizeTest::configureDone_,
-				boost::ref(*this)
-			) = false
-		);
-		queueStep(
-			boost::lambda::bind(
-				&WindowMaximizeTest::resizeDone_,
-				boost::ref(*this)
-			) = false
-		);
-		queueStep(
-			boost::bind(
-				&Window::maximize, boost::ref(window_),
-				EINA_TRUE
-			),
-			"maximizing window"
-		);
-		queueStep(
-			boost::bind(
-				&WindowMaximizeTest::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&WindowMaximizeTest::isMaximized_, boost::ref(*this))
-			),
-			"checking maximized event"
-		);
-		queueStep(
-			boost::bind(
-				&WindowMaximizeTest::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&WindowMaximizeTest::configureDone_, boost::ref(*this))
-			),
-			"checking configure event"
-		);
-		queueStep(
-			boost::bind(
-				&WindowMaximizeTest::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&WindowMaximizeTest::resizeDone_, boost::ref(*this))
-			),
-			"checking resize event"
-		);
+		static bool initial(true);
 
-		// TODO: How do we test if the window is actually maximized (i.e. what should the size be)?
+		YIELD_UNTIL(rendered_);
 
-		queueStep(
-			boost::bind(
-				&WindowMaximizeTest::stepUntilCondition,
-				boost::ref(*this),
-				not boost::lambda::bind(&WindowMaximizeTest::serverGeometryIsInitial, boost::ref(*this))
-			),
-			"checking server geometry != initial server geometry"
-		);
+		isMaximized_ = false;
+		configureDone_ = false;
+		resizeDone_ = false;
 
-		queueStep(
-			boost::bind(
-				&WindowMaximizeTest::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&WindowMaximizeTest::serverSizeIsEqual, boost::ref(*this))
-			),
-			"checking client size == server size"
-		);
+		if (initial) {
+			geometry_ = getSurfaceGeometry(window_.get_wl_surface());
 
-		// UnMaximize
-		queueStep(
-			boost::lambda::bind(
-				&WindowMaximizeTest::configureDone_,
-				boost::ref(*this)
-			) = false
-		);
-		queueStep(
-			boost::lambda::bind(
-				&WindowMaximizeTest::resizeDone_,
-				boost::ref(*this)
-			) = false
-		);
-		queueStep(
-			boost::bind(
-				&Window::maximize, boost::ref(window_),
-				EINA_FALSE
-			),
-			"unmaximizing window"
-		);
-		queueStep(
-			boost::bind(
-				&WindowMaximizeTest::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&WindowMaximizeTest::configureDone_, boost::ref(*this))
-			),
-			"checking configure event"
-		);
-		queueStep(
-			boost::bind(
-				&WindowMaximizeTest::stepUntilCondition,
-				boost::ref(*this),
-				not boost::lambda::bind(&WindowMaximizeTest::isMaximized_, boost::ref(*this))
-			),
-			"checking unmaximized event"
-		);
-		queueStep(
-			boost::bind(
-				&WindowMaximizeTest::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&WindowMaximizeTest::resizeDone_, boost::ref(*this))
-			),
-			"checking resize event"
-		);
-		queueStep(
-			boost::bind(
-				&WindowMaximizeTest::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&WindowMaximizeTest::isInitialGeometry, boost::ref(*this))
-			),
-			"checking client geometry == server geometry == initial server geometry"
-		);
+			std::cout << "...initial server geometry is: "
+				<< geometry_.x << ","
+				<< geometry_.y << " "
+				<< geometry_.width << "x"
+				<< geometry_.height << std::endl;
+			initial = false;
+		}
+
+		std::cout << "...asserting client geometry == server geometry == initial server geometry" << std::endl;
+		ASSERT(isInitialGeometry());
+
+		std::cout << "...maximizing window" << std::endl;
+		window_.maximize(EINA_TRUE);
+
+		std::cout << "...checking for events" << std::endl;
+		YIELD_UNTIL(isMaximized_ and configureDone_ and resizeDone_);
+
+		// FIXME: How do we test if the window is actually maximized (i.e. what should the size be)?
+		std::cout << "...checking server geometry != initial server geometry" << std::endl;
+		YIELD_UNTIL(not serverGeometryIsInitial());
+
+		std::cout << "...checking client size == server size" << std::endl;
+		YIELD_UNTIL(serverSizeIsEqual());
+
+		configureDone_ = false;
+		resizeDone_ = false;
+
+		ASSERT(isMaximized_);
+
+		std::cout << "...unmaximizing window" << std::endl;
+		window_.maximize(EINA_FALSE);
+
+		std::cout << "...checking for events" << std::endl;
+		YIELD_UNTIL(not isMaximized_ and configureDone_ and resizeDone_);
+
+		std::cout << "...checking client geometry == server geometry == initial server geometry" << std::endl;
+		YIELD_UNTIL(isInitialGeometry());
 	}
 
 	bool isInitialGeometry()
@@ -196,11 +118,20 @@ public:
 			and geometry_.height == g.height;
 	}
 
+	static void onPostRender(void *data, Evas *e, void *info)
+	{
+		evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, onPostRender);
+
+		WindowMaximizeTest *test = static_cast<WindowMaximizeTest*>(data);
+		test->rendered_ = true;
+		std::cout << "...got post render event" << std::endl;
+	}
+
 	static Eina_Bool onConfigure(void *data, int type, void *event)
 	{
 		WindowMaximizeTest *test = static_cast<WindowMaximizeTest*>(data);
-		test->configureDone_ = true;
 		Ecore_Wl_Event_Window_Configure *ev = static_cast<Ecore_Wl_Event_Window_Configure *>(event);
+		test->configureDone_ = true;
 
 		std::cout << "...got configure event: "
 			<< ev->x << " "
@@ -214,18 +145,21 @@ public:
 	{
 		WindowMaximizeTest *test = static_cast<WindowMaximizeTest*>(data);
 		test->resizeDone_ = true;
+		std::cout << "...got resize event" << std::endl;
 	}
 
 	static void onMaximize(void* data, Evas_Object *obj, void* event_info)
 	{
 		WindowMaximizeTest *test = static_cast<WindowMaximizeTest*>(data);
-		test->isMaximized_ = EINA_TRUE;
+		test->isMaximized_ = true;
+		std::cout << "...got maximize event" << std::endl;
 	}
 
 	static void onUnMaximize(void *data, Evas_Object*, void*)
 	{
 		WindowMaximizeTest *test = static_cast<WindowMaximizeTest*>(data);
-		test->isMaximized_ = EINA_FALSE;
+		test->isMaximized_ = false;
+		std::cout << "...got unmaximize event" << std::endl;
 	}
 
 private:
@@ -234,6 +168,7 @@ private:
 	bool		isMaximized_;
 	bool		configureDone_;
 	bool		resizeDone_;
+	bool		rendered_;
 };
 
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowMaximizeTest, "Window")
