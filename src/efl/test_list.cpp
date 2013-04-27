@@ -35,6 +35,7 @@ public:
 		, activated_(false)
 		, doubleClicked_(false)
 		, longPressed_(false)
+		, rendered_(false)
 	{
 		for (unsigned i(0); i <= 13; ++i) {
 			const std::string si = boost::lexical_cast<std::string>(i);
@@ -59,10 +60,19 @@ public:
 	{
 		list_.setPosition(0, 0);
 		elm_list_go(list_);
+
+		evas_event_callback_add(evas_object_evas_get(window_), EVAS_CALLBACK_RENDER_POST, onPostRender, this);
+
 		list_.show();
 		window_.show();
 
-		Application::yield(0.01*1e6);
+		queueStep(boost::bind(&ListTestHarness::test, boost::ref(*this)));
+	}
+
+	void test()
+	{
+		YIELD_UNTIL(rendered_);
+
 		Geometry geo = getSurfaceGeometry(window_.get_wl_surface());
 		Geometry geoListItem;
 		Geometry geoFS = window_.getFramespaceGeometry();
@@ -72,18 +82,24 @@ public:
 		evas_object_geometry_get(eo, &geoListItem.x, &geoListItem.y, &geoListItem.width, &geoListItem.height);
 
 		//Place pointer at center of top item of list
-		queueStep(
-			boost::bind(
-				&ElmTestHarness::setGlobalPointerPosition, boost::ref(*this),
-				geoFS.x + geo.x + geoListItem.x + geoListItem.width / 2,
-				geoFS.y + geo.y + geoListItem.y + geoListItem.height / 2
-			)
+		setGlobalPointerPosition(
+			geoFS.x + geo.x + geoListItem.x + geoListItem.width / 2,
+			geoFS.y + geo.y + geoListItem.y + geoListItem.height / 2
 		);
 
-		queueStep(boost::bind(&ListTestHarness::runTest, boost::ref(*this)));
+		runTest();
 	}
 
 	virtual void runTest() = 0;
+
+	static void onPostRender(void *data, Evas *e, void *info)
+	{
+		evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, onPostRender);
+
+		ListTestHarness *test = static_cast<ListTestHarness*>(data);
+		test->rendered_ = true;
+		std::cout << "...got post render event" << std::endl;
+	}
 
 	static void onSelected(void* data, Evas_Object* li, void*)
 	{
@@ -170,6 +186,8 @@ protected:
 	bool		activated_;
 	bool		doubleClicked_;
 	bool		longPressed_;
+private:
+	bool		rendered_;
 };
 
 class ListUserSelectTest : public ListTestHarness
@@ -180,10 +198,9 @@ public:
 		ASSERT(not firstItemSelected_);
 		inputKeySend(BTN_LEFT, 1);
 		inputKeySend(BTN_LEFT, 0);
+
 		std::cout << "...checking for firstSelected callback" << std::endl;
-		while (not firstItemSelected_) {
-			Application::yield();
-		}
+		YIELD_UNTIL(firstItemSelected_);
 
 		std::cout << "...checking for unselected and secondSelected callback" << std::endl;
 		ASSERT(not unselected_);
@@ -205,9 +222,7 @@ public:
 		inputKeySend(BTN_LEFT, 1);
 
 		std::cout << "...checking for longpressed callback" << std::endl;
-		while (not longPressed_) {
-			Application::yield();
-		}
+		YIELD_UNTIL(longPressed_);
 		inputKeySend(BTN_LEFT, 0);
 	}
 };
@@ -224,9 +239,7 @@ public:
 		inputKeySend(KEY_ENTER, 0);
 
 		std::cout << "...checking for activated callback" << std::endl;
-		while (not activated_) {
-			Application::yield();
-		}
+		YIELD_UNTIL(activated_);
 	}
 };
 
@@ -242,9 +255,7 @@ public:
 		inputKeySend(BTN_LEFT, 0);
 
 		std::cout << "...checking for clicked,double callback" << std::endl;
-		while (not doubleClicked_) {
-			Application::yield();
-		}
+		YIELD_UNTIL(doubleClicked_);
 	}
 };
 
@@ -258,9 +269,7 @@ public:
 
 		std::cout << "...checking for firstSelected callback" << std::endl;
 		ASSERT(not firstItemSelected_);
-		while (not firstItemSelected_) {
-			Application::yield();
-		}
+		YIELD_UNTIL(firstItemSelected_);
 
 		std::cout << "...checking for edge,bottom callback" << std::endl;
 		ASSERT(not edgeBottom_);
