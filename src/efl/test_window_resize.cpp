@@ -8,85 +8,73 @@ public:
 		: ElmTestHarness::ElmTestHarness()
 		, window_("WindowResizeTest", "Window Resize Test")
 		, resizeDone_(false)
+		, rendered_(false)
 	{
 		return;
 	}
 
 	void setup()
 	{
+		evas_event_callback_add(evas_object_evas_get(window_), EVAS_CALLBACK_RENDER_POST, onPostRender, this);
+		evas_object_event_callback_add(window_, EVAS_CALLBACK_RESIZE, &onResize, this);
+
 		window_.show();
 
-		// This will flush out the window titlebar animation.
-		// However, this is highly dependent on the default animation
-		// and if that changes, then this may not work.  But currently
-		// 20 yields seems to do the trick.
-		for (unsigned i(0); i < 20; ++i)
-			queueStep(boost::bind(&Application::yield, 0.001*1e6));
-
-		addResizeTest(-10, -10);
-		addResizeTest(-1, 10);
-		addResizeTest(10, -1);
-		addResizeTest(0, 0);
-
-		for (int w(1); w <= 400; w += 89)
-			for (int h(3); h <= 400; h += 91)
-				addResizeTest(w, h);
-
-		addResizeTest(3000, 3000);
-
-		evas_object_event_callback_add(window_, EVAS_CALLBACK_RESIZE, &onResize, this);
+		queueStep(boost::bind(&WindowResizeTest::test, boost::ref(*this)));
 	}
 
-	void addResizeTest(int width, int height)
+	void test()
 	{
-		queueStep(
-			boost::lambda::bind(
-				&WindowResizeTest::resizeDone_,
-				boost::ref(*this)
-			) = false
+		YIELD_UNTIL(rendered_);
+
+		testResize(-10, -10);
+		testResize(-1, 10);
+		testResize(10, -1);
+		testResize(0, 0);
+
+		for (int w(1); w <= 400; w += 89) {
+			for (int h(3); h <= 400; h += 91) {
+				testResize(w, h);
+			}
+		}
+
+		testResize(3000, 3000);
+	}
+
+	void testResize(int width, int height)
+	{
+		resizeDone_ = false;
+
+		std::cout << "...resizing to " << width << "x" << height << std::endl;
+		window_.setSize(width, height);
+
+		std::cout << "...checking for resize event" << std::endl;
+		YIELD_UNTIL(resizeDone_);
+
+		std::cout << "...checking client size == " << std::max(0, width) << "x" << std::max(0, height) << std::endl;
+		ASSERT(
+			window_.getWidth() == std::max(0, width)
+			and window_.getHeight() == std::max(0, height)
 		);
-		queueStep(
-			boost::bind(
-				&Window::setSize,
-				boost::ref(window_),
-				width,
-				height
-			),
-			boost::str(
-				boost::format("resizing to %1% x %2%") % width % height
-			)
-		);
-		queueStep(
-			boost::bind(
-				&WindowResizeTest::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&WindowResizeTest::resizeDone_, boost::ref(*this))
-			),
-			"checking resize event"
-		);
-		queueStep(
-			boost::bind(
-				&WindowResizeTest::assertCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&Window::getWidth, boost::ref(window_)) == std::max(1, width)
-				and boost::lambda::bind(&Window::getHeight, boost::ref(window_)) == std::max(1, height)
-			),
-			"checking client size"
-		);
-		queueStep(
-			boost::bind(
-				&WindowResizeTest::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&WindowResizeTest::serverSizeIsEqual, boost::ref(*this))
-			),
-			"checking server size"
-		);
+
+		std::cout << "...checking server size" << std::endl;
+		YIELD_UNTIL(serverSizeIsEqual());
+	}
+
+	static void onPostRender(void *data, Evas *e, void *info)
+	{
+		evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, onPostRender);
+
+		WindowResizeTest *test = static_cast<WindowResizeTest*>(data);
+		test->rendered_ = true;
+		std::cout << "...got post render event" << std::endl;
 	}
 
 	static void onResize(void *data, Evas*, Evas_Object*, void*)
 	{
 		WindowResizeTest *test = static_cast<WindowResizeTest*>(data);
 		test->resizeDone_ = true;
+		std::cout << "...got resize event" << std::endl;
 	}
 
 	bool serverSizeIsEqual()
@@ -101,6 +89,7 @@ public:
 private:
 	Window	window_;
 	bool	resizeDone_;
+	bool	rendered_;
 };
 
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowResizeTest, "Window")
