@@ -7,177 +7,87 @@ public:
 	WindowFullscreenTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("WindowFullscreenTest", "Window Fullscreen Test")
-		, initialGeometry_()
-		, fullscreenDone_(EINA_FALSE)
-		, unfullscreenDone_(EINA_FALSE)
-		, configureDone_(EINA_FALSE)
-		, resizeDone_(EINA_FALSE)
+		, geometry_()
+		, fullscreenDone_(false)
+		, unfullscreenDone_(false)
+		, configureDone_(false)
+		, resizeDone_(false)
+		, rendered_(false)
 	{
 		return;
 	}
 
 	void setup()
 	{
-		window_.show();
-
-		Application::yield(0.01*1e6);
-		initialGeometry_ = getSurfaceGeometry(window_.get_wl_surface());
-		std::cout << "...initial server geometry is: "
-			<< initialGeometry_.x << ","
-			<< initialGeometry_.y << " "
-			<< initialGeometry_.width << "x"
-			<< initialGeometry_.height << std::endl;
-
-		evas_object_smart_callback_add(window_, "fullscreen", onFullscreen, this);
-		evas_object_smart_callback_add(window_, "unfullscreen", onUnFullscreen, this);
+		evas_event_callback_add(evas_object_evas_get(window_), EVAS_CALLBACK_RENDER_POST, onPostRender, this);
 		evas_object_event_callback_add(window_, EVAS_CALLBACK_RESIZE, &onResize, this);
 		ecore_event_handler_add(ECORE_WL_EVENT_WINDOW_CONFIGURE, onConfigure, this);
 
-		for(unsigned i(0); i < 5; ++i)
-			addFullscreenTest();
+		evas_object_smart_callback_add(window_, "fullscreen", onFullscreen, this);
+		evas_object_smart_callback_add(window_, "unfullscreen", onUnFullscreen, this);
+
+		window_.show();
+
+		for(unsigned i(0); i < 5; ++i) {
+			queueStep(boost::bind(&WindowFullscreenTest::test, boost::ref(*this)));
+		}
 	}
 
-	void addFullscreenTest()
+	void test()
 	{
-		// Set Window Fullscreen
-		queueStep(
-			boost::lambda::bind(
-				&WindowFullscreenTest::fullscreenDone_,
-				boost::ref(*this)
-			) = EINA_FALSE
-		);
-		queueStep(
-			boost::lambda::bind(
-				&WindowFullscreenTest::configureDone_,
-				boost::ref(*this)
-			) = EINA_FALSE
-		);
-		queueStep(
-			boost::lambda::bind(
-				&WindowFullscreenTest::resizeDone_,
-				boost::ref(*this)
-			) = EINA_FALSE
-		);
-		queueStep(
-			boost::bind(
-				&WindowFullscreenTest::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&WindowFullscreenTest::isInitialGeometry, boost::ref(*this))
-			),
-			"checking client geometry == initial server geometry"
-		);
-		queueStep(
-			boost::bind(
-				&Window::fullscreen, boost::ref(window_),
-				EINA_TRUE
-			),
-			"set fullscreen"
-		);
-		queueStep(
-			boost::bind(
-				&WindowFullscreenTest::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&WindowFullscreenTest::fullscreenDone_, boost::ref(*this)) == EINA_TRUE
-			),
-			"checking fullscreen event"
-		);
-		queueStep(
-			boost::bind(
-				&WindowFullscreenTest::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&WindowFullscreenTest::configureDone_, boost::ref(*this)) == EINA_TRUE
-			),
-			"checking configure event"
-		);
-		queueStep(
-			boost::bind(
-				&WindowFullscreenTest::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&WindowFullscreenTest::resizeDone_, boost::ref(*this)) == EINA_TRUE
-			),
-			"checking resize event"
-		);
-		queueStep(
-			boost::bind(
-				&Window::checkFullscreen, boost::ref(window_),
-				EINA_TRUE
-			),
-			"checking client is fullscreen"
-		);
-		queueStep(
-			boost::bind(
-				&WindowFullscreenTest::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&WindowFullscreenTest::isScreenGeometry, boost::ref(*this))
-			),
-			"checking client geometry == server geometry == screen geometry"
-		);
+		static bool initial(true);
 
-		// Unfullscreen/Restore Window
-		queueStep(
-			boost::lambda::bind(
-				&WindowFullscreenTest::unfullscreenDone_,
-				boost::ref(*this)
-			) = EINA_FALSE
-		);
-		queueStep(
-			boost::lambda::bind(
-				&WindowFullscreenTest::configureDone_,
-				boost::ref(*this)
-			) = EINA_FALSE
-		);
-		queueStep(
-			boost::lambda::bind(
-				&WindowFullscreenTest::resizeDone_,
-				boost::ref(*this)
-			) = EINA_FALSE
-		);
-		queueStep(
-			boost::bind(
-				&Window::fullscreen, boost::ref(window_),
-				EINA_FALSE
-			),
-			"set unfullscreen"
-		);
-		queueStep(
-			boost::bind(
-				&WindowFullscreenTest::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&WindowFullscreenTest::configureDone_, boost::ref(*this)) == EINA_TRUE
-			),
-			"checking configure event"
-		);
-		queueStep(
-			boost::bind(
-				&WindowFullscreenTest::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&WindowFullscreenTest::unfullscreenDone_, boost::ref(*this)) == EINA_TRUE
-			),
-			"checking unfullscreen event"
-		);
-		queueStep(
-			boost::bind(
-				&WindowFullscreenTest::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&WindowFullscreenTest::resizeDone_, boost::ref(*this)) == EINA_TRUE
-			),
-			"checking resize event"
-		);
-			queueStep(
-			boost::bind(
-				&Window::checkFullscreen, boost::ref(window_),
-				EINA_FALSE
-			),
-			"checking client is not fullscreen"
-		);
-		queueStep(
-			boost::bind(
-				&WindowFullscreenTest::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&WindowFullscreenTest::isInitialGeometry, boost::ref(*this))
-			),
-			"checking client geometry == server geometry == initial server geometry"
-		);
+		fullscreenDone_		= false;
+		configureDone_		= false;
+		resizeDone_		= false;
+		unfullscreenDone_	= false;
+
+		YIELD_UNTIL(rendered_);
+
+		if (initial) {
+			geometry_ = getSurfaceGeometry(window_.get_wl_surface());
+
+			std::cout << "...initial server geometry is: "
+				<< geometry_.x << ","
+				<< geometry_.y << " "
+				<< geometry_.width << "x"
+				<< geometry_.height << std::endl;
+			initial = false;
+		}
+
+		std::cout << "...asserting client geometry == server geometry == initial server geometry" << std::endl;
+		ASSERT(isInitialGeometry());
+
+		ASSERT(not fullscreenDone_);
+		ASSERT(not configureDone_);
+		ASSERT(not resizeDone_);
+
+		std::cout << "...setting fullscreen" << std::endl;
+		window_.fullscreen(EINA_TRUE);
+
+		std::cout << "...checking for fullscreen events" << std::endl;
+		YIELD_UNTIL(fullscreenDone_ and configureDone_ and resizeDone_);
+
+		window_.checkFullscreen(EINA_TRUE);
+
+		std::cout << "...checking client geometry == server geometry == screen geometry" << std::endl;
+		YIELD_UNTIL(isScreenGeometry());
+
+		configureDone_ = false;
+		resizeDone_ = false;
+
+		ASSERT(not unfullscreenDone_);
+
+		std::cout << "...setting unfullscreen" << std::endl;
+		window_.fullscreen(EINA_FALSE);
+
+		std::cout << "...checking for unfullscreen events" << std::endl;
+		YIELD_UNTIL(unfullscreenDone_ and configureDone_ and resizeDone_);
+
+		window_.checkFullscreen(EINA_FALSE);
+
+		std::cout << "...checking client geometry == server geometry == initial server geometry" << std::endl;
+		YIELD_UNTIL(isInitialGeometry());
 	}
 
 	bool isInitialGeometry()
@@ -185,12 +95,12 @@ public:
 		const Geometry sg(getSurfaceGeometry(window_.get_wl_surface()));
 		const Geometry fg(window_.getFramespaceGeometry());
 	
-		return sg.x == initialGeometry_.x
-			and sg.y == initialGeometry_.y
-			and sg.width == initialGeometry_.width
-			and sg.height == initialGeometry_.height
-			and window_.getWidth() + fg.width == initialGeometry_.width
-			and window_.getHeight() + fg.height == initialGeometry_.height
+		return sg.x == geometry_.x
+			and sg.y == geometry_.y
+			and sg.width == geometry_.width
+			and sg.height == geometry_.height
+			and window_.getWidth() + fg.width == geometry_.width
+			and window_.getHeight() + fg.height == geometry_.height
 		;
 		// NOTE: server does not support client side positioning
 	}
@@ -212,12 +122,20 @@ public:
 		;
 	}
 
+	static void onPostRender(void *data, Evas *e, void *info)
+	{
+		evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, onPostRender);
+
+		WindowFullscreenTest *test = static_cast<WindowFullscreenTest*>(data);
+		test->rendered_ = true;
+		std::cout << "...got post render event" << std::endl;
+	}
+
 	static Eina_Bool onConfigure(void *data, int type, void *event)
 	{
 		WindowFullscreenTest *test = static_cast<WindowFullscreenTest*>(data);
-		test->configureDone_ = true;
 		Ecore_Wl_Event_Window_Configure *ev = static_cast<Ecore_Wl_Event_Window_Configure *>(event);
-
+		test->configureDone_ = true;
 		std::cout << "...got configure event: "
 			<< ev->x << ","
 			<< ev->y << " "
@@ -229,31 +147,32 @@ public:
 	static void onResize(void *data, Evas*, Evas_Object*, void*)
 	{
 		WindowFullscreenTest *test = static_cast<WindowFullscreenTest*>(data);
-		std::cout << "...got resize event" << std::endl;
 		test->resizeDone_ = true;
+		std::cout << "...got resize event" << std::endl;
 	}
 
 	static void onFullscreen(void* data, Evas_Object *obj, void* event_info)
 	{
 		WindowFullscreenTest *test = static_cast<WindowFullscreenTest*>(data);
+		test->fullscreenDone_ = true;
 		std::cout << "...got fullscreen event" << std::endl;
-		test->fullscreenDone_ = EINA_TRUE;
 	}
 
 	static void onUnFullscreen(void *data, Evas_Object*, void*)
 	{
 		WindowFullscreenTest *test = static_cast<WindowFullscreenTest*>(data);
+		test->unfullscreenDone_ = true;
 		std::cout << "...got unfullscreen event" << std::endl;
-		test->unfullscreenDone_ = EINA_TRUE;
 	}
 	
 private:
 	Window		window_;
-	Geometry	initialGeometry_;
-	Eina_Bool	fullscreenDone_;
-	Eina_Bool	unfullscreenDone_;
-	Eina_Bool	configureDone_;
-	Eina_Bool	resizeDone_;
+	Geometry	geometry_;
+	bool		fullscreenDone_;
+	bool		unfullscreenDone_;
+	bool		configureDone_;
+	bool		resizeDone_;
+	bool		rendered_;
 };
 
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowFullscreenTest, "Window")
