@@ -20,8 +20,8 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef __WAYLAND_EFL_WAYLAND_FITS_H__
-#define __WAYLAND_EFL_WAYLAND_FITS_H__
+#ifndef __WFITS_EFL_WAYLAND_FITS_H__
+#define __WFITS_EFL_WAYLAND_FITS_H__
 
 #include <Ecore.h>
 #include <Ecore_Wayland.h>

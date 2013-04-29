@@ -20,8 +20,8 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef __WAYLAND_TEST_SINGLETON_H__
-#define __WAYLAND_TEST_SINGLETON_H__
+#ifndef __WFITS_COMMON_SINGLETON_H__
+#define __WFITS_COMMON_SINGLETON_H__
 
 template <class T>
 class Singleton
@@ -37,4 +37,4 @@ private:
 	Singleton(const Singleton&); // non-copyable
 };
 
-#endif //__WAYLAND_TEST_SINGLETON_H__
+#endif

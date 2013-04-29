@@ -20,8 +20,8 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef __WAYLAND_EFL_WINDOW_H__
-#define __WAYLAND_EFL_WINDOW_H__
+#ifndef __WFITS_EFL_WINDOW_H__
+#define __WFITS_EFL_WINDOW_H__
 
 #include <string>
 

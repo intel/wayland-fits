@@ -20,8 +20,8 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef __WAYLAND_EFL_EVAS_OBJECT_H__
-#define __WAYLAND_EFL_EVAS_OBJECT_H__
+#ifndef __WFITS_EFL_EVASOBJECT_H__
+#define __WFITS_EFL_EVASOBJECT_H__
 
 #include <Evas.h>
 #include "common/util.h"

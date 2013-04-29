@@ -20,8 +20,8 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef __WAYLAND_EFL_TEMPLATES_H__
-#define __WAYLAND_EFL_TEMPLATES_H__
+#ifndef __WFITS_EFL_TEMPLATES_H__
+#define __WFITS_EFL_TEMPLATES_H__
 
 #include <boost/bind.hpp>
 #include <boost/type_traits.hpp>

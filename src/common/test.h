@@ -20,8 +20,8 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _WAYLAND_TEST_TEST_H_
-#define _WAYLAND_TEST_TEST_H_
+#ifndef __WFITS_COMMON_TEST_H__
+#define __WFITS_COMMON_TEST_H__
 
 #include <iostream>
 #include <map>

@@ -20,8 +20,8 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef __WAYLAND_EFL_APPLICATION_H__
-#define __WAYLAND_EFL_APPLICATION_H__
+#ifndef __WFITS_EFL_APPLICATION_H__
+#define __WFITS_EFL_APPLICATION_H__
 
 #include "common/test.h"
 
@@ -60,4 +60,4 @@ while (not (condition)) { \
 	Application::yield(); \
 }
 
-#endif //__WAYLAND_EFL_APPLICATION_H__
+#endif

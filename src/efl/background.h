@@ -20,8 +20,8 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef __WAYLAND_EFL_BACKGROUND_H__
-#define __WAYLAND_EFL_BACKGROUND_H__
+#ifndef __WFITS_EFL_BACKGROUND_H__
+#define __WFITS_EFL_BACKGROUND_H__
 
 #ifndef MEDIA_PATH
 #error "The MEDIA_PATH macro must be defined-- pass definition in CXXFLAGS."
