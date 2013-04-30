@@ -185,20 +185,29 @@ public:
 		, notifyButton_(elm_button_add(window_))
 		, blockClicked_(false)
 		, buttonClicked_(false)
+		, rendered_(false)
 	{
+		return;
+	}
+
+	void setup()
+	{
+
 		elm_object_text_set(notifyButton_, "Notification");
 		elm_object_content_set(notify_, notifyButton_);
 
 		elm_notify_allow_events_set(notify_, EINA_FALSE);
 		evas_object_size_hint_weight_set(notify_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
+		evas_event_callback_add(
+			evas_object_evas_get(window_),
+			EVAS_CALLBACK_RENDER_POST,
+			onPostRender, this
+		);
+
 		evas_object_smart_callback_add(notifyButton_, "clicked", onButtonClick, this);
 		evas_object_smart_callback_add(notify_, "block,clicked", onBlockClick, this);
 
-	}
-
-	void setup()
-	{
 		window_.show();
 		notifyButton_.show();
 		notify_.show();
@@ -210,32 +219,24 @@ public:
 		for (unsigned i(0); i < 40; ++i)
 			queueStep(boost::bind(&Application::yield, 0.001*1e6));
 
-		queueStep(boost::bind(&NotifyUserClickTest::clickNotifyButton, boost::ref(*this)));
-		queueStep(
-			boost::bind(
-				&ElmTestHarness::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&NotifyUserClickTest::buttonClicked_, boost::ref(*this))
-			),
-			"checking clicked event on notifyButton_"
-		);
+		queueStep(boost::bind(&NotifyUserClickTest::test, boost::ref(*this)));
+	}
 
-		queueStep(boost::bind(&NotifyUserClickTest::clickNotify, boost::ref(*this)));
-		queueStep(
-			boost::bind(
-				&ElmTestHarness::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&NotifyUserClickTest::blockClicked_, boost::ref(*this))
-			),
-			"checking blockClicked_ event == true"
-		);
+	void test(){
+		YIELD_UNTIL(rendered_);
+
+		ASSERT(not buttonClicked_);
+		clickNotifyButton();
+		YIELD_UNTIL(buttonClicked_)
+
+		ASSERT(not blockClicked_);
+		clickNotify();
+		YIELD_UNTIL(blockClicked_);
 
 	}
 
 	void clickNotifyButton()
 	{
-		Application::yield(0.01*1e6);
-
 		Geometry gw(getSurfaceGeometry(window_.get_wl_surface()));
 		Geometry gf(window_.getFramespaceGeometry());
 		Geometry gb(notifyButton_.getGeometry());
@@ -245,16 +246,12 @@ public:
 			gw.y + gf.y + gb.y + gb.height / 2
 		);
 
-		ASSERT(buttonClicked_ == false);
-
 		inputKeySend(BTN_LEFT, 1);
 		inputKeySend(BTN_LEFT, 0);
 	}
 
 	void clickNotify()
 	{
-		Application::yield(0.01*1e6);
-
 		Geometry gw(getSurfaceGeometry(window_.get_wl_surface()));
 		Geometry gf(window_.getFramespaceGeometry());
 		Geometry gn(notify_.getGeometry());
@@ -264,10 +261,17 @@ public:
 			gw.y + gf.y + gn.y + gn.height / 2
 		);
 
-		ASSERT(blockClicked_ == false);
-
 		inputKeySend(BTN_LEFT, 1);
 		inputKeySend(BTN_LEFT, 0);
+	}
+
+	static void onPostRender(void *data, Evas *e, void *info)
+	{
+		evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, onPostRender);
+
+		NotifyUserClickTest *test = static_cast<NotifyUserClickTest*>(data);
+		test->rendered_ = true;
+		std::cout << "...received post render event" << std::endl;
 	}
 
 	static void onBlockClick(void* data, Evas_Object*, void*)
@@ -295,6 +299,7 @@ private:
 	EvasObject	notifyButton_;
 	bool		blockClicked_;
 	bool		buttonClicked_;
+	bool		rendered_;
 };
 
 typedef ResizeObjectTest<Notify> NotifyResizeTest;
