@@ -23,6 +23,7 @@
 #ifndef __WFITS_COMMON_UTIL_H__
 #define __WFITS_COMMON_UTIL_H__
 
+#include <iostream>
 #include <boost/format.hpp>
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
@@ -48,6 +49,12 @@ struct Geometry
 		return;
 	}
 
+	friend std::ostream& operator<<(std::ostream& os, const Geometry& g)
+	{
+		os << g.x << "," << g.y << " " << g.width << "x" << g.height;
+		return os;
+	}
+
 	int32_t x;
 	int32_t y;
 	int32_t width;
@@ -61,6 +68,12 @@ struct Position
 		, y(-1)
 	{
 		return;
+	}
+
+	friend std::ostream& operator<<(std::ostream& os, const Position& p)
+	{
+		os << p.x << "," << p.y;
+		return os;
 	}
 
 	int32_t x;
