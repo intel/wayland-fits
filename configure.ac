@@ -27,6 +27,7 @@ m4_define([check_req_version],		[0.9.8])
 m4_define([wayland_req_version],	[1.0.6])
 m4_define([weston_req_version],		[1.0.6])
 m4_define([efl_req_version],		[1.7.6])
+m4_define([gtk_req_version],		[3.9.0])
 
 PKG_CHECK_MODULES([CHECK], [check >= check_req_version])
 PKG_CHECK_MODULES([WAYLAND],
@@ -118,6 +119,40 @@ if test "x$want_efl_tests" = "xyes" -a "x$have_efl" = "xno"; then
 fi
 AM_CONDITIONAL([BUILD_EFL_TESTS], [test x$have_efl = xyes])
 
+have_gtk="no"
+want_gtk_tests="auto"
+AC_ARG_ENABLE([gtk-tests],
+	[AC_HELP_STRING([--disable-gtk-tests], [disable GTK+ Tests. @<:@default=detect@:>@])],
+	[want_gtk_tests=$enableval], [])
+
+if test "x$want_gtk_tests" != "xno"; then
+	PKG_CHECK_MODULES([GTK],
+		[
+			gtk+-wayland-3.0 >= gtk_req_version
+			gdk-wayland-3.0 >= gtk_req_version
+		],
+		[
+			AC_DEFINE(HAVE_GTK, 1, [Support for GTK+ Tests])
+			have_gtk="yes"
+		],
+		[have_gtk="no"]
+	)
+else
+	have_gtk="no"
+fi
+
+if test "x$want_gtk_tests" = "xyes" -a "x$have_gtk" = "xno"; then
+	AC_MSG_ERROR([
+
+		GTK+ tests requested, but one of the following dependency requirements were not met:
+
+		gtk+-wayland-3.0 >= gtk_req_version
+		gdk-wayland-3.0 >= gtk_req_version
+	])
+fi
+AM_CONDITIONAL([BUILD_GTK_TESTS], [test x$have_gtk = xyes])
+
+
 WAYLAND_SCANNER_RULES(['$(top_srcdir)/src/extensions/protocol'])
 
 AC_CONFIG_FILES([Makefile
@@ -125,6 +160,7 @@ AC_CONFIG_FILES([Makefile
 		 src/common/Makefile
 		 src/core/Makefile
 		 src/efl/Makefile
+		 src/gtk+/Makefile
 		 src/extensions/Makefile
 		 src/extensions/weston/Makefile
 		 src/extensions/protocol/Makefile])

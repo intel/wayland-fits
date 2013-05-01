@@ -1,4 +1,4 @@
-SUBDIRS = common extensions core efl
+SUBDIRS = common extensions core efl gtk+
 
 TESTS = wfits
 
@@ -15,6 +15,10 @@ wfits_LDADD =							\
 
 if BUILD_EFL_TESTS
 wfits_LDADD += $(top_builddir)/src/efl/libwfits-efl.la
+endif
+
+if BUILD_GTK_TESTS
+wfits_LDADD += $(top_builddir)/src/gtk+/libwfits-gtk.la
 endif
 
 AM_CXXFLAGS =			\
