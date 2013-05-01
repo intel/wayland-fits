@@ -109,12 +109,15 @@ public:
 		, slider_(window_)
 		, position_()
 		, selection_()
+		, rendered_(false)
 	{
 		return;
 	}
 
 	void setup()
 	{
+		evas_event_callback_add(evas_object_evas_get(window_), EVAS_CALLBACK_RENDER_POST, onPostRender, this);
+
 		window_.show();
 
 		int w(200), h(50);
@@ -144,9 +147,18 @@ public:
 		queueStep(boost::bind(fn, ELM_ACTIONSLIDER_LEFT));
 	}
 
+	static void onPostRender(void *data, Evas *e, void *info)
+	{
+		evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, onPostRender);
+
+		ActionSliderUserTest *test = static_cast<ActionSliderUserTest*>(data);
+		test->rendered_ = true;
+		std::cout << "...got post render event" << std::endl;
+	}
+
 	void moveSliderTo(const Elm_Actionslider_Pos pos)
 	{
-		Application::yield(0.01*1e6);
+		YIELD_UNTIL(rendered_);
 
 		Geometry gw(getSurfaceGeometry(window_.get_wl_surface()));
 		Geometry gf(window_.getFramespaceGeometry());
@@ -218,6 +230,7 @@ private:
 	Actionslider	slider_;
 	std::string	position_;
 	std::string	selection_;
+	bool		rendered_;
 };
 
 typedef ResizeObjectTest<Actionslider> ActionsliderResizeTest;
