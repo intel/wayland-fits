@@ -290,12 +290,16 @@ public:
 		ASSERT(not mouseIn_);
 
 		//Place pointer inside widget
+		std::cout << "...moving mouse inside " << xInside << "," << yInside << std::endl;
 		setGlobalPointerPosition(xInside, yInside);
 
+		std::cout << "...checking for mouse in" << std::endl;
 		YIELD_UNTIL(mouseIn_);
 
+		std::cout << "...moving mouse outside " << xOutside << "," << yOutside << std::endl;
 		setGlobalPointerPosition(xOutside, yOutside);
 
+		std::cout << "...checking for mouse out" << std::endl;
 		YIELD_UNTIL(not mouseIn_);
 	}
 
@@ -312,14 +316,14 @@ public:
 	{
 		ButtonUserMouseInOutTest *test = static_cast<ButtonUserMouseInOutTest*>(data);
 		test->mouseIn_ = true;
-		std::cout << "...received mouse in event" << std::endl;
+		std::cout << "...received mouse in event at " << test->getGlobalPointerPosition() << std::endl;
 	}
 
 	static void onMouseOut(void *data, Evas*, Evas_Object*, void*)
 	{
 		ButtonUserMouseInOutTest *test = static_cast<ButtonUserMouseInOutTest*>(data);
 		test->mouseIn_ = false;
-		std::cout << "...received mouse out event" << std::endl;
+		std::cout << "...received mouse out event at " << test->getGlobalPointerPosition() << std::endl;
 	}
 
 private:
