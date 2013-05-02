@@ -23,6 +23,7 @@
 #ifndef __WFITS_EFL_ELMTESTHARNESS_H__
 #define __WFITS_EFL_ELMTESTHARNESS_H__
 
+#include <Ecore.h>
 #include <Ecore_Wayland.h>
 #include <Elementary.h>
 #include "test/harness.h"
