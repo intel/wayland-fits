@@ -24,7 +24,7 @@
 #define __WFITS_EFL_ELMTESTHARNESS_H__
 
 #include <Elementary.h>
-#include "common/harness.h"
+#include "test/harness.h"
 #include "application.h"
 #include "wayland-fits.h"
 

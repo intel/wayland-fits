@@ -23,7 +23,7 @@
 #ifndef __WFITS_EFL_APPLICATION_H__
 #define __WFITS_EFL_APPLICATION_H__
 
-#include "common/test.h"
+#include "test/tools.h"
 
 class Application
 {

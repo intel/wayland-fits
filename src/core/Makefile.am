@@ -21,7 +21,7 @@ libwfits_core_la_SOURCES =						\
 	$(top_srcdir)/src/extensions/protocol/wayland-fits-protocol.c
 
 libwfits_core_la_LIBADD =						\
-	$(top_builddir)/src/common/libwfits-common.la			\
+	$(top_builddir)/src/test/libwfits-test.la			\
 	$(WAYLAND_LIBS)							\
 	$(CHECK_LIBS)
 

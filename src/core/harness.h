@@ -23,7 +23,7 @@
 #ifndef __WFITS_CORE_HARNESS_H__
 #define __WFITS_CORE_HARNESS_H__
 
-#include "common/harness.h"
+#include "test/harness.h"
 #include "display.h"
 
 class CoreTestHarness : public TestHarness

@@ -10,7 +10,7 @@ libwfits_gtk_la_SOURCES = \
 	$(top_srcdir)/src/extensions/protocol/wayland-fits-protocol.c
 
 libwfits_gtk_la_LIBADD = \
-	$(top_builddir)/src/common/libwfits-common.la \
+	$(top_builddir)/src/test/libwfits-test.la \
 	$(WAYLAND_LIBS)		\
 	$(GTK_LIBS)		\
 	$(CHECK_LIBS)

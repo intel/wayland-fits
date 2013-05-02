@@ -25,7 +25,7 @@
 
 #include <map>
 #include <wayland-client.h>
-#include "common/test.h"
+#include "test/tools.h"
 
 class Display
 {

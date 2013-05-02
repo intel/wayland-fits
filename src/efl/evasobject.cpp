@@ -21,7 +21,7 @@
  */
 
 #include "evasobject.h"
-#include "common/test.h"
+#include "test/tools.h"
 
 EvasObject::EvasObject(Evas_Object* o, bool autodel)
 	: obj_(o)

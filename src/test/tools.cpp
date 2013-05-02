@@ -22,8 +22,8 @@
 
 #include <boost/regex.hpp>
 
-#include "util.h"
-#include "test.h"
+#include "common/util.h"
+#include "tools.h"
 
 GlobalTestSuite::GlobalTestSuite()
 	: name("Wayland Functional Test Suite")

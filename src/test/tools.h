@@ -29,7 +29,7 @@
 #include <check.h> // Check unit testing framework... see http://check.sourceforge.net
 #include <boost/test/utils/wrap_stringstream.hpp>
 
-#include "singleton.h"
+#include "common/singleton.h"
 
 class GlobalTestSuite
 {

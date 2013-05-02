@@ -20,7 +20,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "common/test.h"
+#include "test/tools.h"
 #include "wayland-fits.h"
 
 WaylandFits::WaylandFits()

@@ -25,7 +25,7 @@
 
 #include <deque>
 
-#include "util.h"
+#include "common/util.h"
 
 class TestHarness
 {

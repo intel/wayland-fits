@@ -21,7 +21,7 @@
  */
 
 #include <Elementary.h>
-#include "common/test.h"
+#include "test/tools.h"
 
 TEST(ShmSetEngineTest, "EFL/Engine")
 {

@@ -31,7 +31,7 @@
 #include <boost/enable_shared_from_this.hpp>
 
 #include "common/util.h"
-#include "common/test.h"
+#include "test/tools.h"
 
 namespace po = boost::program_options;
 

@@ -158,6 +158,7 @@ WAYLAND_SCANNER_RULES(['$(top_srcdir)/src/extensions/protocol'])
 AC_CONFIG_FILES([Makefile
 		 src/Makefile
 		 src/common/Makefile
+		 src/test/Makefile
 		 src/core/Makefile
 		 src/efl/Makefile
 		 src/gtk+/Makefile
