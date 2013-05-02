@@ -12,7 +12,6 @@ libwfits_efl_la_SOURCES = \
 	elmtestharness.cpp		\
 	evasobject.cpp			\
 	window.cpp			\
-	wayland-fits.cpp		\
 	test_actionslider.cpp		\
 	test_background.cpp		\
 	test_bubble.cpp			\

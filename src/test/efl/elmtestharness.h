@@ -23,10 +23,10 @@
 #ifndef __WFITS_EFL_ELMTESTHARNESS_H__
 #define __WFITS_EFL_ELMTESTHARNESS_H__
 
+#include <Ecore_Wayland.h>
 #include <Elementary.h>
 #include "test/harness.h"
 #include "application.h"
-#include "wayland-fits.h"
 
 class ElmTestHarness : public TestHarness
 {
@@ -70,7 +70,6 @@ private:
 
 	int			eventType_; /// custom event type
 	Ecore_Event_Handler*	handler_;
-	WaylandFits		wfits_;
 };
 
 #define WAYLAND_ELM_HARNESS_EGL_TEST_CASE(Harness, suite) \
@@ -95,4 +94,3 @@ TEST(Shm##Harness, "EFL/" suite) \
 
 
 #endif
-

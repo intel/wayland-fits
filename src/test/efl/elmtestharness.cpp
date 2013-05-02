@@ -21,23 +21,26 @@
  */
 
 #include <Elementary.h>
-
 #include "elmtestharness.h"
+#include "test/client.h"
+
+static const wfits::test::Client& client()
+{
+	static const wfits::test::Client c(ecore_wl_display_get());
+
+	return c;
+}
 
 ElmTestHarness::ElmTestHarness()
 	: TestHarness::TestHarness()
 	, eventType_(ecore_event_type_new())
 	, handler_(NULL)
-	, wfits_()
 {
 	return;
 }
 
 void ElmTestHarness::run()
 {
-	// TODO: Add a run timeout just in case
-	// a bug gets introduced into idler stuff.
-
 	ecore_idler_add(idleSetup, this);
 	elm_run();
 }
@@ -80,11 +83,9 @@ void ElmTestHarness::assertCondition(Condition condition, const std::string& mes
 
 Geometry ElmTestHarness::getSurfaceGeometry(wl_surface* surface)
 {
-	WaylandFits::QueryRequest* request = wfits_.makeGeometryRequest(surface);
+	wfits::test::Client::QueryRequest* request = client().makeGeometryRequest(surface);
 
-	while (not request->done) {
-		Application::yield();
-	}
+	YIELD_UNTIL(request->done);
 
 	Geometry *data(static_cast<Geometry*>(request->data));
 	Geometry result = *data;
@@ -97,11 +98,9 @@ Geometry ElmTestHarness::getSurfaceGeometry(wl_surface* surface)
 
 Position ElmTestHarness::getGlobalPointerPosition() const
 {
-	WaylandFits::QueryRequest* request = wfits_.makeGlobalPointerPositionRequest();
+	wfits::test::Client::QueryRequest* request = client().makePointerPositionRequest();
 
-	while (not request->done) {
-		Application::yield();
-	}
+	YIELD_UNTIL(request->done);
 
 	Position *data(static_cast<Position*>(request->data));
 	Position result = *data;
@@ -128,7 +127,7 @@ void ElmTestHarness::expectGlobalPointerPosition(const Position& p) const
 
 void ElmTestHarness::setGlobalPointerPosition(int32_t x, int32_t y) const
 {
-	wfits_.setGlobalPointerPosition(x, y);
+	client().movePointerTo(x, y);
 	expectGlobalPointerPosition(x, y);
 }
 
@@ -139,7 +138,7 @@ void ElmTestHarness::setGlobalPointerPosition(const Position& p) const
 
 void ElmTestHarness::inputKeySend(int32_t key, int32_t state) const
 {
-	wfits_.inputKeySend(key, state);
+	client().sendKey(key, state);
 }
 
 /*static*/
@@ -163,7 +162,6 @@ Eina_Bool ElmTestHarness::doSetup(void* data, int, void*)
 
 	ecore_event_handler_del(harness->handler_);
 
-	// TODO: wrap this with try-catch
 	harness->setup();
 
 	Application::yield();
@@ -229,7 +227,6 @@ Eina_Bool ElmTestHarness::doTeardown(void* data, int, void*)
 
 	harness->handler_ = NULL;
 
-	// TODO: wrap this with try-catch
 	harness->teardown();
 
 	Application::yield();
