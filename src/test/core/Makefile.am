@@ -1,6 +1,6 @@
 INCLUDES = -I$(top_srcdir)/src
 
-lib_LTLIBRARIES = libwfits-core.la
+noinst_LTLIBRARIES = libwfits-core.la
 
 libwfits_core_la_SOURCES =		\
 	display.cpp			\
@@ -18,10 +18,6 @@ libwfits_core_la_SOURCES =		\
 	test_cursor.cpp			\
 	test_data.cpp			\
 	test_surface.cpp
-
-libwfits_core_la_LIBADD =		\
-	$(WAYLAND_LIBS)			\
-	$(CHECK_LIBS)
 
 AM_CXXFLAGS = \
 	$(WAYLAND_CFLAGS)		\

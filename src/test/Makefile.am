@@ -14,18 +14,26 @@ wfits_SOURCES =				\
 	$(top_srcdir)/src/extensions/protocol/wayland-fits-protocol.c
 
 wfits_LDADD =				\
-	core/libwfits-core.la		\
 	-lboost_regex			\
 	-lboost_filesystem		\
 	-lboost_program_options		\
-	$(CHECK_LIBS)
+	-lboost_system			\
+	$(CHECK_LIBS)			\
+	$(WAYLAND_LIBS)
+
+wfits_LDFLAGS =				\
+	-Wl,--whole-archive,core/.libs/libwfits-core.a -Wl,--no-whole-archive
 
 if BUILD_EFL_TESTS
-wfits_LDADD += efl/libwfits-efl.la
+wfits_LDFLAGS +=			\
+	-Wl,--whole-archive,efl/.libs/libwfits-efl.a -Wl,--no-whole-archive
+wfits_LDADD += $(EFL_LIBS)
 endif
 
 if BUILD_GTK_TESTS
-wfits_LDADD += gtk+/libwfits-gtk.la
+wfits_LDFLAGS +=			\
+	-Wl,--whole-archive,gtk+/.libs/libwfits-gtk.a -Wl,--no-whole-archive
+wfits_LDADD += $(GTK_LIBS)
 endif
 
 AM_CXXFLAGS =				\

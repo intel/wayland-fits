@@ -158,5 +158,3 @@ void Client::sendKey(uint32_t key, uint32_t state) const
 
 } // namespace test
 } // namespace client
-
-

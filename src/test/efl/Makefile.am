@@ -4,7 +4,7 @@ MEDIA = \"$(abs_top_srcdir)/media\"
 
 INCLUDES = -I$(top_srcdir)/src
 
-lib_LTLIBRARIES = libwfits-efl.la
+noinst_LTLIBRARIES = libwfits-efl.la
 
 libwfits_efl_la_SOURCES = \
 	application.cpp			\
@@ -48,17 +48,10 @@ libwfits_efl_la_SOURCES = \
 	test_window_maximize.cpp	\
 	test_window_fullscreen.cpp
 
-libwfits_efl_la_LIBADD =		\
-	$(WAYLAND_LIBS)			\
-	$(EFL_LIBS)			\
-	$(CHECK_LIBS)
-
 AM_CXXFLAGS =				\
 	-DMEDIA_PATH=$(MEDIA)		\
 	$(WAYLAND_CFLAGS)		\
 	$(EFL_CFLAGS)			\
-	$(CHECK_CFLAGS)			\
-	-lboost_system			\
-	-lboost_filesystem
+	$(CHECK_CFLAGS)
 
 endif
