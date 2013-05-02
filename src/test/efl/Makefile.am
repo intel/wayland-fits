@@ -47,21 +47,19 @@ libwfits_efl_la_SOURCES = \
 	test_window_resize.cpp		\
 	test_window_move.cpp		\
 	test_window_maximize.cpp	\
-	test_window_fullscreen.cpp	\
-	$(top_srcdir)/src/extensions/protocol/wayland-fits-protocol.c
+	test_window_fullscreen.cpp
 
-libwfits_efl_la_LIBADD = \
-	$(top_builddir)/src/test/libwfits-test.la \
-	$(WAYLAND_LIBS)		\
-	$(EFL_LIBS)		\
+libwfits_efl_la_LIBADD =		\
+	$(WAYLAND_LIBS)			\
+	$(EFL_LIBS)			\
 	$(CHECK_LIBS)
 
-AM_CXXFLAGS = \
-	-DMEDIA_PATH=$(MEDIA)	\
-	$(WAYLAND_CFLAGS)	\
-	$(EFL_CFLAGS)		\
-	$(CHECK_CFLAGS)		\
-	-lboost_system		\
+AM_CXXFLAGS =				\
+	-DMEDIA_PATH=$(MEDIA)		\
+	$(WAYLAND_CFLAGS)		\
+	$(EFL_CFLAGS)			\
+	$(CHECK_CFLAGS)			\
+	-lboost_system			\
 	-lboost_filesystem
 
 endif

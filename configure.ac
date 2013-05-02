@@ -159,9 +159,9 @@ AC_CONFIG_FILES([Makefile
 		 src/Makefile
 		 src/common/Makefile
 		 src/test/Makefile
-		 src/core/Makefile
-		 src/efl/Makefile
-		 src/gtk+/Makefile
+		 src/test/core/Makefile
+		 src/test/efl/Makefile
+		 src/test/gtk+/Makefile
 		 src/extensions/Makefile
 		 src/extensions/weston/Makefile
 		 src/extensions/protocol/Makefile])
