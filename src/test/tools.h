@@ -20,8 +20,8 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef __WFITS_COMMON_TEST_H__
-#define __WFITS_COMMON_TEST_H__
+#ifndef __WFITS_TEST_TOOLS_H__
+#define __WFITS_TEST_TOOLS_H__
 
 #include <iostream>
 #include <map>

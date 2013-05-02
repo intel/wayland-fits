@@ -9,6 +9,7 @@ bin_PROGRAMS = ${TESTS}
 wfits_SOURCES =				\
 	tools.cpp			\
 	harness.cpp			\
+	client.cpp			\
 	testmain.cpp			\
 	$(top_srcdir)/src/extensions/protocol/wayland-fits-protocol.c
 

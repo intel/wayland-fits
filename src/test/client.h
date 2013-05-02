@@ -20,41 +20,48 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef __WFITS_TEST_HARNESS_H__
-#define __WFITS_TEST_HARNESS_H__
+#ifndef __WFITS_TEST_CLIENT_H__
+#define __WFITS_TEST_CLIENT_H__
 
-#include <deque>
+#include "extensions/protocol/wayland-fits-client-protocol.h"
 
-#include "common/util.h"
+namespace wfits {
+namespace test {
 
-class TestHarness
+class Client
 {
 public:
-	typedef boost::function<void()>	TestStep;
-	typedef std::deque<TestStep>	TestSteps;
+	Client(wl_display*);
 
-	TestHarness();
+	virtual ~Client();
 
-	virtual ~TestHarness();
+	class QueryRequest
+	{
+	public:
+		QueryRequest();
+		bool done;
+		void* data;
+	};
 
-	virtual void queueStep(TestStep);
+	/** QueryRequest::data will be a Geometry object **/
+	QueryRequest* makeGeometryRequest(wl_surface*) const;
 
-	virtual void run();
-	virtual void setup() { };
-	virtual void teardown() { };
+	/** QueryRequest::data will be a Position object **/
+	QueryRequest* makePointerPositionRequest() const;
 
-	void runNextStep();
-	bool haveStep() const;
+	void movePointerTo(int32_t, int32_t) const;
+	void movePointerTo(const Position&) const;
 
-protected:
-	TestSteps	steps_;
+	void sendKey(uint32_t, uint32_t) const;
+
+private:
+	static void bind_wfits(void *, wl_registry *, uint32_t, const char *, uint32_t);
+
+	wfits_input*	wfits_input_;
+	wfits_query*	wfits_query_;
 };
 
-#define HARNESS_TEST(HarnessClass, suite) \
-\
-TEST(HarnessClass, suite) \
-{ \
-	HarnessClass().run(); \
-}
+} // namespace test
+} // namespace wfits
 
 #endif
