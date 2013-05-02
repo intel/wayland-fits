@@ -54,6 +54,8 @@ bool GlobalTestSuite::registerTest(TFun fn, const std::string& name)
 	tcase_add_test(tc, fn);
 	tcase_set_timeout(tc, 30);
 	cases_.insert(std::make_pair(name, tc));
+
+	return true;
 }
 
 std::vector<std::string> GlobalTestSuite::testNames(const std::string& testPattern) const
