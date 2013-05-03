@@ -114,6 +114,7 @@ public:
 		, window_("CheckUserStateTest", "Check User State Test")
 		, check_(elm_check_add(window_))
 		, changed_(false)
+		, rendered_(false)
 	{
 		evas_object_resize(check_, 200, 100);
 		elm_object_text_set(check_, "Test Check");
@@ -123,8 +124,18 @@ public:
 
 	void setup()
 	{
+		evas_event_callback_add(evas_object_evas_get(window_), EVAS_CALLBACK_RENDER_POST, onPostRender, this);
+
 		check_.show();
 		window_.show();
+
+		queueStep(
+			boost::bind(
+				&ElmTestHarness::stepUntilCondition,
+				boost::ref(*this),
+				boost::lambda::bind(&CheckUserStateTest::rendered_, boost::ref(*this))
+			)
+		);
 
 		queueStep(boost::bind(&CheckUserStateTest::clickCheck, boost::ref(*this)));
 		queueStep(
@@ -190,6 +201,15 @@ public:
 		std::cout << "...received changed event" << std::endl;
 	}
 
+	static void onPostRender(void *data, Evas *e, void *info)
+	{
+		evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, onPostRender);
+
+		CheckUserStateTest *test = static_cast<CheckUserStateTest*>(data);
+		test->rendered_ = true;
+		std::cout << "...got post render event" << std::endl;
+	}
+
 	void testCheckState(Eina_Bool checked)
 	{
 		FAIL_UNLESS_EQUAL(elm_check_state_get(check_), checked);
@@ -204,6 +224,7 @@ private:
 	EvasObject	check_;
 
 	bool		changed_;
+	bool		rendered_;
 };
 
 
