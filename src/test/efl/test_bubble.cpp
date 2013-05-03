@@ -130,17 +130,26 @@ public:
 		, window_("BubbleClickTest", "Bubble Click Test")
 		, bubble_(elm_bubble_add(window_))
 		, clicked_(false)
+		, rendered_(false)
 	{
 		evas_object_smart_callback_add(bubble_, "clicked", onClick, this);
 	}
 
 	void setup()
 	{
+		evas_event_callback_add(evas_object_evas_get(window_), EVAS_CALLBACK_RENDER_POST, onPostRender, this);
+
+		bubble_.setSize(200, 100);
 		window_.show();
 		bubble_.show();
 
-		bubble_.setSize(200, 100);
-
+		queueStep(
+			boost::bind(
+				&ElmTestHarness::stepUntilCondition,
+				boost::ref(*this),
+				boost::lambda::bind(&BubbleUserClickTest::rendered_, boost::ref(*this))
+			)
+		);
 		queueStep(boost::bind(&BubbleUserClickTest::clickBubble, boost::ref(*this)));
 		queueStep(
 			boost::bind(
@@ -178,10 +187,20 @@ public:
 		std::cout << "...received click event" << std::endl;
 	}
 
+	static void onPostRender(void *data, Evas *e, void *info)
+	{
+		evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, onPostRender);
+
+		BubbleUserClickTest *test = static_cast<BubbleUserClickTest*>(data);
+		test->rendered_ = true;
+		std::cout << "...got post render event" << std::endl;
+	}
+
 private:
 	Window		window_;
 	EvasObject	bubble_;
 	bool		clicked_;
+	bool		rendered_;
 };
 
 typedef ResizeObjectTest<Bubble> BubbleResizeTest;
