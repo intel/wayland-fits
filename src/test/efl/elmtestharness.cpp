@@ -41,8 +41,15 @@ ElmTestHarness::ElmTestHarness()
 
 void ElmTestHarness::run()
 {
-	ecore_idler_add(idleSetup, this);
+	setup();
+
+	ecore_idler_add(idleStep, this);
+
 	elm_run();
+
+	teardown();
+
+	ASSERT(not haveStep());
 }
 
 static void runStepWithMessage(TestHarness::TestStep step, std::string message)
@@ -142,36 +149,6 @@ void ElmTestHarness::inputKeySend(int32_t key, int32_t state) const
 }
 
 /*static*/
-Eina_Bool ElmTestHarness::idleSetup(void* data)
-{
-	ElmTestHarness* harness = static_cast<ElmTestHarness*>(data);
-	harness->handler_ = ecore_event_handler_add(
-		harness->eventType_,
-		doSetup,
-		data
-	);
-	ecore_event_add(harness->eventType_, NULL, NULL, NULL);
-
-	return ECORE_CALLBACK_CANCEL;
-}
-
-/*static*/
-Eina_Bool ElmTestHarness::doSetup(void* data, int, void*)
-{
-	ElmTestHarness* harness = static_cast<ElmTestHarness*>(data);
-
-	ecore_event_handler_del(harness->handler_);
-
-	harness->setup();
-
-	Application::yield();
-
-	ecore_idler_add(idleStep, data);
-
-	return ECORE_CALLBACK_DONE;
-}
-
-/*static*/
 Eina_Bool ElmTestHarness::idleStep(void* data)
 {
 	ElmTestHarness* harness = static_cast<ElmTestHarness*>(data);
@@ -198,40 +175,8 @@ Eina_Bool ElmTestHarness::doStep(void* data, int, void*)
 		Application::yield();
 		ecore_idler_add(idleStep, data);
 	} else {
-		ecore_idler_add(idleTeardown, data);
+		elm_exit();
 	}
-
-	return ECORE_CALLBACK_DONE;
-}
-
-/*static*/
-Eina_Bool ElmTestHarness::idleTeardown(void* data)
-{
-	ElmTestHarness* harness = static_cast<ElmTestHarness*>(data);
-
-	harness->handler_ = ecore_event_handler_add(
-		harness->eventType_,
-		doTeardown,
-		data
-	);
-	ecore_event_add(harness->eventType_, NULL, NULL, NULL);
-
-	return ECORE_CALLBACK_CANCEL;
-}
-
-Eina_Bool ElmTestHarness::doTeardown(void* data, int, void*)
-{
-	ElmTestHarness* harness = static_cast<ElmTestHarness*>(data);
-
-	ecore_event_handler_del(harness->handler_);
-
-	harness->handler_ = NULL;
-
-	harness->teardown();
-
-	Application::yield();
-
-	elm_exit();
 
 	return ECORE_CALLBACK_DONE;
 }

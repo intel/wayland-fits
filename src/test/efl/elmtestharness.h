@@ -60,14 +60,8 @@ public:
 	void assertCondition(Condition condition, const std::string&);
 
 private:
-	static Eina_Bool idleSetup(void*);
-	static Eina_Bool doSetup(void*, int, void*);
-
 	static Eina_Bool idleStep(void*);
 	static Eina_Bool doStep(void*, int, void*);
-
-	static Eina_Bool idleTeardown(void*);
-	static Eina_Bool doTeardown(void*, int, void*);
 
 	int			eventType_; /// custom event type
 	Ecore_Event_Handler*	handler_;
