@@ -86,10 +86,6 @@ public:
 		, window_("BackgroundImageTest", "Background Image Test")
 		, control_(window_)
 	{
-		evas_object_size_hint_weight_set(control_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-		elm_win_resize_object_add(window_, control_);
-		window_.maximize(EINA_TRUE);
-
 		options_.push_back(ELM_BG_OPTION_SCALE);
 		options_.push_back(ELM_BG_OPTION_CENTER);
 		options_.push_back(ELM_BG_OPTION_STRETCH);
@@ -100,39 +96,32 @@ public:
 
 	void setup()
 	{
+		evas_object_size_hint_weight_set(control_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+		elm_win_resize_object_add(window_, control_);
+
 		control_.show();
 		window_.show();
 
+		window_.maximize(EINA_TRUE);
+
+		queueStep(boost::bind(&BackgroundImageTest::test, boost::ref(*this)));
+	}
+
+	void test()
+	{
 		path p(MEDIA_PATH"/bridge_of_the_gods.png");
+		path actual;
 
-		queueStep(boost::bind(&Background::setImage, boost::ref(control_), p));
-		queueStep(boost::bind(&BackgroundImageTest::checkImage, boost::ref(*this), p));
-
-		queueStep(boost::bind(&Window::maximize, boost::ref(window_), EINA_TRUE));
-		queueStep(boost::bind(&BackgroundImageTest::checkMax, boost::ref(*this), EINA_TRUE));
+		control_.setImage(p);
+		Application::yield(0.02*1e6);
+		control_.getImage(actual);
+		FAIL_UNLESS_EQUAL(p, actual);
 
 		foreach (Elm_Bg_Option o, options_) {
-			queueStep(boost::bind(&Background::setImageOpt, boost::ref(control_), o));
-			queueStep(boost::bind(&BackgroundImageTest::checkImageOpt, boost::ref(*this), o));
+			control_.setImageOpt(o);
+			Application::yield(0.02*1e6);
+			FAIL_UNLESS_EQUAL(control_.getImageOpt(), o);
 		}
-	}
-
-	void checkMax(const Eina_Bool expected)
-	{
-		FAIL_UNLESS_EQUAL(window_.isMaximized(), expected);
-	}
-
-	void checkImage(path& expected)
-	{
-		path actual;
-		control_.getImage(actual);
-
-		FAIL_UNLESS_EQUAL(actual, expected);
-	}
-
-	void checkImageOpt(Elm_Bg_Option expected)
-	{
-		FAIL_UNLESS_EQUAL(control_.getImageOpt(), expected);
 	}
 
 private:
