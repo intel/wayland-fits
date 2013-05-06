@@ -4,8 +4,7 @@ INCLUDES = -I$(top_srcdir)/src
 
 noinst_LTLIBRARIES = libwfits-gtk.la
 
-libwfits_gtk_la_SOURCES =	\
-	$(top_srcdir)/src/extensions/protocol/wayland-fits-protocol.c
+libwfits_gtk_la_SOURCES =
 
 AM_CXXFLAGS =			\
 	$(WAYLAND_CFLAGS)	\
