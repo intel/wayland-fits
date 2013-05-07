@@ -202,6 +202,8 @@ public:
 	{
 		YIELD_UNTIL(rendered_);
 
+		setGlobalPointerPosition(0, 0);
+
 		int bw(button_.getWidth());
 		int bh(button_.getHeight());
 		Geometry geo(getSurfaceGeometry(elm_win_wl_window_get(window_)->surface));
