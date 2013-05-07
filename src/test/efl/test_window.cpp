@@ -140,30 +140,62 @@ class WindowAlphaTest : public ElmTestHarness
 public:
 	WindowAlphaTest()
 		: ElmTestHarness::ElmTestHarness()
-		, window_("WindowAlphaTest", "Window Alpha Test")
+		, window_(elm_win_add(NULL, elm_config_engine_get(), ELM_WIN_BASIC))
+		, rendered_(false)
 	{
 		return;
 	}
 
 	void setup()
 	{
+		elm_win_title_set(window_, "Alpha Test");
+		window_.setSize(800, 600);
 		window_.show();
 
-		queueStep(boost::bind(elm_win_alpha_set, boost::ref(window_), EINA_TRUE));
-		queueStep(boost::bind(&WindowAlphaTest::checkAlpha, boost::ref(*this), EINA_TRUE));
-		queueStep(boost::bind(elm_win_alpha_set, boost::ref(window_), EINA_FALSE));
-		queueStep(boost::bind(&WindowAlphaTest::checkAlpha, boost::ref(*this), EINA_FALSE));
-		queueStep(boost::bind(elm_win_alpha_set, boost::ref(window_), EINA_TRUE));
-		queueStep(boost::bind(&WindowAlphaTest::checkAlpha, boost::ref(*this), EINA_TRUE));
+		queueStep(boost::bind(&WindowAlphaTest::test, boost::ref(*this)));
 	}
 
-	void checkAlpha(const Eina_Bool expected)
+	void test()
 	{
-		FAIL_UNLESS_EQUAL(elm_win_alpha_get(window_), expected);
+		#define YIELD_UNTIL_RENDERED \
+		do { \
+			rendered_ = false; \
+			evas_event_callback_add( \
+				evas_object_evas_get(window_), \
+				EVAS_CALLBACK_RENDER_POST, \
+				onPostRender, this \
+			); \
+			std::cout << "...checking for post render" << std::endl; \
+			YIELD_UNTIL(rendered_); \
+		} while (0)
+
+		YIELD_UNTIL_RENDERED;
+
+		for (unsigned i(0); i < 5; ++i) {
+			std::cout << "...setting alpha true" << std::endl;
+			elm_win_alpha_set(window_, EINA_TRUE);
+			YIELD_UNTIL_RENDERED;
+			std::cout << "...checking alpha prop" << std::endl;
+			YIELD_UNTIL(elm_win_alpha_get(window_) == EINA_TRUE);
+			std::cout << "...setting alpha false" << std::endl;
+			elm_win_alpha_set(window_, EINA_FALSE);
+			YIELD_UNTIL_RENDERED;
+			std::cout << "...checking alpha prop" << std::endl;
+			YIELD_UNTIL(elm_win_alpha_get(window_) == EINA_FALSE);
+		}
+		#undef YIELD_UNTIL_RENDERED
 	}
 
+	static void onPostRender(void *data, Evas *e, void *info)
+	{
+		evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, onPostRender);
+
+		WindowAlphaTest *test = static_cast<WindowAlphaTest*>(data);
+		test->rendered_ = true;
+	}
 private:
-	Window	window_;
+	EvasObject window_;
+	bool rendered_;
 };
 
 class WindowIndicatorTest : public ElmTestHarness
