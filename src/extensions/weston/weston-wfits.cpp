@@ -514,14 +514,9 @@ module_init(struct weston_compositor *compositor,
 	if (not wfits->is_headless) {
 		create_input(wfits);
 		/* sync our input pointer device with weston */
-		seat = get_seat(wfits);
-#if defined(HAVE_WESTON_SDK3)
-		move_pointer(wfits, wl_fixed_to_int(seat->pointer->x),
-			     wl_fixed_to_int(seat->pointer->y));
-#else
-		move_pointer(wfits, wl_fixed_to_int(seat->pointer.x),
-			     wl_fixed_to_int(seat->pointer.y));
-#endif
+		wl_fixed_t cx, cy;
+		get_pointer_xy(wfits, &cx, &cy);
+		move_pointer(wfits, wl_fixed_to_int(cx), wl_fixed_to_int(cy));
 	} else {
 		loop = wl_display_get_event_loop(compositor->wl_display);
 		wl_event_loop_add_idle(loop, init_input, wfits);
