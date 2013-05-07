@@ -388,9 +388,15 @@ query_global_pointer_position(struct wl_client *client,
 	result.data = NULL;
 
 	wl_client_add_resource(client, &result);
+#if defined(HAVE_WESTON_SDK3)
+	wfits_query_result_send_global_pointer_position(&result,
+							seat->pointer->x,
+						        seat->pointer->y);
+#else
 	wfits_query_result_send_global_pointer_position(&result,
 							seat->pointer.x,
 						        seat->pointer.y);
+#endif
 	wl_resource_destroy(&result);
 }
 
@@ -422,13 +428,13 @@ compositor_destroy(struct wl_listener *listener, void *data)
 	}
 }
 
-#ifdef HAVE_WESTON_SDK2
+#if defined(HAVE_WESTON_SDK1)
+WL_EXPORT int
+module_init(struct weston_compositor *compositor)
+#else //defined(HAVE_WESTON_SDK2) || defined(HAVE_WESTON_SDK3)
 WL_EXPORT int
 module_init(struct weston_compositor *compositor,
 	int *argc, char *argv[], const char *config_file)
-#else
-WL_EXPORT int
-module_init(struct weston_compositor *compositor)
 #endif
 {
 	struct wfits *wfits;
@@ -456,9 +462,13 @@ module_init(struct weston_compositor *compositor)
 
 	/* sync our input pointer device with weston */
 	seat = get_seat(wfits);
+#if defined(HAVE_WESTON_SDK3)
+	move_pointer(wfits, wl_fixed_to_int(seat->pointer->x),
+		     wl_fixed_to_int(seat->pointer->y));
+#else
 	move_pointer(wfits, wl_fixed_to_int(seat->pointer.x),
 		     wl_fixed_to_int(seat->pointer.y));
-
+#endif
 	wfits->compositor_destroy_listener.notify = compositor_destroy;
 	wl_signal_add(&compositor->destroy_signal,
 		      &wfits->compositor_destroy_listener);
