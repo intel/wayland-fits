@@ -87,26 +87,28 @@ std::string fullname()
 	#define ASSERT(expr) fail_unless(expr)
 #endif
 
-#define ASSERT_MSG(expr, msg) \
-{ \
-	boost::wrap_stringstream s; \
-	s.ref() << msg; \
-	ck_assert_msg(expr, s.str().c_str()); \
+#define ASSERT_MSG(expr, msg)			\
+{						\
+	boost::wrap_stringstream s;		\
+	s.ref() << msg;				\
+	ck_assert_msg(expr, s.str().c_str());	\
 }
 
-#define TEST(name) \
-	class class_ ## name { \
-	public: \
-	START_TEST(ck_ ## name) \
-	{ \
-		std::cout << fullname<class_ ## name>() << std::endl; \
-		run(); \
-	} \
-	END_TEST \
-	static void run(); \
-	static bool registered; \
-	}; \
-	bool class_ ## name::registered = TheGlobalSuite::instance().registerTest(class_ ## name::ck_ ## name, fullname<class_ ## name>()); \
+#define TEST(name)								\
+	class class_ ## name {							\
+	public:									\
+	START_TEST(ck_ ## name)							\
+	{									\
+		std::cout << fullname_ << std::endl;				\
+		run();								\
+	}									\
+	END_TEST								\
+	static void run();							\
+	static std::string fullname_;						\
+	static bool registered_;						\
+	};									\
+	std::string class_ ## name::fullname_ = fullname<class_ ## name>();	\
+	bool class_ ## name::registered_ = TheGlobalSuite::instance().registerTest(class_ ## name::ck_ ## name, class_ ## name::fullname_); \
 	void class_ ## name::run()
 
 } // namespace test
