@@ -22,46 +22,50 @@
 
 #include "harness.h"
 
-CoreTestHarness::CoreTestHarness()
-	: TestHarness::TestHarness()
+namespace wfits {
+namespace test {
+namespace core {
+
+Harness::Harness()
+	: test::Harness::Harness()
 	, display_()
 {
 	return;
 }
 
-CoreTestHarness::~CoreTestHarness()
+Harness::~Harness()
 {
 	return;
 }
 
-void CoreTestHarness::runStep(CoreTestHarness::TestStep step) const
+void Harness::runStep(TestStep step) const
 {
 	step();
 	yield();
 }
 
-void CoreTestHarness::queueStep(TestStep step)
+void Harness::queueStep(TestStep step)
 {
-	TestHarness::queueStep(
-		boost::bind(&CoreTestHarness::runStep, boost::ref(*this), step));
+	test::Harness::queueStep(
+		boost::bind(&Harness::runStep, boost::ref(*this), step));
 }
 
-void CoreTestHarness::yield(const unsigned time) const
+void Harness::yield(const unsigned time) const
 {
 	display().yield(time);
 }
 
-const wfits::test::Client& CoreTestHarness::client() const
+const test::Client& Harness::client() const
 {
-	static const wfits::test::Client c(display_);
+	static const test::Client c(display_);
 	return c;
 }
 
-class SimpleTest : public CoreTestHarness
+class SimpleTest : public Harness
 {
 public:
 	SimpleTest() :
-		CoreTestHarness::CoreTestHarness()
+		Harness::Harness()
 		, tested(0)
 	{
 		return;
@@ -88,7 +92,7 @@ public:
 	unsigned tested;
 };
 
-class GlobalPointerTest : public CoreTestHarness
+class GlobalPointerTest : public Harness
 {
 public:
 	void setup()
@@ -116,3 +120,6 @@ public:
 WFITS_CORE_HARNESS_TEST_CASE(SimpleTest, "Harness")
 WFITS_CORE_HARNESS_TEST_CASE(GlobalPointerTest, "Harness")
 
+} // namespace core
+} // namespace test
+} // namespace wfits

@@ -23,6 +23,10 @@
 #include "window.h"
 #include "elmtestharness.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 class WindowMoveTest : public ElmTestHarness
 {
 public:
@@ -110,3 +114,7 @@ private:
 };
 
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowMoveTest, "Window")
+
+} // namespace efl
+} // namespace test
+} // namespace wfits

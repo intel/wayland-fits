@@ -29,11 +29,15 @@
 #include "shell_surface.h"
 #include "shm.h"
 
-class SurfacePointerTest : public CoreTestHarness
+namespace wfits {
+namespace test {
+namespace core {
+
+class SurfacePointerTest : public Harness
 {
 public:
 	SurfacePointerTest()
-		: CoreTestHarness::CoreTestHarness()
+		: Harness::Harness()
 		, compositor_(display())
 		, shell_(display())
 		, seat_(display())
@@ -125,3 +129,6 @@ public:
 
 WFITS_CORE_HARNESS_TEST_CASE(SurfacePointerTest, "Input");
 
+} // namespace core
+} // namespace test
+} // namespace wfits

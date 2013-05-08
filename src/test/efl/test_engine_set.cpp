@@ -23,37 +23,48 @@
 #include <Elementary.h>
 #include "test/tools.h"
 
-TEST(ShmSetEngineTest, "EFL/Engine")
-{
-	const std::string engine("wayland_shm");
+namespace wfits {
+namespace test {
+namespace efl {
 
-	elm_init(
-		TheGlobalTestSuite::instance().argc,
-		TheGlobalTestSuite::instance().argv
-	);
+namespace shm {
+	TEST(SetEngineTest, "EFL/Shm")
+	{
+		const std::string engine("wayland_shm");
 
-	elm_config_preferred_engine_set(engine.c_str()); // override's ELM_ENGINE user environment setting
-	elm_config_engine_set(engine.c_str());
-	FAIL_UNLESS_EQUAL(engine, std::string(elm_config_preferred_engine_get()));
-	FAIL_UNLESS_EQUAL(engine, std::string(elm_config_engine_get()));
+		elm_init(
+			TheGlobalTestSuite::instance().argc,
+			TheGlobalTestSuite::instance().argv
+		);
 
-	elm_shutdown();
-}
+		elm_config_preferred_engine_set(engine.c_str()); // override's ELM_ENGINE user environment setting
+		elm_config_engine_set(engine.c_str());
+		FAIL_UNLESS_EQUAL(engine, std::string(elm_config_preferred_engine_get()));
+		FAIL_UNLESS_EQUAL(engine, std::string(elm_config_engine_get()));
 
-TEST(EglSetEngineTest, "EFL/Engine")
-{
-	const std::string engine("wayland_egl");
+		elm_shutdown();
+	}
+} // namespace shm
 
-	elm_init(
-		TheGlobalTestSuite::instance().argc,
-		TheGlobalTestSuite::instance().argv
-	);
+namespace egl {
+	TEST(SetEngineTest, "EFL/Egl")
+	{
+		const std::string engine("wayland_egl");
 
-	elm_config_preferred_engine_set(engine.c_str()); // override's ELM_ENGINE user environment setting
-	elm_config_engine_set(engine.c_str());
-	FAIL_UNLESS_EQUAL(engine, std::string(elm_config_preferred_engine_get()));
-	FAIL_UNLESS_EQUAL(engine, std::string(elm_config_engine_get()));
+		elm_init(
+			TheGlobalTestSuite::instance().argc,
+			TheGlobalTestSuite::instance().argv
+		);
 
-	elm_shutdown();
-}
+		elm_config_preferred_engine_set(engine.c_str()); // override's ELM_ENGINE user environment setting
+		elm_config_engine_set(engine.c_str());
+		FAIL_UNLESS_EQUAL(engine, std::string(elm_config_preferred_engine_get()));
+		FAIL_UNLESS_EQUAL(engine, std::string(elm_config_engine_get()));
 
+		elm_shutdown();
+	}
+} // namespace egl
+
+} // namespace efl
+} // namespace test
+} // namespace wfits

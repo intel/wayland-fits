@@ -29,6 +29,10 @@
 #include "elmtestharness.h"
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 class List : public EvasObject
 {
 public:
@@ -407,3 +411,7 @@ WAYLAND_ELM_HARNESS_TEST_CASE(ListUserActivatedTest, "List")
 WAYLAND_ELM_HARNESS_TEST_CASE(ListUserDoubleClickTest, "List")
 WAYLAND_ELM_HARNESS_TEST_CASE(ListUserKeyScrollTest, "List")
 WAYLAND_ELM_HARNESS_TEST_CASE(ListUserMouseScrollTest, "List")
+
+} // namespace efl
+} // namespace test
+} // namespace wfits

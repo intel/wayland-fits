@@ -23,6 +23,10 @@
 #include "window.h"
 #include "elmtestharness.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 class WindowFullscreenTest : public ElmTestHarness
 {
 public:
@@ -198,3 +202,7 @@ private:
 };
 
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowFullscreenTest, "Window")
+
+} // namespace efl
+} // namespace test
+} // namespace wfits

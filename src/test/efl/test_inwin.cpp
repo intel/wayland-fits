@@ -22,6 +22,10 @@
 
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 class Inwin : public EvasObject
 {
 public:
@@ -42,3 +46,6 @@ typedef VisibleObjectTest<Inwin> InwinVisibilityTest;
 WAYLAND_ELM_HARNESS_TEST_CASE(InwinPositionTest, "Inwin")
 WAYLAND_ELM_HARNESS_TEST_CASE(InwinVisibilityTest, "Inwin")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

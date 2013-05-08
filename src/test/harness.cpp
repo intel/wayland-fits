@@ -25,23 +25,23 @@
 namespace wfits {
 namespace test {
 
-TestHarness::TestHarness()
+Harness::Harness()
 	: steps_()
 {
 	return;
 }
 
-TestHarness::~TestHarness()
+Harness::~Harness()
 {
 	return;
 }
 
-void TestHarness::queueStep(TestStep step)
+void Harness::queueStep(TestStep step)
 {
 	steps_.push_back(step);
 }
 
-void TestHarness::run()
+void Harness::run()
 {
 	setup();
 
@@ -51,19 +51,19 @@ void TestHarness::run()
 	teardown();
 }
 
-bool TestHarness::haveStep() const
+bool Harness::haveStep() const
 {
 	return not steps_.empty();
 }
 
-void TestHarness::runNextStep()
+void Harness::runNextStep()
 {
 	TestStep step(steps_.front());
 	steps_.pop_front();
 	step();
 }
 
-Geometry TestHarness::getSurfaceGeometry(wl_surface *surface)
+Geometry Harness::getSurfaceGeometry(wl_surface *surface)
 {
 	Client::QueryRequest* request = client().makeGeometryRequest(surface);
 
@@ -78,7 +78,7 @@ Geometry TestHarness::getSurfaceGeometry(wl_surface *surface)
 	return result;
 }
 
-Position TestHarness::getGlobalPointerPosition() const
+Position Harness::getGlobalPointerPosition() const
 {
 	Client::QueryRequest* request = client().makePointerPositionRequest();
 
@@ -93,7 +93,7 @@ Position TestHarness::getGlobalPointerPosition() const
 	return result;
 }
 
-void TestHarness::expectGlobalPointerPosition(int32_t x, int32_t y) const
+void Harness::expectGlobalPointerPosition(int32_t x, int32_t y) const
 {
 	Position actual(getGlobalPointerPosition());
 	while (actual.x != x or actual.y != y)
@@ -102,23 +102,23 @@ void TestHarness::expectGlobalPointerPosition(int32_t x, int32_t y) const
 	}
 }
 
-void TestHarness::expectGlobalPointerPosition(const Position& p) const
+void Harness::expectGlobalPointerPosition(const Position& p) const
 {
 	expectGlobalPointerPosition(p.x, p.y);
 }
 
-void TestHarness::setGlobalPointerPosition(int32_t x, int32_t y) const
+void Harness::setGlobalPointerPosition(int32_t x, int32_t y) const
 {
 	client().movePointerTo(x, y);
 	expectGlobalPointerPosition(x, y);
 }
 
-void TestHarness::setGlobalPointerPosition(const Position& p) const
+void Harness::setGlobalPointerPosition(const Position& p) const
 {
 	setGlobalPointerPosition(p.x, p.y);
 }
 
-void TestHarness::inputKeySend(int32_t key, int32_t state) const
+void Harness::inputKeySend(int32_t key, int32_t state) const
 {
 	client().sendKey(key, state);
 }

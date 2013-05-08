@@ -23,6 +23,10 @@
 #include "evasobject.h"
 #include "test/tools.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 EvasObject::EvasObject(Evas_Object* o, bool autodel)
 	: obj_(o)
 	, autodel_(autodel)
@@ -158,3 +162,6 @@ void EvasObject::checkVisible(const Eina_Bool isVisible)
 	FAIL_UNLESS_EQUAL(this->isVisible(), isVisible);
 }
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

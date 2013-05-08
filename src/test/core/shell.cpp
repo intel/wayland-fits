@@ -22,6 +22,10 @@
 
 #include "shell.h"
 
+namespace wfits {
+namespace test {
+namespace core {
+
 Shell::Shell(const Display& display)
 	: display_(display)
 	, wl_shell_(
@@ -49,3 +53,7 @@ TEST(Shell, "Core/Wrapper")
 	FAIL_IF((wl_shell*)shell == NULL);
 	FAIL_UNLESS_EQUAL(wl_shell_get_user_data(shell), &shell);
 }
+
+} // namespace core
+} // namespace test
+} // namespace wfits

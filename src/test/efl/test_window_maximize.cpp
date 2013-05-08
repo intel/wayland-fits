@@ -23,6 +23,10 @@
 #include "window.h"
 #include "elmtestharness.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 class WindowMaximizeTest : public ElmTestHarness
 {
 public:
@@ -194,3 +198,7 @@ private:
 };
 
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowMaximizeTest, "Window")
+
+} // namespace efl
+} // namespace test
+} // namespace wfits

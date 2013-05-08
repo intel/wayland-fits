@@ -27,6 +27,10 @@
 
 #include <linux/input.h>
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 using std::vector;
 
 class Button : public EvasObject
@@ -345,3 +349,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(ButtonResizeTest, "Button")
 WAYLAND_ELM_HARNESS_TEST_CASE(ButtonPositionTest, "Button")
 WAYLAND_ELM_HARNESS_TEST_CASE(ButtonVisibilityTest, "Button")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

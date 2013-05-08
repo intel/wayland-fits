@@ -29,13 +29,16 @@
 #include "test/harness.h"
 #include "application.h"
 
-class ElmTestHarness : public ::wfits::test::TestHarness
+namespace wfits {
+namespace test {
+namespace efl {
+
+class ElmTestHarness : public test::Harness
 {
 public:
 	typedef ::boost::function<bool (void)> Condition;
-	typedef ::wfits::test::TestHarness::TestStep TestStep;
 
-	using ::wfits::test::TestHarness::queueStep;
+	using test::Harness::queueStep;
 
 	/**
 	 * Construct the test harness.
@@ -47,7 +50,7 @@ public:
 	void queueStep(TestStep, const std::string&);
 
 	/*virtual*/ void yield(const unsigned time = 0.01 * 1e6) const;
-	/*virtual*/ const ::wfits::test::Client& client() const;
+	/*virtual*/ const test::Client& client() const;
 
 	void stepUntilCondition(Condition condition);
 	void assertCondition(Condition condition);
@@ -62,25 +65,32 @@ private:
 };
 
 #define WAYLAND_ELM_HARNESS_EGL_TEST_CASE(Harness, suite) \
-TEST(Egl##Harness, "EFL/" suite) \
-{ \
-	Application app; \
-	app.setEngine(Application::ENGINE_EGL); \
-	Harness().run(); \
-}
+namespace egl { \
+	TEST(Harness, "EFL/Egl/" suite) \
+	{ \
+		Application app; \
+		app.setEngine(Application::ENGINE_EGL); \
+		Harness().run(); \
+	} \
+} // namespace egl
 
 #define WAYLAND_ELM_HARNESS_SHM_TEST_CASE(Harness, suite) \
-TEST(Shm##Harness, "EFL/" suite) \
-{ \
-	Application app; \
-	app.setEngine(Application::ENGINE_SHM); \
-	Harness().run(); \
-}
+namespace shm { \
+	TEST(Harness, "EFL/Shm/" suite) \
+	{ \
+		Application app; \
+		app.setEngine(Application::ENGINE_SHM); \
+		Harness().run(); \
+	} \
+} // namespace shm
 
 #define WAYLAND_ELM_HARNESS_TEST_CASE(Harness, suite) \
 	WAYLAND_ELM_HARNESS_SHM_TEST_CASE(Harness, suite) \
 	WAYLAND_ELM_HARNESS_EGL_TEST_CASE(Harness, suite)
 
+} // namespace efl
+} // namespace test
+} // namespace wfits
 
 #endif
 

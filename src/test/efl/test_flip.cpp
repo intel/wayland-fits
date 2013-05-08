@@ -27,6 +27,10 @@
 #include "background.h"
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 using boost::filesystem::path;
 using std::vector;
 
@@ -157,3 +161,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(FlipResizeTest, "Flip")
 WAYLAND_ELM_HARNESS_TEST_CASE(FlipPositionTest, "Flip")
 WAYLAND_ELM_HARNESS_TEST_CASE(FlipVisibilityTest, "Flip")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

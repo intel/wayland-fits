@@ -25,6 +25,10 @@
 
 #include "test/tools.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 class Application
 {
 public:
@@ -54,5 +58,9 @@ public:
 	 **/
 	static void yield(const unsigned time = 0.01 * 1e6);
 };
+
+} // namespace efl
+} // namespace test
+} // namespace wfits
 
 #endif

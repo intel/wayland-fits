@@ -31,6 +31,10 @@
 
 #include "elmtestharness.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 using boost::filesystem::path;
 using std::vector;
 
@@ -133,3 +137,6 @@ private:
 WAYLAND_ELM_HARNESS_TEST_CASE(BackgroundColorTest, "Background")
 WAYLAND_ELM_HARNESS_TEST_CASE(BackgroundImageTest, "Background")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

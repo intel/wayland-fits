@@ -27,6 +27,10 @@
 
 #include "elmtestharness.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 class ColorselectorColorTest : public ElmTestHarness
 {
 public:
@@ -61,3 +65,7 @@ private:
 };
 
 WAYLAND_ELM_HARNESS_TEST_CASE(ColorselectorColorTest, "ColorSelector")
+
+} // namespace efl
+} // namespace test
+} // namespace wfits

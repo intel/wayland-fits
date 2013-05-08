@@ -23,6 +23,10 @@
 #include <sys/mman.h>
 #include "shm.h"
 
+namespace wfits {
+namespace test {
+namespace core {
+
 SharedMemory::SharedMemory(const Display& display)
 	: display_(display)
 	, wl_shm_(display.bind<wl_shm>("wl_shm", &wl_shm_interface))
@@ -144,3 +148,7 @@ TEST(SharedMemoryBuffer, "Core/Wrapper")
 	FAIL_UNLESS_EQUAL(buffer.stride(), 4*24);
 	FAIL_UNLESS_EQUAL(buffer.size(), 4*24*13);
 }
+
+} // namespace core
+} // namespace test
+} // namespace wfits

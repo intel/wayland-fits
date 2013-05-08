@@ -26,19 +26,23 @@
 #include "test/harness.h"
 #include "display.h"
 
-class CoreTestHarness : public ::wfits::test::TestHarness
+namespace wfits {
+namespace test {
+namespace core {
+
+class Harness : public test::Harness
 {
 public:
-	CoreTestHarness();
+	Harness();
 
-	virtual ~CoreTestHarness();
+	virtual ~Harness();
 	
 	void queueStep(TestStep);
 
 	const Display& display() const { return display_; }
 
 	/*virtual*/ void yield(const unsigned = 0.001 * 1e6) const;
-	/*virtual*/ const ::wfits::test::Client& client() const;
+	/*virtual*/ const test::Client& client() const;
 
 private:
 	void runStep(TestStep step) const;
@@ -48,5 +52,9 @@ private:
 
 #define WFITS_CORE_HARNESS_TEST_CASE(HarnessClass, suite) \
 	HARNESS_TEST(HarnessClass, "Core/" suite)
+
+} // namespace core
+} // namespace test
+} // namespace wfits
 
 #endif

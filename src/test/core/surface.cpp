@@ -22,6 +22,10 @@
 
 #include "surface.h"
 
+namespace wfits {
+namespace test {
+namespace core {
+
 Surface::Surface(const Compositor& compositor)
 	: compositor_(compositor)
 	, wl_surface_(
@@ -92,3 +96,7 @@ TEST(Surface, "Core/Wrapper")
 	FAIL_IF((wl_surface*)surface == NULL);
 	FAIL_UNLESS_EQUAL(wl_surface_get_user_data(surface), &surface);
 }
+
+} // namespace core
+} // namespace test
+} // namespace wfits

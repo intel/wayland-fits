@@ -25,6 +25,10 @@
 
 #include "display.h"
 
+namespace wfits {
+namespace test {
+namespace core {
+
 class Shell
 {
 public:
@@ -39,5 +43,9 @@ private:
 	const Display&	display_;
 	wl_shell	*wl_shell_;
 };
+
+} // namespace core
+} // namespace test
+} // namespace wfits
 
 #endif

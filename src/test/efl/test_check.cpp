@@ -27,6 +27,10 @@
 #include "elmtestharness.h"
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 class Check : public EvasObject
 {
 public:
@@ -256,3 +260,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(CheckUserStateTest, "Check")
 // WAYLAND_ELM_HARNESS_TEST_CASE(CheckPartTextOnTest, "Check")
 // WAYLAND_ELM_HARNESS_TEST_CASE(CheckPartTextOffTest, "Check")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

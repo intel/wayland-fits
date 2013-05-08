@@ -24,8 +24,12 @@
 #include "elmtestharness.h"
 #include "test/client.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 ElmTestHarness::ElmTestHarness()
-	: ::wfits::test::TestHarness::TestHarness()
+	: test::Harness::Harness()
 	, eventType_(ecore_event_type_new())
 	, handler_(NULL)
 {
@@ -37,9 +41,9 @@ void ElmTestHarness::yield(const unsigned time) const
 	Application::yield(time);
 }
 
-const ::wfits::test::Client& ElmTestHarness::client() const
+const test::Client& ElmTestHarness::client() const
 {
-	static const ::wfits::test::Client c(ecore_wl_display_get());
+	static const test::Client c(ecore_wl_display_get());
 	return c;
 }
 
@@ -124,3 +128,14 @@ Eina_Bool ElmTestHarness::doStep(void* data, int, void*)
 
 	return ECORE_CALLBACK_DONE;
 }
+
+class SimpleTest : public ElmTestHarness
+{
+public:
+};
+
+WAYLAND_ELM_HARNESS_TEST_CASE(SimpleTest, "Harness")
+
+} // namespace efl
+} // namespace test
+} // namespace wfits

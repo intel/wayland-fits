@@ -25,6 +25,10 @@
 
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 using std::vector;
 using std::string;
 
@@ -128,3 +132,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(IconPositionTest, "Icon")
 WAYLAND_ELM_HARNESS_TEST_CASE(IconVisibilityTest, "Icon")
 WAYLAND_ELM_HARNESS_TEST_CASE(IconStandardTest, "Icon")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

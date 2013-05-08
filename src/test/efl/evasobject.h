@@ -26,6 +26,10 @@
 #include <Evas.h>
 #include "common/util.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 class EvasObject
 {
 public:
@@ -63,5 +67,9 @@ private:
 	Evas_Object*	obj_;
 	bool		autodel_;
 };
+
+} // namespace efl
+} // namespace test
+} // namespace wfits
 
 #endif

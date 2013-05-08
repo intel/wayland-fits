@@ -28,6 +28,10 @@
 #include "elmtestharness.h"
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 using std::vector;
 using std::string;
 
@@ -215,3 +219,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(BubbleTextTest, "Bubble")
 
 WAYLAND_ELM_HARNESS_TEST_CASE(BubbleUserClickTest, "Bubble")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

@@ -27,6 +27,10 @@
 
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 using std::string;
 using std::vector;
 
@@ -304,3 +308,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(EntryCutTest, "Entry")
 WAYLAND_ELM_HARNESS_TEST_CASE(EntryCopyTest, "Entry")
 WAYLAND_ELM_HARNESS_TEST_CASE(EntryPasteTest, "Entry")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

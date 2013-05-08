@@ -30,6 +30,10 @@
 #include "elmtestharness.h"
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 using std::vector;
 
 class Dayselector : public EvasObject
@@ -155,3 +159,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorVisibilityTest, "DaySelector")
 WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorDayTest, "DaySelector")
 WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorLocaleTest, "DaySelector")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

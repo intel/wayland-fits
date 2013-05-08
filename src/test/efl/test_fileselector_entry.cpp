@@ -30,6 +30,11 @@
 #include "elmtestharness.h"
 #include "templates.h"
 
+
+namespace wfits {
+namespace test {
+namespace efl {
+
 using std::vector;
 
 // TODO: FileselectorEntry and FileselectorButton share a lot of commonality
@@ -210,3 +215,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryFolderOnlyTest, "FileSelectorEntr
 WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryIsSaveTest, "FileSelectorEntry")
 WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorEntryInwinTest, "FileSelectorEntry")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

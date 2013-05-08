@@ -22,6 +22,10 @@
 
 #include "compositor.h"
 
+namespace wfits {
+namespace test {
+namespace core {
+
 Compositor::Compositor(const Display& display)
 	: display_(display)
 	, wl_compositor_(
@@ -47,3 +51,7 @@ TEST(Compositor, "Core/Wrapper")
 	FAIL_IF((wl_compositor*)compositor == NULL);
 	FAIL_UNLESS_EQUAL(wl_compositor_get_user_data(compositor), &compositor);
 }
+
+} // namespace core
+} // namespace test
+} // namespace wfits

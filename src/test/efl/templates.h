@@ -32,6 +32,10 @@
 #include "evasobject.h"
 #include "window.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 template <typename T>
 class ResizeObjectTest : public ElmTestHarness
 {
@@ -317,6 +321,10 @@ private:
 	T	object_;
 };
 */
+
+} // namespace efl
+} // namespace test
+} // namespace wfits
 
 #endif
 

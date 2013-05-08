@@ -29,6 +29,10 @@
 
 struct wl_surface;
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 class Window : public EvasObject
 {
 public:
@@ -58,6 +62,10 @@ public:
 
 	wl_surface* get_wl_surface();
 };
+
+} // namespace efl
+} // namespace test
+} // namespace wfits
 
 #endif
 

@@ -24,6 +24,10 @@
 
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 class GLView : public EvasObject
 {
 public:
@@ -232,3 +236,6 @@ WAYLAND_ELM_HARNESS_EGL_TEST_CASE(GLViewRenderPolicyTest, "GLView")
 WAYLAND_ELM_HARNESS_EGL_TEST_CASE(GLViewModeTest, "GLView")
 WAYLAND_ELM_HARNESS_EGL_TEST_CASE(GLViewAPITest, "GLView")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

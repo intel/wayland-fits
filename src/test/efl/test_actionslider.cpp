@@ -34,6 +34,10 @@
 
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 using std::vector;
 
 class Actionslider : public EvasObject
@@ -243,3 +247,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderVisibilityTest, "ActionSlider")
 WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderIndicatorTest, "ActionSlider")
 WAYLAND_ELM_HARNESS_TEST_CASE(ActionSliderUserTest, "ActionSlider")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

@@ -24,6 +24,10 @@
 
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 // From "A Tale of Two Cities" by Dickens, Ch 5 (Public Domain, WikiSource)
 static const char* dickens =
 	"A large cask of wine had been dropped and broken, in the street. The accident "
@@ -156,3 +160,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(LabelVisibilityTest, "Label")
 WAYLAND_ELM_HARNESS_TEST_CASE(LabelWrapTest, "Label")
 WAYLAND_ELM_HARNESS_TEST_CASE(LabelWrapWidthTest, "Label")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

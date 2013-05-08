@@ -22,6 +22,10 @@
 
 #include "seat.h"
 
+namespace wfits {
+namespace test {
+namespace core {
+
 Seat::Seat(const Display& display)
 	: display_(display)
 	, wl_seat_(display.bind<wl_seat>("wl_seat", &wl_seat_interface))
@@ -61,3 +65,7 @@ TEST(Seat, "Core/Wrapper")
 	FAIL_UNLESS_EQUAL(wl_seat_get_user_data(seat), &seat);
 	FAIL_IF_EQUAL(seat.capabilities(), 0u);
 }
+
+} // namespace core
+} // namespace test
+} // namespace wfits

@@ -27,6 +27,10 @@
 
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 class Notify : public EvasObject
 {
 public:
@@ -314,3 +318,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(NotifyOrientTest, "Notify")
 
 WAYLAND_ELM_HARNESS_TEST_CASE(NotifyUserClickTest, "Notify")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

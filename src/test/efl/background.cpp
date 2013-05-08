@@ -22,6 +22,10 @@
 
 #include "background.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 using boost::filesystem::path;
 
 Background::Background(EvasObject& parent)
@@ -64,3 +68,6 @@ Elm_Bg_Option Background::getImageOpt()
 	return elm_bg_option_get(*this);
 }
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

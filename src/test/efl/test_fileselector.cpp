@@ -30,6 +30,10 @@
 #include "elmtestharness.h"
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 using std::vector;
 
 class Fileselector : public EvasObject
@@ -248,3 +252,7 @@ WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorFolderOnlyTest, "FileSelector")
 WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorIsSaveTest, "FileSelector")
 WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorModeTest, "FileSelector")
 WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorOkCancelTest, "FileSelector")
+
+} // namespace efl
+} // namespace test
+} // namespace wfits

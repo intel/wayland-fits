@@ -22,6 +22,10 @@
 
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 class Progressbar : public EvasObject
 {
 public:
@@ -220,3 +224,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(ProgressbarValueTest, "Progressbar")
 WAYLAND_ELM_HARNESS_TEST_CASE(ProgressbarPulseTest, "Progressbar")
 WAYLAND_ELM_HARNESS_TEST_CASE(ProgressbarInvertedTest, "Progressbar")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

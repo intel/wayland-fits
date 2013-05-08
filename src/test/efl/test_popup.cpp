@@ -25,6 +25,10 @@
 
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 class Popup : public EvasObject
 {
 public:
@@ -173,3 +177,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(PopupPositionTest, "Popup")
 WAYLAND_ELM_HARNESS_TEST_CASE(PopupVisibilityTest, "Popup")
 WAYLAND_ELM_HARNESS_TEST_CASE(PopupTimeoutTest, "Popup")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

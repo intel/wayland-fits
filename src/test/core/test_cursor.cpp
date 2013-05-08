@@ -20,7 +20,6 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <boost/bind.hpp>
 #include <wayland-cursor.h>
 #include "harness.h"
 
@@ -34,11 +33,15 @@ struct wl_cursor_theme {
 	int size;
 };
 
-class ThemeLoadTest : public CoreTestHarness
+namespace wfits {
+namespace test {
+namespace core {
+
+class ThemeLoadTest : public Harness
 {
 public:
 	ThemeLoadTest()
-		: CoreTestHarness::CoreTestHarness()
+		: Harness::Harness()
 		, shm_(display().bind<wl_shm>("wl_shm", &wl_shm_interface))
 	{
 		ASSERT(shm_ != NULL);
@@ -71,3 +74,6 @@ private:
 
 WFITS_CORE_HARNESS_TEST_CASE(ThemeLoadTest, "Cursor");
 
+} // namespace core
+} // namespace test
+} // namespace wfits

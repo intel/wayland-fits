@@ -25,6 +25,10 @@
 
 #include "display.h"
 
+namespace wfits {
+namespace test {
+namespace core {
+
 class Seat
 {
 public:
@@ -43,5 +47,9 @@ private:
 	wl_seat*		wl_seat_;
 	uint32_t		capabilities_;
 };
+
+} // namespace core
+} // namespace test
+} // namespace wfits
 
 #endif

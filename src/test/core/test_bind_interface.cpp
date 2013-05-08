@@ -22,12 +22,16 @@
 
 #include "harness.h"
 
+namespace wfits {
+namespace test {
+namespace core {
+
 template <typename O, const wl_interface& interface, const std::string& str_interface>
-class BindInterface : public CoreTestHarness
+class BindInterface : public Harness
 {
 public:
 	BindInterface()
-		: CoreTestHarness::CoreTestHarness()
+		: Harness::Harness()
 		, object_(NULL)
 	{
 		return;
@@ -58,6 +62,9 @@ BIND_TEST(wl_output)
 BIND_TEST(wl_seat)
 BIND_TEST(wl_shell)
 BIND_TEST(wl_data_device_manager)
-// BIND_TEST(wfits_input)
-// BIND_TEST(wfits_query)
+BIND_TEST(wfits_input)
+BIND_TEST(wfits_query)
 
+} // namespace core
+} // namespace test
+} // namespace wfits

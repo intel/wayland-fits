@@ -26,6 +26,10 @@
 #include "background.h"
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 using std::vector;
 using std::string;
 
@@ -89,3 +93,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(HoverPositionTest, "Hover")
 WAYLAND_ELM_HARNESS_TEST_CASE(HoverVisibilityTest, "Hover")
 WAYLAND_ELM_HARNESS_TEST_CASE(HoverParentTargetTest, "Hover")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

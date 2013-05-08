@@ -28,6 +28,10 @@
 #include "elmtestharness.h"
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 class Clock : public EvasObject
 {
 public:
@@ -196,3 +200,7 @@ WAYLAND_ELM_HARNESS_TEST_CASE(ClockVisibilityTest, "Clock")
 WAYLAND_ELM_HARNESS_TEST_CASE(ClockTimeTest, "Clock")
 WAYLAND_ELM_HARNESS_TEST_CASE(ClockEditionTest, "Clock")
 WAYLAND_ELM_HARNESS_TEST_CASE(ClockDigitEditionTest, "Clock")
+
+} // namespace efl
+} // namespace test
+} // namespace wfits

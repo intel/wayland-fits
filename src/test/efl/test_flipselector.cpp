@@ -27,6 +27,10 @@
 
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 using std::vector;
 using std::string;
 
@@ -121,3 +125,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(FlipSelectorResizeTest, "FlipSelector")
 WAYLAND_ELM_HARNESS_TEST_CASE(FlipSelectorPositionTest, "FlipSelector")
 WAYLAND_ELM_HARNESS_TEST_CASE(FlipSelectorVisibilityTest, "FlipSelector")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

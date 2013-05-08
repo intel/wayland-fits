@@ -27,6 +27,10 @@
 #include "templates.h"
 #include "background.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 static const boost::filesystem::path img(MEDIA_PATH"/bridge_of_the_gods.png");
 static const boost::filesystem::path gif(MEDIA_PATH"/ADN_animation.gif");
 
@@ -206,3 +210,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(ImageAnimateTest, "Image")
 WAYLAND_ELM_HARNESS_TEST_CASE(ImageFileTest, "Image")
 WAYLAND_ELM_HARNESS_TEST_CASE(ImageOrientTest, "Image")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

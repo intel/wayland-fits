@@ -32,6 +32,10 @@
 #include <Elementary.h>
 #include "evasobject.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 class Background : public EvasObject
 {
 public:
@@ -45,5 +49,9 @@ public:
 	void getImage(boost::filesystem::path&);
 	Elm_Bg_Option getImageOpt();
 };
+
+} // namespace efl
+} // namespace test
+} // namespace wfits
 
 #endif

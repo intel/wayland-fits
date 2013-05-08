@@ -22,6 +22,10 @@
 
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 class Hoversel : public EvasObject
 {
 public:
@@ -41,3 +45,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(HoverselResizeTest, "Hoversel")
 WAYLAND_ELM_HARNESS_TEST_CASE(HoverselPositionTest, "Hoversel")
 WAYLAND_ELM_HARNESS_TEST_CASE(HoverselVisibilityTest, "Hoversel")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

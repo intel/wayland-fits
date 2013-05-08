@@ -25,6 +25,10 @@
 
 #include "compositor.h"
 
+namespace wfits {
+namespace test {
+namespace core {
+
 class Surface
 {
 public:
@@ -44,5 +48,9 @@ private:
 	const Compositor&	compositor_;
 	wl_surface		*wl_surface_;
 };
+
+} // namespace core
+} // namespace test
+} // namespace wfits
 
 #endif

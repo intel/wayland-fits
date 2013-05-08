@@ -26,6 +26,10 @@
 #include "shell.h"
 #include "surface.h"
 
+namespace wfits {
+namespace test {
+namespace core {
+
 class ShellSurface
 {
 public:
@@ -49,5 +53,9 @@ private:
 	const Surface&		surface_;
 	wl_shell_surface 	*wl_shell_surface_;
 };
+
+} // namespace core
+} // namespace test
+} // namespace wfits
 
 #endif

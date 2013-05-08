@@ -22,6 +22,10 @@
 
 #include "display.h"
 
+namespace wfits {
+namespace test {
+namespace core {
+
 Display::Display()
 	: wl_display_(wl_display_connect(0))
 	, wl_registry_(NULL)
@@ -89,3 +93,7 @@ TEST(Display, "Core/Wrapper")
 
 	ASSERT(not wl_display_get_error(display));
 }
+
+} // namespace core
+} // namespace test
+} // namespace wfits

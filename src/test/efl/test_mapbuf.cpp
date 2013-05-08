@@ -22,6 +22,10 @@
 
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 class Mapbuf : public EvasObject
 {
 public:
@@ -42,3 +46,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(MapbufResizeTest, "Mapbuf")
 WAYLAND_ELM_HARNESS_TEST_CASE(MapbufPositionTest, "Mapbuf")
 WAYLAND_ELM_HARNESS_TEST_CASE(MapbufVisibilityTest, "Mapbuf")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

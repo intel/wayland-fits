@@ -30,15 +30,15 @@
 namespace wfits {
 namespace test {
 
-class TestHarness
+class Harness
 {
 public:
 	typedef boost::function<void()>	TestStep;
 	typedef std::deque<TestStep>	TestSteps;
 
-	TestHarness();
+	Harness();
 
-	virtual ~TestHarness();
+	virtual ~Harness();
 
 	virtual void queueStep(TestStep);
 

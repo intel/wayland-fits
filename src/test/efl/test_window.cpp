@@ -25,6 +25,10 @@
 #include "window.h"
 #include "elmtestharness.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 using std::vector;
 
 class WindowIconifyTest : public ElmTestHarness
@@ -372,3 +376,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(WindowAlphaTest, "Window")
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowIndicatorTest, "Window")
 WAYLAND_ELM_HARNESS_TEST_CASE(WindowIndicatorOpacityTest, "Window")
 
+} // namespace efl
+} // namespace test
+} // namespace wfitsv

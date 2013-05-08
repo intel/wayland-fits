@@ -22,6 +22,10 @@
 
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 class Frame : public EvasObject
 {
 public:
@@ -82,3 +86,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(FrameResizeTest, "Frame")
 WAYLAND_ELM_HARNESS_TEST_CASE(FramePositionTest, "Frame")
 WAYLAND_ELM_HARNESS_TEST_CASE(FrameVisibilityTest, "Frame")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

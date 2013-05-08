@@ -24,6 +24,10 @@
 
 #include "application.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 Application::Application()
 {
 	elm_init(
@@ -67,3 +71,6 @@ void Application::yield(const unsigned time)
 	usleep(time);
 }
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

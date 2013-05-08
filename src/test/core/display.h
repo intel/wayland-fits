@@ -27,6 +27,10 @@
 #include <wayland-client.h>
 #include "test/tools.h"
 
+namespace wfits {
+namespace test {
+namespace core {
+
 class Display
 {
 	typedef std::pair<uint32_t, uint32_t> GlobalInfo;
@@ -66,5 +70,9 @@ private:
 	wl_registry	*wl_registry_;
 	Globals		globals_;
 };
+
+} // namespace core
+} // namespace test
+} // namespace wfits
 
 #endif

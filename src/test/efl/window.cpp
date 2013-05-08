@@ -26,6 +26,10 @@
 #include "window.h"
 #include "application.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 Window::Window(const std::string& name, const std::string& title, const unsigned width, const unsigned height)
 	: EvasObject::EvasObject(
 		elm_win_util_standard_add(name.c_str(), title.c_str())
@@ -128,3 +132,7 @@ void Window::checkRotation(const int expected) const
 {
 	FAIL_UNLESS_EQUAL(this->getRotation(), expected);
 }
+
+} // namespace efl
+} // namespace test
+} // namespace wfits

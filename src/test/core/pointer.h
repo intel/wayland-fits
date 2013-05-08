@@ -25,6 +25,10 @@
 
 #include "seat.h"
 
+namespace wfits {
+namespace test {
+namespace core {
+
 class Surface;
 
 class Pointer
@@ -65,5 +69,9 @@ private:
 	uint32_t	axisValue_;
 	wl_pointer*	wl_pointer_;
 };
+
+} // namespace core
+} // namespace test
+} // namespace wfits
 
 #endif

@@ -23,6 +23,10 @@
 #include "surface.h"
 #include "pointer.h"
 
+namespace wfits {
+namespace test {
+namespace core {
+
 Pointer::Pointer(const Seat& seat)
 	: seat_(seat)
 	, focus_(NULL)
@@ -142,3 +146,6 @@ TEST(Pointer, "Core/Wrapper")
 	FAIL_UNLESS(pointer.hasFocus(NULL));
 }
 
+} // namespace core
+} // namespace test
+} // namespace wfits

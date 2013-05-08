@@ -24,6 +24,10 @@
 
 #include "templates.h"
 
+namespace wfits {
+namespace test {
+namespace efl {
+
 class Panel : public EvasObject
 {
 public:
@@ -138,3 +142,6 @@ WAYLAND_ELM_HARNESS_TEST_CASE(PanelVisibilityTest, "Panel")
 WAYLAND_ELM_HARNESS_TEST_CASE(PanelOrientTest, "Panel")
 //WAYLAND_ELM_HARNESS_TEST_CASE(PanelToggleTest, "Panel")
 
+} // namespace efl
+} // namespace test
+} // namespace wfits

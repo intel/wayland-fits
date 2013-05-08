@@ -25,6 +25,10 @@
 
 #include "display.h"
 
+namespace wfits {
+namespace test {
+namespace core {
+
 class SharedMemory
 {
 public:
@@ -66,5 +70,9 @@ private:
 	int			size_;
 
 };
+
+} // namespace core
+} // namespace test
+} // namespace wfits
 
 #endif

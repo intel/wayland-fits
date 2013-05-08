@@ -23,8 +23,12 @@
 #include <wayland-client-protocol.h>
 #include "harness.h"
 
+namespace wfits {
+namespace test {
+namespace core {
+
 template <typename O>
-class DataTest : public CoreTestHarness
+class DataTest : public Harness
 {
 public:
 	virtual void setup()
@@ -87,3 +91,7 @@ DATA_TEST(wl_output)
 DATA_TEST(wl_seat)
 DATA_TEST(wl_shell)
 DATA_TEST(wl_data_device_manager)
+
+} // namespace core
+} // namespace test
+} // namespace wfits

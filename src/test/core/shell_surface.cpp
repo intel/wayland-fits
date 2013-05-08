@@ -22,6 +22,10 @@
 
 #include "shell_surface.h"
 
+namespace wfits {
+namespace test {
+namespace core {
+
 ShellSurface::ShellSurface(const Shell& shell, const Surface& surface)
 	: shell_(shell)
 	, surface_(surface)
@@ -85,3 +89,6 @@ TEST(ShellSurface, "Core/Wrapper")
 	FAIL_UNLESS_EQUAL(wl_shell_surface_get_user_data(ss), &ss);
 }
 
+} // namespace core
+} // namespace test
+} // namespace wfits
