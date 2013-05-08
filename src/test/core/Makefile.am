@@ -11,8 +11,6 @@ libwfits_core_la_SOURCES =		\
 	surface.cpp			\
 	shm.cpp				\
 	shell_surface.cpp		\
-	query.cpp			\
-	input.cpp			\
 	harness.cpp			\
 	test_bind_interface.cpp		\
 	test_cursor.cpp			\

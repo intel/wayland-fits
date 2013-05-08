@@ -88,4 +88,31 @@ public:
 	unsigned tested;
 };
 
+class GlobalPointerTest : public CoreTestHarness
+{
+public:
+	void setup()
+	{
+		queueStep(boost::bind(&GlobalPointerTest::test, boost::ref(*this)));
+	}
+
+	void test()
+	{
+		Position p(getGlobalPointerPosition());
+		FAIL_IF_EQUAL(p.x, -1);
+		FAIL_IF_EQUAL(p.y, -1);
+
+		for (unsigned y(0); y < 480; y += 80) {
+			for (unsigned x(0); x < 640; x += 80) {
+				setGlobalPointerPosition(x, y);
+				p = getGlobalPointerPosition();
+				FAIL_UNLESS_EQUAL(p.x, x);
+				FAIL_UNLESS_EQUAL(p.y, y);
+			}
+		}
+	}
+};
+
 WFITS_CORE_HARNESS_TEST_CASE(SimpleTest, "Harness")
+WFITS_CORE_HARNESS_TEST_CASE(GlobalPointerTest, "Harness")
+

@@ -58,7 +58,7 @@ public:
 	
 	virtual void* getter() = 0;
 	virtual void setter(void*) = 0;
-	
+
 protected:
 	O* obj_;
 };
@@ -79,7 +79,7 @@ protected:
 		DATA_SETTER_GETTER(name) \
 	}; \
 	WFITS_CORE_HARNESS_TEST_CASE(data_ ## name, "DataInterface")
-	
+
 DATA_TEST(wl_compositor)
 DATA_TEST(wl_display)
 DATA_TEST(wl_shm)

@@ -53,7 +53,7 @@ public:
 			boost::bind(&ThemeLoadTest::test, boost::ref(*this), "this_theme_does_not_exist", "default")
 		);
 	}
-	
+
 	void test(const std::string load, const std::string expect)
 	{
 		wl_cursor_theme* theme(

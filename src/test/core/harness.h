@@ -37,13 +37,13 @@ public:
 
 	const Display& display() const { return display_; }
 
-	/*virtual*/ void yield(const unsigned = 0.01 * 1e6) const;
+	/*virtual*/ void yield(const unsigned = 0.001 * 1e6) const;
 	/*virtual*/ const ::wfits::test::Client& client() const;
 
 private:
 	void runStep(TestStep step) const;
 
-	Display	display_;
+	Display display_;
 };
 
 #define WFITS_CORE_HARNESS_TEST_CASE(HarnessClass, suite) \

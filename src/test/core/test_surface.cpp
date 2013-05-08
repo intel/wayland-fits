@@ -20,7 +20,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "display.h"
+#include "harness.h"
 #include "compositor.h"
 #include "pointer.h"
 #include "seat.h"
@@ -28,115 +28,100 @@
 #include "shell.h"
 #include "shell_surface.h"
 #include "shm.h"
-#include "input.h"
-#include "query.h"
 
-class Client
+class SurfacePointerTest : public CoreTestHarness
 {
 public:
-	Client(uint32_t width, uint32_t height)
-		: display()
-		, compositor(display)
-		, shell(display)
-		, seat(display)
-		, pointer(seat)
-		, surface(compositor)
-		, shellSurface(shell, surface)
-		, shm(display)
-		, buffer(shm, width, height)
-		, query(display)
-		, input(query)
+	SurfacePointerTest()
+		: CoreTestHarness::CoreTestHarness()
+		, compositor_(display())
+		, shell_(display())
+		, seat_(display())
+		, pointer_(seat_)
+		, surface_(compositor_)
+		, shellSurface_(shell_, surface_)
+		, shm_(display())
+		, buffer_(shm_, 120, 75)
 	{
-		wl_surface_attach(surface, buffer, 0, 0);
-		wl_surface_damage(surface, 0, 0, buffer.width(),
-				  buffer.height());
-		surface.commit();
+		return;
 	}
 
-	void movePointer(int32_t x, int32_t y)
+	void setup()
 	{
-		Query::Geometry geometry = query.getSurfaceGeometry(surface);
-		input.moveGlobalPointer(geometry.x + x, geometry.y + y);
+		wl_surface_attach(surface_, buffer_, 0, 0);
+		wl_surface_damage(surface_, 0, 0, buffer_.width(), buffer_.height());
+		surface_.commit();
+
+		queueStep(boost::bind(&SurfacePointerTest::test, boost::ref(*this)));
 	}
 
-	void checkFocus(bool focus)
+	void test()
 	{
-		display.yield();
-		for(unsigned i(0); i < 20 && (pointer.hasFocus(&surface) != focus); ++i) {
-			display.yield(i*0.001*1e6);
+		for (unsigned x(0); x < buffer_.width(); x+=10) {
+			for (unsigned y(0); y < buffer_.height(); y+=10) {
+				movePointer(x, y);
+				checkFocus(true);
+				checkPointer(x, y);
+			}
 		}
-		FAIL_UNLESS_EQUAL(pointer.hasFocus(&surface), focus);
+
+		movePointer(-1, -1);
+		checkFocus(false);
+
+		movePointer(5, 5);
+		checkFocus(true);
+
+		inputKeySend(BTN_LEFT, 1);
+		checkButton(BTN_LEFT, 1);
+
+		inputKeySend(BTN_LEFT, 0);
+		checkButton(BTN_LEFT, 0);
+
+		inputKeySend(BTN_RIGHT, 1);
+		checkButton(BTN_RIGHT, 1);
+
+		inputKeySend(BTN_RIGHT, 0);
+		checkButton(BTN_RIGHT, 0);
+
+		inputKeySend(BTN_MIDDLE, 1);
+		checkButton(BTN_MIDDLE, 1);
+
+		inputKeySend(BTN_MIDDLE, 0);
+		checkButton(BTN_MIDDLE, 0);
 	}
 
-	void checkPointer(uint32_t x, uint32_t y)
+	void movePointer(const int32_t x, const int32_t y)
 	{
-		display.yield();
-		for(unsigned i(0); i < 20 && (pointer.x() != x || pointer.y() != y); ++i) {
-			display.yield(i*0.001*1e6);
-		}
-		FAIL_UNLESS_EQUAL(pointer.x(), x);
-		FAIL_UNLESS_EQUAL(pointer.y(), y);
+		Geometry geometry(getSurfaceGeometry(surface_));
+		setGlobalPointerPosition(geometry.x + x, geometry.y + y);
 	}
 
-	void checkButton(uint32_t button, uint32_t state)
+	void checkFocus(const bool focus)
 	{
-		display.yield();
-		for (unsigned i(0);
-		     i < 20 && (pointer.button() != button
-		     || pointer.buttonState() != state); ++i) {
-			display.yield(i*0.001*1e6);
-		}
-		FAIL_UNLESS_EQUAL(pointer.button(), button);
-		FAIL_UNLESS_EQUAL(pointer.buttonState(), state);
+		YIELD_UNTIL(pointer_.hasFocus(&surface_) == focus);
 	}
 
-	Display display;
-	Compositor compositor;
-	Shell shell;
-	Seat seat;
-	Pointer pointer;
-	Surface surface;
-	ShellSurface shellSurface;
-	SharedMemory shm;
-	SharedMemoryBuffer buffer;
-	Query query;
-	Input input;
+	void checkPointer(const uint32_t x, const uint32_t y)
+	{
+		YIELD_UNTIL(pointer_.x() == x and pointer_.y() == y);
+	}
+
+	void checkButton(const uint32_t button, const uint32_t state)
+	{
+		YIELD_UNTIL(
+			pointer_.button() == button
+			and pointer_.buttonState() == state);
+	}
+
+	Compositor		compositor_;
+	Shell			shell_;
+	Seat			seat_;
+	Pointer			pointer_;
+	Surface			surface_;
+	ShellSurface		shellSurface_;
+	SharedMemory		shm_;
+	SharedMemoryBuffer	buffer_;
 };
 
-#include <linux/input.h>
+WFITS_CORE_HARNESS_TEST_CASE(SurfacePointerTest, "Input");
 
-TEST(SurfacePointer, "Core/Input")
-{
-	Client client(120, 75);
-
-	for (unsigned x(0); x < 120; x+=10) {
-		for (unsigned y(0); y < 75; y+=10) {
-			client.movePointer(x, y);
-			client.checkFocus(true);
-			client.checkPointer(x, y);
-		}
-	}
-	client.movePointer(-1, -1);
-	client.checkFocus(false);
-
-	client.movePointer(5, 5);
-	client.checkFocus(true);
-	
-	wfits_input_key_send(client.input, BTN_LEFT, 1);
-	client.checkButton(BTN_LEFT, 1);
-
-	wfits_input_key_send(client.input, BTN_LEFT, 0);
-	client.checkButton(BTN_LEFT, 0);
-
-	wfits_input_key_send(client.input, BTN_RIGHT, 1);
-	client.checkButton(BTN_RIGHT, 1);
-
-	wfits_input_key_send(client.input, BTN_RIGHT, 0);
-	client.checkButton(BTN_RIGHT, 0);
-
-	wfits_input_key_send(client.input, BTN_MIDDLE, 1);
-	client.checkButton(BTN_MIDDLE, 1);
-
-	wfits_input_key_send(client.input, BTN_MIDDLE, 0);
-	client.checkButton(BTN_MIDDLE, 0);
-}

@@ -23,6 +23,7 @@
 #ifndef __WFITS_TEST_CLIENT_H__
 #define __WFITS_TEST_CLIENT_H__
 
+#include <linux/input.h>
 #include "common/util.h"
 #include "extensions/protocol/wayland-fits-client-protocol.h"
 
