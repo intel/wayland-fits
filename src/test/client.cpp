@@ -20,7 +20,6 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "common/util.h"
 #include "tools.h"
 #include "client.h"
 

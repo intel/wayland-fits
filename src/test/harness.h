@@ -24,8 +24,11 @@
 #define __WFITS_TEST_HARNESS_H__
 
 #include <deque>
-
 #include "common/util.h"
+#include "client.h"
+
+namespace wfits {
+namespace test {
 
 class TestHarness
 {
@@ -43,8 +46,19 @@ public:
 	virtual void setup() { };
 	virtual void teardown() { };
 
-	void runNextStep();
-	bool haveStep() const;
+	virtual void yield(const unsigned time = 0.01 * 1e6) const = 0;
+	virtual const Client& client() const = 0;
+
+	void		runNextStep();
+	bool		haveStep() const;
+
+	Geometry	getSurfaceGeometry(wl_surface*);
+	void		setGlobalPointerPosition(int32_t, int32_t) const;
+	void		setGlobalPointerPosition(const Position&) const;
+	Position	getGlobalPointerPosition() const;
+	void		expectGlobalPointerPosition(int32_t, int32_t) const;
+	void		expectGlobalPointerPosition(const Position&) const;
+	void		inputKeySend(int32_t, int32_t) const;
 
 protected:
 	TestSteps	steps_;
@@ -56,5 +70,13 @@ TEST(HarnessClass, suite) \
 { \
 	HarnessClass().run(); \
 }
+
+#define YIELD_UNTIL(condition) \
+while (not (condition)) { \
+	yield(); \
+}
+
+} // namespace test
+} // namespace wfits
 
 #endif

@@ -29,10 +29,13 @@
 #include "test/harness.h"
 #include "application.h"
 
-class ElmTestHarness : public TestHarness
+class ElmTestHarness : public ::wfits::test::TestHarness
 {
 public:
-	typedef boost::function<bool (void)> Condition;
+	typedef ::boost::function<bool (void)> Condition;
+	typedef ::wfits::test::TestHarness::TestStep TestStep;
+
+	using ::wfits::test::TestHarness::queueStep;
 
 	/**
 	 * Construct the test harness.
@@ -41,19 +44,10 @@ public:
 
 	void run();
 
-	using TestHarness::queueStep;
+	void queueStep(TestStep, const std::string&);
 
-	void queueStep(TestHarness::TestStep, const std::string&);
-
-	Geometry getSurfaceGeometry(wl_surface*);
-
-	void setGlobalPointerPosition(int32_t, int32_t) const;
-	void setGlobalPointerPosition(const Position&) const;
-	Position getGlobalPointerPosition() const;
-	void expectGlobalPointerPosition(int32_t, int32_t) const;
-	void expectGlobalPointerPosition(const Position&) const;
-
-	void inputKeySend(int32_t, int32_t) const;
+	/*virtual*/ void yield(const unsigned time = 0.01 * 1e6) const;
+	/*virtual*/ const ::wfits::test::Client& client() const;
 
 	void stepUntilCondition(Condition condition);
 	void assertCondition(Condition condition);

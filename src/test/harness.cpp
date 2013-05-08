@@ -22,6 +22,9 @@
 
 #include "harness.h"
 
+namespace wfits {
+namespace test {
+
 TestHarness::TestHarness()
 	: steps_()
 {
@@ -59,3 +62,67 @@ void TestHarness::runNextStep()
 	steps_.pop_front();
 	step();
 }
+
+Geometry TestHarness::getSurfaceGeometry(wl_surface *surface)
+{
+	Client::QueryRequest* request = client().makeGeometryRequest(surface);
+
+	YIELD_UNTIL(request->done);
+
+	Geometry *data(static_cast<Geometry*>(request->data));
+	Geometry result = *data;
+
+	delete data;
+	delete request;
+
+	return result;
+}
+
+Position TestHarness::getGlobalPointerPosition() const
+{
+	Client::QueryRequest* request = client().makePointerPositionRequest();
+
+	YIELD_UNTIL(request->done);
+
+	Position *data(static_cast<Position*>(request->data));
+	Position result = *data;
+
+	delete data;
+	delete request;
+
+	return result;
+}
+
+void TestHarness::expectGlobalPointerPosition(int32_t x, int32_t y) const
+{
+	Position actual(getGlobalPointerPosition());
+	while (actual.x != x or actual.y != y)
+	{
+		actual = getGlobalPointerPosition();
+	}
+}
+
+void TestHarness::expectGlobalPointerPosition(const Position& p) const
+{
+	expectGlobalPointerPosition(p.x, p.y);
+}
+
+void TestHarness::setGlobalPointerPosition(int32_t x, int32_t y) const
+{
+	client().movePointerTo(x, y);
+	expectGlobalPointerPosition(x, y);
+}
+
+void TestHarness::setGlobalPointerPosition(const Position& p) const
+{
+	setGlobalPointerPosition(p.x, p.y);
+}
+
+void TestHarness::inputKeySend(int32_t key, int32_t state) const
+{
+	client().sendKey(key, state);
+}
+
+} // namespace test
+} // namespace wfits
+

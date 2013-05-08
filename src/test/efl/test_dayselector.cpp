@@ -135,7 +135,7 @@ public:
 		FAIL_UNLESS_EQUAL(elm_dayselector_week_start_get(control_), weekstart);
 	}
 
-	void checkLength(const int length)
+	void checkLength(const unsigned length)
 	{
 		FAIL_UNLESS_EQUAL(elm_dayselector_weekend_length_get(control_), length);
 	}

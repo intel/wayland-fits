@@ -24,19 +24,23 @@
 #include "elmtestharness.h"
 #include "test/client.h"
 
-static const wfits::test::Client& client()
-{
-	static const wfits::test::Client c(ecore_wl_display_get());
-
-	return c;
-}
-
 ElmTestHarness::ElmTestHarness()
-	: TestHarness::TestHarness()
+	: ::wfits::test::TestHarness::TestHarness()
 	, eventType_(ecore_event_type_new())
 	, handler_(NULL)
 {
 	return;
+}
+
+void ElmTestHarness::yield(const unsigned time) const
+{
+	Application::yield(time);
+}
+
+const ::wfits::test::Client& ElmTestHarness::client() const
+{
+	static const ::wfits::test::Client c(ecore_wl_display_get());
+	return c;
 }
 
 void ElmTestHarness::run()
@@ -52,13 +56,13 @@ void ElmTestHarness::run()
 	ASSERT(not haveStep());
 }
 
-static void runStepWithMessage(TestHarness::TestStep step, std::string message)
+static void runStepWithMessage(ElmTestHarness::TestStep step, std::string message)
 {
 	std::cout << "..." << message << std::endl;
 	step();
 }
 
-void ElmTestHarness::queueStep(TestHarness::TestStep step, const std::string& message)
+void ElmTestHarness::queueStep(TestStep step, const std::string& message)
 {
 	queueStep(
 		boost::bind(&runStepWithMessage, step, message)
@@ -88,66 +92,6 @@ void ElmTestHarness::assertCondition(Condition condition, const std::string& mes
 	ASSERT_MSG(condition(), message);
 }
 
-Geometry ElmTestHarness::getSurfaceGeometry(wl_surface* surface)
-{
-	wfits::test::Client::QueryRequest* request = client().makeGeometryRequest(surface);
-
-	YIELD_UNTIL(request->done);
-
-	Geometry *data(static_cast<Geometry*>(request->data));
-	Geometry result = *data;
-
-	delete data;
-	delete request;
-
-	return result;
-}
-
-Position ElmTestHarness::getGlobalPointerPosition() const
-{
-	wfits::test::Client::QueryRequest* request = client().makePointerPositionRequest();
-
-	YIELD_UNTIL(request->done);
-
-	Position *data(static_cast<Position*>(request->data));
-	Position result = *data;
-
-	delete data;
-	delete request;
-
-	return result;
-}
-
-void ElmTestHarness::expectGlobalPointerPosition(int32_t x, int32_t y) const
-{
-	Position actual(getGlobalPointerPosition());
-	while (actual.x != x or actual.y != y)
-	{
-		actual = getGlobalPointerPosition();
-	}
-}
-
-void ElmTestHarness::expectGlobalPointerPosition(const Position& p) const
-{
-	expectGlobalPointerPosition(p.x, p.y);
-}
-
-void ElmTestHarness::setGlobalPointerPosition(int32_t x, int32_t y) const
-{
-	client().movePointerTo(x, y);
-	expectGlobalPointerPosition(x, y);
-}
-
-void ElmTestHarness::setGlobalPointerPosition(const Position& p) const
-{
-	setGlobalPointerPosition(p.x, p.y);
-}
-
-void ElmTestHarness::inputKeySend(int32_t key, int32_t state) const
-{
-	client().sendKey(key, state);
-}
-
 /*static*/
 Eina_Bool ElmTestHarness::idleStep(void* data)
 {
@@ -172,7 +116,7 @@ Eina_Bool ElmTestHarness::doStep(void* data, int, void*)
 
 	if (harness->haveStep()) {
 		harness->runNextStep();
-		Application::yield();
+		harness->yield();
 		ecore_idler_add(idleStep, data);
 	} else {
 		elm_exit();

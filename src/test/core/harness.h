@@ -26,7 +26,7 @@
 #include "test/harness.h"
 #include "display.h"
 
-class CoreTestHarness : public TestHarness
+class CoreTestHarness : public ::wfits::test::TestHarness
 {
 public:
 	CoreTestHarness();
@@ -36,6 +36,9 @@ public:
 	void queueStep(TestStep);
 
 	const Display& display() const { return display_; }
+
+	/*virtual*/ void yield(const unsigned = 0.01 * 1e6) const;
+	/*virtual*/ const ::wfits::test::Client& client() const;
 
 private:
 	void runStep(TestStep step) const;

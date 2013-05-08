@@ -37,13 +37,24 @@ CoreTestHarness::~CoreTestHarness()
 void CoreTestHarness::runStep(CoreTestHarness::TestStep step) const
 {
 	step();
-	display().yield();
+	yield();
 }
 
 void CoreTestHarness::queueStep(TestStep step)
 {
 	TestHarness::queueStep(
 		boost::bind(&CoreTestHarness::runStep, boost::ref(*this), step));
+}
+
+void CoreTestHarness::yield(const unsigned time) const
+{
+	display().yield(time);
+}
+
+const wfits::test::Client& CoreTestHarness::client() const
+{
+	static const wfits::test::Client c(display_);
+	return c;
 }
 
 class SimpleTest : public CoreTestHarness

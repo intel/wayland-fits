@@ -55,9 +55,4 @@ public:
 	static void yield(const unsigned time = 0.01 * 1e6);
 };
 
-#define YIELD_UNTIL(condition) \
-while (not (condition)) { \
-	Application::yield(); \
-}
-
 #endif
