@@ -43,8 +43,8 @@ public:
 typedef PositionObjectTest<Inwin> InwinPositionTest;
 typedef VisibleObjectTest<Inwin> InwinVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(InwinPositionTest, "Inwin")
-WAYLAND_ELM_HARNESS_TEST_CASE(InwinVisibilityTest, "Inwin")
+WFITS_EFL_HARNESS_TEST_CASE(InwinPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(InwinVisibilityTest)
 
 } // namespace efl
 } // namespace test

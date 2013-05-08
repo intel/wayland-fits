@@ -31,8 +31,8 @@ namespace efl {
 Application::Application()
 {
 	elm_init(
-		TheGlobalTestSuite::instance().argc,
-		TheGlobalTestSuite::instance().argv
+		TheGlobalSuite::instance().argc,
+		TheGlobalSuite::instance().argv
 	);
 
 	setEngine(ENGINE_SHM);

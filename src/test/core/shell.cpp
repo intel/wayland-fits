@@ -44,15 +44,19 @@ Shell::Shell(const Display& display)
 	wl_shell_destroy(*this);
 }
 
-TEST(Shell, "Core/Wrapper")
-{
-	Display display;
-	Shell shell(display);
+namespace wrapper {
 
-	FAIL_UNLESS_EQUAL(&shell.display(), &display);
-	FAIL_IF((wl_shell*)shell == NULL);
-	FAIL_UNLESS_EQUAL(wl_shell_get_user_data(shell), &shell);
-}
+	TEST(Shell)
+	{
+		Display display;
+		Shell shell(display);
+
+		FAIL_UNLESS_EQUAL(&shell.display(), &display);
+		FAIL_IF((wl_shell*)shell == NULL);
+		FAIL_UNLESS_EQUAL(wl_shell_get_user_data(shell), &shell);
+	}
+
+} // namespace wrapper
 
 } // namespace core
 } // namespace test

@@ -136,11 +136,11 @@ typedef ResizeObjectTest<Panel> PanelResizeTest;
 typedef PositionObjectTest<Panel> PanelPositionTest;
 typedef VisibleObjectTest<Panel> PanelVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(PanelResizeTest, "Panel")
-WAYLAND_ELM_HARNESS_TEST_CASE(PanelPositionTest, "Panel")
-WAYLAND_ELM_HARNESS_TEST_CASE(PanelVisibilityTest, "Panel")
-WAYLAND_ELM_HARNESS_TEST_CASE(PanelOrientTest, "Panel")
-//WAYLAND_ELM_HARNESS_TEST_CASE(PanelToggleTest, "Panel")
+WFITS_EFL_HARNESS_TEST_CASE(PanelResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(PanelPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(PanelVisibilityTest)
+WFITS_EFL_HARNESS_TEST_CASE(PanelOrientTest)
+//WFITS_EFL_HARNESS_TEST_CASE(PanelToggleTest, "Panel")
 
 } // namespace efl
 } // namespace test

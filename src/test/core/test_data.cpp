@@ -26,6 +26,7 @@
 namespace wfits {
 namespace test {
 namespace core {
+namespace data {
 
 template <typename O>
 class DataTest : public Harness
@@ -82,7 +83,7 @@ protected:
 		} \
 		DATA_SETTER_GETTER(name) \
 	}; \
-	WFITS_CORE_HARNESS_TEST_CASE(data_ ## name, "DataInterface")
+	WFITS_CORE_HARNESS_TEST_CASE(data_ ## name)
 
 DATA_TEST(wl_compositor)
 DATA_TEST(wl_display)
@@ -92,6 +93,7 @@ DATA_TEST(wl_seat)
 DATA_TEST(wl_shell)
 DATA_TEST(wl_data_device_manager)
 
+} // namespace data
 } // namespace core
 } // namespace test
 } // namespace wfits

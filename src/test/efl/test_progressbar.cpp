@@ -217,12 +217,12 @@ typedef ResizeObjectTest<Progressbar> ProgressbarResizeTest;
 typedef PositionObjectTest<Progressbar> ProgressbarPositionTest;
 typedef VisibleObjectTest<Progressbar> ProgressbarVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(ProgressbarResizeTest, "Progressbar")
-WAYLAND_ELM_HARNESS_TEST_CASE(ProgressbarPositionTest, "Progressbar")
-WAYLAND_ELM_HARNESS_TEST_CASE(ProgressbarVisibilityTest, "Progressbar")
-WAYLAND_ELM_HARNESS_TEST_CASE(ProgressbarValueTest, "Progressbar")
-WAYLAND_ELM_HARNESS_TEST_CASE(ProgressbarPulseTest, "Progressbar")
-WAYLAND_ELM_HARNESS_TEST_CASE(ProgressbarInvertedTest, "Progressbar")
+WFITS_EFL_HARNESS_TEST_CASE(ProgressbarResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(ProgressbarPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(ProgressbarVisibilityTest)
+WFITS_EFL_HARNESS_TEST_CASE(ProgressbarValueTest)
+WFITS_EFL_HARNESS_TEST_CASE(ProgressbarPulseTest)
+WFITS_EFL_HARNESS_TEST_CASE(ProgressbarInvertedTest)
 
 } // namespace efl
 } // namespace test

@@ -32,6 +32,7 @@
 namespace wfits {
 namespace test {
 namespace core {
+namespace input {
 
 class SurfacePointerTest : public Harness
 {
@@ -127,8 +128,9 @@ public:
 	SharedMemoryBuffer	buffer_;
 };
 
-WFITS_CORE_HARNESS_TEST_CASE(SurfacePointerTest, "Input");
+WFITS_CORE_HARNESS_TEST_CASE(SurfacePointerTest);
 
+} // namespace input
 } // namespace core
 } // namespace test
 } // namespace wfits

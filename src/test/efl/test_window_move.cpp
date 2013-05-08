@@ -113,7 +113,7 @@ private:
 	bool		moveDone_;
 };
 
-WAYLAND_ELM_HARNESS_TEST_CASE(WindowMoveTest, "Window")
+WFITS_EFL_HARNESS_TEST_CASE(WindowMoveTest)
 
 } // namespace efl
 } // namespace test

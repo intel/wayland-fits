@@ -343,11 +343,11 @@ typedef ResizeObjectTest<Button> ButtonResizeTest;
 typedef PositionObjectTest<Button> ButtonPositionTest;
 typedef VisibleObjectTest<Button> ButtonVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(ButtonUserMouseClickTest, "Button")
-WAYLAND_ELM_HARNESS_TEST_CASE(ButtonUserMouseInOutTest, "Button")
-WAYLAND_ELM_HARNESS_TEST_CASE(ButtonResizeTest, "Button")
-WAYLAND_ELM_HARNESS_TEST_CASE(ButtonPositionTest, "Button")
-WAYLAND_ELM_HARNESS_TEST_CASE(ButtonVisibilityTest, "Button")
+WFITS_EFL_HARNESS_TEST_CASE(ButtonUserMouseClickTest)
+WFITS_EFL_HARNESS_TEST_CASE(ButtonUserMouseInOutTest)
+WFITS_EFL_HARNESS_TEST_CASE(ButtonResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(ButtonPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(ButtonVisibilityTest)
 
 } // namespace efl
 } // namespace test

@@ -50,8 +50,8 @@ private:
 	Display display_;
 };
 
-#define WFITS_CORE_HARNESS_TEST_CASE(HarnessClass, suite) \
-	HARNESS_TEST(HarnessClass, "Core/" suite)
+#define WFITS_CORE_HARNESS_TEST_CASE(HarnessClass) \
+	HARNESS_TEST(HarnessClass)
 
 } // namespace core
 } // namespace test

@@ -154,11 +154,11 @@ typedef ResizeObjectTest<Label> LabelResizeTest;
 typedef PositionObjectTest<Label> LabelPositionTest;
 typedef VisibleObjectTest<Label> LabelVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(LabelResizeTest, "Label")
-WAYLAND_ELM_HARNESS_TEST_CASE(LabelPositionTest, "Label")
-WAYLAND_ELM_HARNESS_TEST_CASE(LabelVisibilityTest, "Label")
-WAYLAND_ELM_HARNESS_TEST_CASE(LabelWrapTest, "Label")
-WAYLAND_ELM_HARNESS_TEST_CASE(LabelWrapWidthTest, "Label")
+WFITS_EFL_HARNESS_TEST_CASE(LabelResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(LabelPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(LabelVisibilityTest)
+WFITS_EFL_HARNESS_TEST_CASE(LabelWrapTest)
+WFITS_EFL_HARNESS_TEST_CASE(LabelWrapWidthTest)
 
 } // namespace efl
 } // namespace test

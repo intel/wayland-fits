@@ -364,17 +364,17 @@ private:
 	bool		rendered_;
 };
 
-WAYLAND_ELM_HARNESS_TEST_CASE(WindowIconifyTest, "Window")
-WAYLAND_ELM_HARNESS_TEST_CASE(WindowStickyTest, "Window")
-WAYLAND_ELM_HARNESS_TEST_CASE(WindowWithdrawnTest, "Window")
-WAYLAND_ELM_HARNESS_TEST_CASE(WindowRotationTest, "Window")
-WAYLAND_ELM_HARNESS_TEST_CASE(EcoreWlWindowTest, "Window")
-WAYLAND_ELM_HARNESS_TEST_CASE(WindowOutputTest, "Window")
+WFITS_EFL_HARNESS_TEST_CASE(WindowIconifyTest)
+WFITS_EFL_HARNESS_TEST_CASE(WindowStickyTest)
+WFITS_EFL_HARNESS_TEST_CASE(WindowWithdrawnTest)
+WFITS_EFL_HARNESS_TEST_CASE(WindowRotationTest)
+WFITS_EFL_HARNESS_TEST_CASE(EcoreWlWindowTest)
+WFITS_EFL_HARNESS_TEST_CASE(WindowOutputTest)
 
 //TODO: These three below need work still
-WAYLAND_ELM_HARNESS_TEST_CASE(WindowAlphaTest, "Window")
-WAYLAND_ELM_HARNESS_TEST_CASE(WindowIndicatorTest, "Window")
-WAYLAND_ELM_HARNESS_TEST_CASE(WindowIndicatorOpacityTest, "Window")
+WFITS_EFL_HARNESS_TEST_CASE(WindowAlphaTest)
+WFITS_EFL_HARNESS_TEST_CASE(WindowIndicatorTest)
+WFITS_EFL_HARNESS_TEST_CASE(WindowIndicatorOpacityTest)
 
 } // namespace efl
 } // namespace test

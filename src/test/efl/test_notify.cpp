@@ -310,13 +310,12 @@ typedef ResizeObjectTest<Notify> NotifyResizeTest;
 typedef PositionObjectTest<Notify> NotifyPositionTest;
 typedef VisibleObjectTest<Notify> NotifyVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(NotifyResizeTest, "Notify")
-WAYLAND_ELM_HARNESS_TEST_CASE(NotifyPositionTest, "Notify")
-WAYLAND_ELM_HARNESS_TEST_CASE(NotifyVisibilityTest, "Notify")
-WAYLAND_ELM_HARNESS_TEST_CASE(NotifyTimeoutTest, "Notify")
-WAYLAND_ELM_HARNESS_TEST_CASE(NotifyOrientTest, "Notify")
-
-WAYLAND_ELM_HARNESS_TEST_CASE(NotifyUserClickTest, "Notify")
+WFITS_EFL_HARNESS_TEST_CASE(NotifyResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(NotifyPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(NotifyVisibilityTest)
+WFITS_EFL_HARNESS_TEST_CASE(NotifyTimeoutTest)
+WFITS_EFL_HARNESS_TEST_CASE(NotifyOrientTest)
+WFITS_EFL_HARNESS_TEST_CASE(NotifyUserClickTest)
 
 } // namespace efl
 } // namespace test

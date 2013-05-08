@@ -201,7 +201,7 @@ private:
 	bool		rendered_;
 };
 
-WAYLAND_ELM_HARNESS_TEST_CASE(WindowFullscreenTest, "Window")
+WFITS_EFL_HARNESS_TEST_CASE(WindowFullscreenTest)
 
 } // namespace efl
 } // namespace test

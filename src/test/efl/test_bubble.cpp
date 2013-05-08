@@ -211,13 +211,12 @@ typedef ResizeObjectTest<Bubble> BubbleResizeTest;
 typedef PositionObjectTest<Bubble> BubblePositionTest;
 typedef VisibleObjectTest<Bubble> BubbleVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(BubbleResizeTest, "Bubble")
-WAYLAND_ELM_HARNESS_TEST_CASE(BubblePositionTest, "Bubble")
-WAYLAND_ELM_HARNESS_TEST_CASE(BubbleVisibilityTest, "Bubble")
-WAYLAND_ELM_HARNESS_TEST_CASE(BubbleCornerTest, "Bubble")
-WAYLAND_ELM_HARNESS_TEST_CASE(BubbleTextTest, "Bubble")
-
-WAYLAND_ELM_HARNESS_TEST_CASE(BubbleUserClickTest, "Bubble")
+WFITS_EFL_HARNESS_TEST_CASE(BubbleResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(BubblePositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(BubbleVisibilityTest)
+WFITS_EFL_HARNESS_TEST_CASE(BubbleCornerTest)
+WFITS_EFL_HARNESS_TEST_CASE(BubbleTextTest)
+WFITS_EFL_HARNESS_TEST_CASE(BubbleUserClickTest)
 
 } // namespace efl
 } // namespace test

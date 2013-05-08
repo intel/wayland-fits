@@ -172,10 +172,10 @@ typedef ResizeObjectTest<Popup> PopupResizeTest;
 typedef PositionObjectTest<Popup> PopupPositionTest;
 typedef VisibleObjectTest<Popup> PopupVisibilityTest;
 
-//WAYLAND_ELM_HARNESS_TEST_CASE(PopupResizeTest, "Popup")
-WAYLAND_ELM_HARNESS_TEST_CASE(PopupPositionTest, "Popup")
-WAYLAND_ELM_HARNESS_TEST_CASE(PopupVisibilityTest, "Popup")
-WAYLAND_ELM_HARNESS_TEST_CASE(PopupTimeoutTest, "Popup")
+//WFITS_EFL_HARNESS_TEST_CASE(PopupResizeTest, "Popup")
+WFITS_EFL_HARNESS_TEST_CASE(PopupPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(PopupVisibilityTest)
+WFITS_EFL_HARNESS_TEST_CASE(PopupTimeoutTest)
 
 } // namespace efl
 } // namespace test

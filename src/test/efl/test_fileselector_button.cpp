@@ -204,13 +204,13 @@ typedef ResizeObjectTest<FileselectorButton> FileselectorButtonResizeTest;
 typedef PositionObjectTest<FileselectorButton> FileselectorButtonPositionTest;
 typedef VisibleObjectTest<FileselectorButton> FileselectorButtonVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonResizeTest, "FileSelectorButton")
-WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonPositionTest, "FileSelectorButton")
-WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonVisibilityTest, "FileSelectorButton")
-WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonExpandableTest, "FileSelectorButton")
-WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonFolderOnlyTest, "FileSelectorButton")
-WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonIsSaveTest, "FileSelectorButton")
-WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorButtonInwinTest, "FileSelectorButton")
+WFITS_EFL_HARNESS_TEST_CASE(FileselectorButtonResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(FileselectorButtonPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(FileselectorButtonVisibilityTest)
+WFITS_EFL_HARNESS_TEST_CASE(FileselectorButtonExpandableTest)
+WFITS_EFL_HARNESS_TEST_CASE(FileselectorButtonFolderOnlyTest)
+WFITS_EFL_HARNESS_TEST_CASE(FileselectorButtonIsSaveTest)
+WFITS_EFL_HARNESS_TEST_CASE(FileselectorButtonInwinTest)
 
 } // namespace efl
 } // namespace test

@@ -300,13 +300,13 @@ typedef ResizeObjectTest<Entry> EntryResizeTest;
 typedef PositionObjectTest<Entry> EntryPositionTest;
 typedef VisibleObjectTest<Entry> EntryVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(EntryResizeTest, "Entry")
-WAYLAND_ELM_HARNESS_TEST_CASE(EntryPositionTest, "Entry")
-WAYLAND_ELM_HARNESS_TEST_CASE(EntryVisibilityTest, "Entry")
-WAYLAND_ELM_HARNESS_TEST_CASE(EntryEmoticonTest, "Entry")
-WAYLAND_ELM_HARNESS_TEST_CASE(EntryCutTest, "Entry")
-WAYLAND_ELM_HARNESS_TEST_CASE(EntryCopyTest, "Entry")
-WAYLAND_ELM_HARNESS_TEST_CASE(EntryPasteTest, "Entry")
+WFITS_EFL_HARNESS_TEST_CASE(EntryResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(EntryPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(EntryVisibilityTest)
+WFITS_EFL_HARNESS_TEST_CASE(EntryEmoticonTest)
+WFITS_EFL_HARNESS_TEST_CASE(EntryCutTest)
+WFITS_EFL_HARNESS_TEST_CASE(EntryCopyTest)
+WFITS_EFL_HARNESS_TEST_CASE(EntryPasteTest)
 
 } // namespace efl
 } // namespace test

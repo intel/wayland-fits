@@ -64,17 +64,16 @@ protected:
 	TestSteps	steps_;
 };
 
-#define HARNESS_TEST(HarnessClass, suite) \
-\
-TEST(HarnessClass, suite) \
-{ \
-	HarnessClass().run(); \
-}
+#define HARNESS_TEST(HarnessClass)	\
+	TEST(HarnessClass)		\
+	{				\
+		HarnessClass().run();	\
+	}
 
-#define YIELD_UNTIL(condition) \
-while (not (condition)) { \
-	yield(); \
-}
+#define YIELD_UNTIL(condition)		\
+	while (not (condition)) {	\
+		yield();		\
+	}
 
 } // namespace test
 } // namespace wfits

@@ -82,17 +82,21 @@ void Display::yield(const unsigned time) const
 	display->globals_[std::string(interface)] = GlobalInfo(id, version);
 }
 
-TEST(Display, "Core/Wrapper")
-{
-	Display display;
+namespace wrapper {
 
-	FAIL_IF((wl_display*)display == NULL);
-	FAIL_IF((wl_registry*)display == NULL);
-	FAIL_UNLESS_EQUAL(wl_display_get_user_data(display), &display);
-	FAIL_UNLESS_EQUAL(wl_registry_get_user_data(display), &display);
+	TEST(Display)
+	{
+		Display display;
 
-	ASSERT(not wl_display_get_error(display));
-}
+		FAIL_IF((wl_display*)display == NULL);
+		FAIL_IF((wl_registry*)display == NULL);
+		FAIL_UNLESS_EQUAL(wl_display_get_user_data(display), &display);
+		FAIL_UNLESS_EQUAL(wl_registry_get_user_data(display), &display);
+
+		ASSERT(not wl_display_get_error(display));
+	}
+
+} // namespace wrapper
 
 } // namespace core
 } // namespace test

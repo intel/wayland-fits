@@ -64,7 +64,7 @@ private:
 	EvasObject	selector_;
 };
 
-WAYLAND_ELM_HARNESS_TEST_CASE(ColorselectorColorTest, "ColorSelector")
+WFITS_EFL_HARNESS_TEST_CASE(ColorselectorColorTest)
 
 } // namespace efl
 } // namespace test

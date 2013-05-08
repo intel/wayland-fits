@@ -228,13 +228,13 @@ typedef ResizeObjectTest<GLView> GLViewResizeTest;
 typedef PositionObjectTest<GLView> GLViewPositionTest;
 typedef VisibleObjectTest<GLView> GLViewVisibilityTest;
 
-WAYLAND_ELM_HARNESS_EGL_TEST_CASE(GLViewResizeTest, "GLView")
-WAYLAND_ELM_HARNESS_EGL_TEST_CASE(GLViewPositionTest, "GLView")
-WAYLAND_ELM_HARNESS_EGL_TEST_CASE(GLViewVisibilityTest, "GLView")
-WAYLAND_ELM_HARNESS_EGL_TEST_CASE(GLViewResizePolicyTest, "GLView")
-WAYLAND_ELM_HARNESS_EGL_TEST_CASE(GLViewRenderPolicyTest, "GLView")
-WAYLAND_ELM_HARNESS_EGL_TEST_CASE(GLViewModeTest, "GLView")
-WAYLAND_ELM_HARNESS_EGL_TEST_CASE(GLViewAPITest, "GLView")
+WFITS_EFL_HARNESS_EGL_TEST_CASE(GLViewResizeTest)
+WFITS_EFL_HARNESS_EGL_TEST_CASE(GLViewPositionTest)
+WFITS_EFL_HARNESS_EGL_TEST_CASE(GLViewVisibilityTest)
+WFITS_EFL_HARNESS_EGL_TEST_CASE(GLViewResizePolicyTest)
+WFITS_EFL_HARNESS_EGL_TEST_CASE(GLViewRenderPolicyTest)
+WFITS_EFL_HARNESS_EGL_TEST_CASE(GLViewModeTest)
+WFITS_EFL_HARNESS_EGL_TEST_CASE(GLViewAPITest)
 
 } // namespace efl
 } // namespace test

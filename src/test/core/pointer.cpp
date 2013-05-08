@@ -134,17 +134,21 @@ bool Pointer::hasFocus(const Surface* surface)
 	pointer->axisValue_ = wl_fixed_to_double(value);
 }
 
-TEST(Pointer, "Core/Wrapper")
-{
-	Display display;
-	Seat seat(display);
-	Pointer pointer(seat);
+namespace wrapper {
 
-	FAIL_UNLESS_EQUAL(&pointer.seat(), &seat);
-	FAIL_IF((wl_pointer*)pointer == NULL);
-	FAIL_UNLESS_EQUAL(wl_pointer_get_user_data(pointer), &pointer);
-	FAIL_UNLESS(pointer.hasFocus(NULL));
-}
+	TEST(Pointer)
+	{
+		Display display;
+		Seat seat(display);
+		Pointer pointer(seat);
+
+		FAIL_UNLESS_EQUAL(&pointer.seat(), &seat);
+		FAIL_IF((wl_pointer*)pointer == NULL);
+		FAIL_UNLESS_EQUAL(wl_pointer_get_user_data(pointer), &pointer);
+		FAIL_UNLESS(pointer.hasFocus(NULL));
+	}
+
+} // namespace wrapper
 
 } // namespace core
 } // namespace test

@@ -123,31 +123,35 @@ SharedMemoryBuffer::SharedMemoryBuffer(const SharedMemory& shm, int width, int h
 	wl_buffer_destroy(*this);
 }
 
-TEST(SharedMemory, "Core/Wrapper")
-{
-	Display display;
-	SharedMemory shm(display);
+namespace wrapper {
 
-	FAIL_UNLESS_EQUAL(&shm.display(), &display);
-	FAIL_IF((wl_shm*)shm == NULL);
-	FAIL_UNLESS_EQUAL(wl_shm_get_user_data(shm), &shm);
-}
+	TEST(SharedMemory)
+	{
+		Display display;
+		SharedMemory shm(display);
 
-TEST(SharedMemoryBuffer, "Core/Wrapper")
-{
-	Display display;
-	SharedMemory shm(display);
-	SharedMemoryBuffer buffer(shm, 24, 13);
+		FAIL_UNLESS_EQUAL(&shm.display(), &display);
+		FAIL_IF((wl_shm*)shm == NULL);
+		FAIL_UNLESS_EQUAL(wl_shm_get_user_data(shm), &shm);
+	}
 
-	FAIL_UNLESS_EQUAL(&buffer.shm(), &shm);
-	FAIL_IF((wl_buffer*)buffer == NULL);
-	FAIL_UNLESS_EQUAL(wl_buffer_get_user_data(buffer), &buffer);
+	TEST(SharedMemoryBuffer)
+	{
+		Display display;
+		SharedMemory shm(display);
+		SharedMemoryBuffer buffer(shm, 24, 13);
 
-	FAIL_UNLESS_EQUAL(buffer.width(), 24);
-	FAIL_UNLESS_EQUAL(buffer.height(), 13);
-	FAIL_UNLESS_EQUAL(buffer.stride(), 4*24);
-	FAIL_UNLESS_EQUAL(buffer.size(), 4*24*13);
-}
+		FAIL_UNLESS_EQUAL(&buffer.shm(), &shm);
+		FAIL_IF((wl_buffer*)buffer == NULL);
+		FAIL_UNLESS_EQUAL(wl_buffer_get_user_data(buffer), &buffer);
+
+		FAIL_UNLESS_EQUAL(buffer.width(), 24);
+		FAIL_UNLESS_EQUAL(buffer.height(), 13);
+		FAIL_UNLESS_EQUAL(buffer.stride(), 4*24);
+		FAIL_UNLESS_EQUAL(buffer.size(), 4*24*13);
+	}
+
+} // namespace wrapper
 
 } // namespace core
 } // namespace test

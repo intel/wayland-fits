@@ -117,8 +117,12 @@ public:
 	}
 };
 
-WFITS_CORE_HARNESS_TEST_CASE(SimpleTest, "Harness")
-WFITS_CORE_HARNESS_TEST_CASE(GlobalPointerTest, "Harness")
+namespace harness {
+
+	WFITS_CORE_HARNESS_TEST_CASE(SimpleTest)
+	WFITS_CORE_HARNESS_TEST_CASE(GlobalPointerTest)
+
+} // namespace harness
 
 } // namespace core
 } // namespace test

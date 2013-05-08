@@ -241,11 +241,11 @@ typedef ResizeObjectTest<Actionslider> ActionsliderResizeTest;
 typedef PositionObjectTest<Actionslider> ActionsliderPositionTest;
 typedef VisibleObjectTest<Actionslider> ActionsliderVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderResizeTest, "ActionSlider")
-WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderPositionTest, "ActionSlider")
-WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderVisibilityTest, "ActionSlider")
-WAYLAND_ELM_HARNESS_TEST_CASE(ActionsliderIndicatorTest, "ActionSlider")
-WAYLAND_ELM_HARNESS_TEST_CASE(ActionSliderUserTest, "ActionSlider")
+WFITS_EFL_HARNESS_TEST_CASE(ActionsliderResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(ActionsliderPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(ActionsliderVisibilityTest)
+WFITS_EFL_HARNESS_TEST_CASE(ActionsliderIndicatorTest)
+WFITS_EFL_HARNESS_TEST_CASE(ActionSliderUserTest)
 
 } // namespace efl
 } // namespace test

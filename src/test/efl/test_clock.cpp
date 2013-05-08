@@ -194,12 +194,12 @@ typedef ResizeObjectTest<Clock> ClockResizeTest;
 typedef PositionObjectTest<Clock> ClockPositionTest;
 typedef VisibleObjectTest<Clock> ClockVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(ClockResizeTest, "Clock")
-WAYLAND_ELM_HARNESS_TEST_CASE(ClockPositionTest, "Clock")
-WAYLAND_ELM_HARNESS_TEST_CASE(ClockVisibilityTest, "Clock")
-WAYLAND_ELM_HARNESS_TEST_CASE(ClockTimeTest, "Clock")
-WAYLAND_ELM_HARNESS_TEST_CASE(ClockEditionTest, "Clock")
-WAYLAND_ELM_HARNESS_TEST_CASE(ClockDigitEditionTest, "Clock")
+WFITS_EFL_HARNESS_TEST_CASE(ClockResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(ClockPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(ClockVisibilityTest)
+WFITS_EFL_HARNESS_TEST_CASE(ClockTimeTest)
+WFITS_EFL_HARNESS_TEST_CASE(ClockEditionTest)
+WFITS_EFL_HARNESS_TEST_CASE(ClockDigitEditionTest)
 
 } // namespace efl
 } // namespace test

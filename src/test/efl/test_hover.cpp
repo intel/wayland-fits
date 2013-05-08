@@ -88,10 +88,10 @@ typedef ResizeObjectTest<Hover> HoverResizeTest;
 typedef PositionObjectTest<Hover> HoverPositionTest;
 typedef VisibleObjectTest<Hover> HoverVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(HoverResizeTest, "Hover")
-WAYLAND_ELM_HARNESS_TEST_CASE(HoverPositionTest, "Hover")
-WAYLAND_ELM_HARNESS_TEST_CASE(HoverVisibilityTest, "Hover")
-WAYLAND_ELM_HARNESS_TEST_CASE(HoverParentTargetTest, "Hover")
+WFITS_EFL_HARNESS_TEST_CASE(HoverResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(HoverPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(HoverVisibilityTest)
+WFITS_EFL_HARNESS_TEST_CASE(HoverParentTargetTest)
 
 } // namespace efl
 } // namespace test

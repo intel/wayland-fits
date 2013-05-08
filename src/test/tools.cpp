@@ -25,13 +25,16 @@
 #include "common/util.h"
 #include "tools.h"
 
-GlobalTestSuite::GlobalTestSuite()
-	: name("Wayland Functional Test Suite")
+namespace wfits {
+namespace test {
+
+GlobalSuite::GlobalSuite()
+	: name("Wayland Functional Integration Test Suite")
 {
 	return;
 }
 
-SRunner* GlobalTestSuite::createRunner(const std::string& testPattern) const
+SRunner* GlobalSuite::createRunner(const std::string& testPattern) const
 {
 	boost::regex exp(testPattern, boost::regex::egrep | boost::regex::icase);
 	boost::cmatch what;
@@ -48,17 +51,17 @@ SRunner* GlobalTestSuite::createRunner(const std::string& testPattern) const
 	return srunner_create(suite);
 }
 
-bool GlobalTestSuite::registerTest(TFun fn, const std::string& name)
+bool GlobalSuite::registerTest(TFun fn, const std::string& fullname)
 {
-	TCase* tc(tcase_create(name.c_str()));
+	TCase* tc(tcase_create(fullname.c_str()));
 	tcase_add_test(tc, fn);
 	tcase_set_timeout(tc, 30);
-	cases_.insert(std::make_pair(name, tc));
+	cases_.insert(std::make_pair(fullname, tc));
 
 	return true;
 }
 
-std::vector<std::string> GlobalTestSuite::testNames(const std::string& testPattern) const
+std::vector<std::string> GlobalSuite::testNames(const std::string& testPattern) const
 {
 	boost::regex exp(testPattern, boost::regex::egrep | boost::regex::icase);
 	boost::cmatch what;
@@ -73,7 +76,10 @@ std::vector<std::string> GlobalTestSuite::testNames(const std::string& testPatte
 	return result;
 }
 
-TEST(MacroTest, "Common/Sanity")
+namespace tools {
+namespace sanity {
+
+TEST(MacroTest)
 {
 	FAIL_UNLESS(1);
 	FAIL_UNLESS(1 == 1);
@@ -86,3 +92,16 @@ TEST(MacroTest, "Common/Sanity")
 	ASSERT(1);
 	ASSERT_MSG(1, "sanity failed");
 }
+
+TEST(FullnameTest)
+{
+	FAIL_UNLESS_EQUAL(
+		fullname<class_FullnameTest>(),
+		std::string("tools/sanity/FullnameTest")
+	);
+}
+
+} // namespace sanity
+} // namespace tools
+} // namespace test
+} // namespace wfits

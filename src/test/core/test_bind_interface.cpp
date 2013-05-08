@@ -52,8 +52,10 @@ private:
 
 #define BIND_TEST(name) \
 	std::string str_iface_##name = #name; \
-	typedef BindInterface<name, name##_interface, str_iface_##name> bind_ ## name; \
-	WFITS_CORE_HARNESS_TEST_CASE(bind_ ## name, "BindInterface")
+	typedef BindInterface<name, name##_interface, str_iface_##name> name; \
+	WFITS_CORE_HARNESS_TEST_CASE(name)
+
+namespace bind_interface {
 
 BIND_TEST(wl_compositor)
 BIND_TEST(wl_display)
@@ -64,6 +66,8 @@ BIND_TEST(wl_shell)
 BIND_TEST(wl_data_device_manager)
 BIND_TEST(wfits_input)
 BIND_TEST(wfits_query)
+
+} // namespace bind_interface
 
 } // namespace core
 } // namespace test

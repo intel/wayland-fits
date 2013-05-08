@@ -156,10 +156,10 @@ typedef ResizeObjectTest<Flip> FlipResizeTest;
 typedef PositionObjectTest<Flip> FlipPositionTest;
 typedef VisibleObjectTest<Flip> FlipVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(FlipGoTest, "Flip")
-WAYLAND_ELM_HARNESS_TEST_CASE(FlipResizeTest, "Flip")
-WAYLAND_ELM_HARNESS_TEST_CASE(FlipPositionTest, "Flip")
-WAYLAND_ELM_HARNESS_TEST_CASE(FlipVisibilityTest, "Flip")
+WFITS_EFL_HARNESS_TEST_CASE(FlipGoTest)
+WFITS_EFL_HARNESS_TEST_CASE(FlipResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(FlipPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(FlipVisibilityTest)
 
 } // namespace efl
 } // namespace test

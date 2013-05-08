@@ -36,6 +36,7 @@ struct wl_cursor_theme {
 namespace wfits {
 namespace test {
 namespace core {
+namespace cursor {
 
 class ThemeLoadTest : public Harness
 {
@@ -72,8 +73,9 @@ private:
 	wl_shm*	shm_;
 };
 
-WFITS_CORE_HARNESS_TEST_CASE(ThemeLoadTest, "Cursor");
+WFITS_CORE_HARNESS_TEST_CASE(ThemeLoadTest);
 
+} // namespace cursor
 } // namespace core
 } // namespace test
 } // namespace wfits

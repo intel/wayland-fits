@@ -244,14 +244,14 @@ typedef ResizeObjectTest<Fileselector> FileselectorResizeTest;
 typedef PositionObjectTest<Fileselector> FileselectorPositionTest;
 typedef VisibleObjectTest<Fileselector> FileselectorVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorResizeTest, "FileSelector")
-WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorPositionTest, "FileSelector")
-WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorVisibilityTest, "FileSelector")
-WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorExpandableTest, "FileSelector")
-WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorFolderOnlyTest, "FileSelector")
-WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorIsSaveTest, "FileSelector")
-WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorModeTest, "FileSelector")
-WAYLAND_ELM_HARNESS_TEST_CASE(FileselectorOkCancelTest, "FileSelector")
+WFITS_EFL_HARNESS_TEST_CASE(FileselectorResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(FileselectorPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(FileselectorVisibilityTest)
+WFITS_EFL_HARNESS_TEST_CASE(FileselectorExpandableTest)
+WFITS_EFL_HARNESS_TEST_CASE(FileselectorFolderOnlyTest)
+WFITS_EFL_HARNESS_TEST_CASE(FileselectorIsSaveTest)
+WFITS_EFL_HARNESS_TEST_CASE(FileselectorModeTest)
+WFITS_EFL_HARNESS_TEST_CASE(FileselectorOkCancelTest)
 
 } // namespace efl
 } // namespace test

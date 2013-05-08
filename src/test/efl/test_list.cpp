@@ -401,16 +401,15 @@ typedef ResizeObjectTest<List> ListResizeTest;
 typedef PositionObjectTest<List> ListPositionTest;
 typedef VisibleObjectTest<List> ListVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(ListResizeTest, "List")
-WAYLAND_ELM_HARNESS_TEST_CASE(ListPositionTest, "List")
-WAYLAND_ELM_HARNESS_TEST_CASE(ListVisibilityTest, "List")
-
-WAYLAND_ELM_HARNESS_TEST_CASE(ListUserSelectTest, "List")
-WAYLAND_ELM_HARNESS_TEST_CASE(ListUserLongpressTest, "List")
-WAYLAND_ELM_HARNESS_TEST_CASE(ListUserActivatedTest, "List")
-WAYLAND_ELM_HARNESS_TEST_CASE(ListUserDoubleClickTest, "List")
-WAYLAND_ELM_HARNESS_TEST_CASE(ListUserKeyScrollTest, "List")
-WAYLAND_ELM_HARNESS_TEST_CASE(ListUserMouseScrollTest, "List")
+WFITS_EFL_HARNESS_TEST_CASE(ListResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(ListPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(ListVisibilityTest)
+WFITS_EFL_HARNESS_TEST_CASE(ListUserSelectTest)
+WFITS_EFL_HARNESS_TEST_CASE(ListUserLongpressTest)
+WFITS_EFL_HARNESS_TEST_CASE(ListUserActivatedTest)
+WFITS_EFL_HARNESS_TEST_CASE(ListUserDoubleClickTest)
+WFITS_EFL_HARNESS_TEST_CASE(ListUserKeyScrollTest)
+WFITS_EFL_HARNESS_TEST_CASE(ListUserMouseScrollTest)
 
 } // namespace efl
 } // namespace test

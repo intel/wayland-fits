@@ -75,19 +75,23 @@ ShellSurface::~ShellSurface()
 	ASSERT(wl_shell_surface == *shellSurface);
 }
 
-TEST(ShellSurface, "Core/Wrapper")
-{
-	Display display;
-	Compositor compositor(display);
-	Shell shell(display);
-	Surface surface(compositor);
-	ShellSurface ss(shell, surface);
+namespace wrapper {
 
-	FAIL_UNLESS_EQUAL(&ss.shell(), &shell);
-	FAIL_UNLESS_EQUAL(&ss.surface(), &surface);
-	FAIL_IF((wl_shell_surface*)ss == NULL);
-	FAIL_UNLESS_EQUAL(wl_shell_surface_get_user_data(ss), &ss);
-}
+	TEST(ShellSurface)
+	{
+		Display display;
+		Compositor compositor(display);
+		Shell shell(display);
+		Surface surface(compositor);
+		ShellSurface ss(shell, surface);
+
+		FAIL_UNLESS_EQUAL(&ss.shell(), &shell);
+		FAIL_UNLESS_EQUAL(&ss.surface(), &surface);
+		FAIL_IF((wl_shell_surface*)ss == NULL);
+		FAIL_UNLESS_EQUAL(wl_shell_surface_get_user_data(ss), &ss);
+	}
+
+} // namespace wrapper
 
 } // namespace core
 } // namespace test

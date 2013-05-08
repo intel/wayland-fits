@@ -42,9 +42,9 @@ typedef ResizeObjectTest<Map> MapResizeTest;
 typedef PositionObjectTest<Map> MapPositionTest;
 typedef VisibleObjectTest<Map> MapVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(MapResizeTest, "Map")
-WAYLAND_ELM_HARNESS_TEST_CASE(MapPositionTest, "Map")
-WAYLAND_ELM_HARNESS_TEST_CASE(MapVisibilityTest, "Map")
+WFITS_EFL_HARNESS_TEST_CASE(MapResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(MapPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(MapVisibilityTest)
 
 } // namespace efl
 } // namespace test

@@ -28,13 +28,13 @@ namespace test {
 namespace efl {
 
 namespace shm {
-	TEST(SetEngineTest, "EFL/Shm")
+	TEST(SetEngineTest)
 	{
 		const std::string engine("wayland_shm");
 
 		elm_init(
-			TheGlobalTestSuite::instance().argc,
-			TheGlobalTestSuite::instance().argv
+			TheGlobalSuite::instance().argc,
+			TheGlobalSuite::instance().argv
 		);
 
 		elm_config_preferred_engine_set(engine.c_str()); // override's ELM_ENGINE user environment setting
@@ -47,13 +47,13 @@ namespace shm {
 } // namespace shm
 
 namespace egl {
-	TEST(SetEngineTest, "EFL/Egl")
+	TEST(SetEngineTest)
 	{
 		const std::string engine("wayland_egl");
 
 		elm_init(
-			TheGlobalTestSuite::instance().argc,
-			TheGlobalTestSuite::instance().argv
+			TheGlobalSuite::instance().argc,
+			TheGlobalSuite::instance().argv
 		);
 
 		elm_config_preferred_engine_set(engine.c_str()); // override's ELM_ENGINE user environment setting

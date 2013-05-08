@@ -129,13 +129,6 @@ Eina_Bool ElmTestHarness::doStep(void* data, int, void*)
 	return ECORE_CALLBACK_DONE;
 }
 
-class SimpleTest : public ElmTestHarness
-{
-public:
-};
-
-WAYLAND_ELM_HARNESS_TEST_CASE(SimpleTest, "Harness")
-
 } // namespace efl
 } // namespace test
 } // namespace wfits

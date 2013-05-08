@@ -41,9 +41,9 @@ typedef ResizeObjectTest<Hoversel> HoverselResizeTest;
 typedef PositionObjectTest<Hoversel> HoverselPositionTest;
 typedef VisibleObjectTest<Hoversel> HoverselVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(HoverselResizeTest, "Hoversel")
-WAYLAND_ELM_HARNESS_TEST_CASE(HoverselPositionTest, "Hoversel")
-WAYLAND_ELM_HARNESS_TEST_CASE(HoverselVisibilityTest, "Hoversel")
+WFITS_EFL_HARNESS_TEST_CASE(HoverselResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(HoverselPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(HoverselVisibilityTest)
 
 } // namespace efl
 } // namespace test

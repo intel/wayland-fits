@@ -153,11 +153,11 @@ typedef ResizeObjectTest<Dayselector> DayselectorResizeTest;
 typedef PositionObjectTest<Dayselector> DayselectorPositionTest;
 typedef VisibleObjectTest<Dayselector> DayselectorVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorResizeTest, "DaySelector")
-WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorPositionTest, "DaySelector")
-WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorVisibilityTest, "DaySelector")
-WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorDayTest, "DaySelector")
-WAYLAND_ELM_HARNESS_TEST_CASE(DayselectorLocaleTest, "DaySelector")
+WFITS_EFL_HARNESS_TEST_CASE(DayselectorResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(DayselectorPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(DayselectorVisibilityTest)
+WFITS_EFL_HARNESS_TEST_CASE(DayselectorDayTest)
+WFITS_EFL_HARNESS_TEST_CASE(DayselectorLocaleTest)
 
 } // namespace efl
 } // namespace test

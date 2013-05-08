@@ -203,12 +203,12 @@ typedef ResizeObjectTest<Image> ImageResizeTest;
 typedef PositionObjectTest<Image> ImagePositionTest;
 typedef VisibleObjectTest<Image> ImageVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(ImageResizeTest, "Image")
-WAYLAND_ELM_HARNESS_TEST_CASE(ImagePositionTest, "Image")
-WAYLAND_ELM_HARNESS_TEST_CASE(ImageVisibilityTest, "Image")
-WAYLAND_ELM_HARNESS_TEST_CASE(ImageAnimateTest, "Image")
-WAYLAND_ELM_HARNESS_TEST_CASE(ImageFileTest, "Image")
-WAYLAND_ELM_HARNESS_TEST_CASE(ImageOrientTest, "Image")
+WFITS_EFL_HARNESS_TEST_CASE(ImageResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(ImagePositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(ImageVisibilityTest)
+WFITS_EFL_HARNESS_TEST_CASE(ImageAnimateTest)
+WFITS_EFL_HARNESS_TEST_CASE(ImageFileTest)
+WFITS_EFL_HARNESS_TEST_CASE(ImageOrientTest)
 
 } // namespace efl
 } // namespace test

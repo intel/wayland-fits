@@ -28,13 +28,16 @@
 #include <vector>
 #include <check.h> // Check unit testing framework... see http://check.sourceforge.net
 #include <boost/test/utils/wrap_stringstream.hpp>
+#include <boost/units/detail/utility.hpp>
 
 #include "common/singleton.h"
 
-class GlobalTestSuite
+namespace wfits {
+namespace test {
+
+class GlobalSuite
 {
 	typedef std::map<std::string, TCase*> Cases;
-
 public:
 	bool registerTest(TFun, const std::string&);
 
@@ -48,14 +51,32 @@ public:
 	std::vector<std::string> testNames(const std::string& = ".*") const;
 
 private:
-	friend class Singleton<GlobalTestSuite>;
-	GlobalTestSuite(); // non-default constructible
-	GlobalTestSuite(const GlobalTestSuite&); // non-copyable
+	friend class Singleton<GlobalSuite>;
+	GlobalSuite(); // non-default constructible
+	GlobalSuite(const GlobalSuite&); // non-copyable
 
 	Cases cases_;
 };
 
-typedef Singleton<GlobalTestSuite> TheGlobalTestSuite;
+typedef Singleton<GlobalSuite> TheGlobalSuite;
+
+template <typename T>
+std::string fullname(const T& t)
+{
+	std::string result(boost::units::simplify_typename(t));
+	boost::replace_all(result, "wfits::test::", "");
+	boost::replace_all(result, "wfits::", "");
+	boost::replace_all(result, "class_", "");
+	boost::replace_all(result, "::", "/");
+	return result;
+}
+
+template <typename T>
+std::string fullname()
+{
+	T tmp;
+	return fullname(tmp);
+}
 
 #define FAIL_UNLESS(expr) fail_unless(expr)
 #define FAIL_UNLESS_EQUAL(lhs, rhs) fail_unless(lhs == rhs)
@@ -73,19 +94,22 @@ typedef Singleton<GlobalTestSuite> TheGlobalTestSuite;
 	ck_assert_msg(expr, s.str().c_str()); \
 }
 
-#define TEST(name, suite) \
+#define TEST(name) \
 	class class_ ## name { \
 	public: \
 	START_TEST(ck_ ## name) \
 	{ \
-		std::cout << suite "/" # name << std::endl; \
+		std::cout << fullname<class_ ## name>() << std::endl; \
 		run(); \
 	} \
 	END_TEST \
 	static void run(); \
 	static bool registered; \
 	}; \
-	bool class_ ## name::registered = TheGlobalTestSuite::instance().registerTest(class_ ## name::ck_ ## name, suite "/" # name); \
+	bool class_ ## name::registered = TheGlobalSuite::instance().registerTest(class_ ## name::ck_ ## name, fullname<class_ ## name>()); \
 	void class_ ## name::run()
+
+} // namespace test
+} // namespace wfits
 
 #endif

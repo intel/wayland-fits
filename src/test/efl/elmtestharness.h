@@ -64,29 +64,29 @@ private:
 	Ecore_Event_Handler*	handler_;
 };
 
-#define WAYLAND_ELM_HARNESS_EGL_TEST_CASE(Harness, suite) \
-namespace egl { \
-	TEST(Harness, "EFL/Egl/" suite) \
-	{ \
-		Application app; \
-		app.setEngine(Application::ENGINE_EGL); \
-		Harness().run(); \
-	} \
-} // namespace egl
+#define WFITS_EFL_HARNESS_EGL_TEST_CASE(Harness)		\
+	namespace egl {						\
+		TEST(Harness)					\
+		{						\
+			Application app;			\
+			app.setEngine(Application::ENGINE_EGL);	\
+			Harness().run();			\
+		}						\
+	} // namespace egl
 
-#define WAYLAND_ELM_HARNESS_SHM_TEST_CASE(Harness, suite) \
-namespace shm { \
-	TEST(Harness, "EFL/Shm/" suite) \
-	{ \
-		Application app; \
-		app.setEngine(Application::ENGINE_SHM); \
-		Harness().run(); \
-	} \
-} // namespace shm
+#define WFITS_EFL_HARNESS_SHM_TEST_CASE(Harness)		\
+	namespace shm {						\
+		TEST(Harness)					\
+		{						\
+			Application app;			\
+			app.setEngine(Application::ENGINE_SHM);	\
+			Harness().run();			\
+		}						\
+	} // namespace shm
 
-#define WAYLAND_ELM_HARNESS_TEST_CASE(Harness, suite) \
-	WAYLAND_ELM_HARNESS_SHM_TEST_CASE(Harness, suite) \
-	WAYLAND_ELM_HARNESS_EGL_TEST_CASE(Harness, suite)
+#define WFITS_EFL_HARNESS_TEST_CASE(Harness)			\
+	WFITS_EFL_HARNESS_SHM_TEST_CASE(Harness)		\
+	WFITS_EFL_HARNESS_EGL_TEST_CASE(Harness)
 
 } // namespace efl
 } // namespace test

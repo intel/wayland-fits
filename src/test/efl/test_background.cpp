@@ -134,8 +134,8 @@ private:
 	vector<Elm_Bg_Option>	options_;
 };
 
-WAYLAND_ELM_HARNESS_TEST_CASE(BackgroundColorTest, "Background")
-WAYLAND_ELM_HARNESS_TEST_CASE(BackgroundImageTest, "Background")
+WFITS_EFL_HARNESS_TEST_CASE(BackgroundColorTest)
+WFITS_EFL_HARNESS_TEST_CASE(BackgroundImageTest)
 
 } // namespace efl
 } // namespace test

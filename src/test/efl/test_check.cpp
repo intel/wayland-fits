@@ -240,13 +240,12 @@ typedef ResizeObjectTest<Check> CheckResizeTest;
 typedef PositionObjectTest<Check> CheckPositionTest;
 typedef VisibleObjectTest<Check> CheckVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(CheckResizeTest, "Check")
-WAYLAND_ELM_HARNESS_TEST_CASE(CheckPositionTest, "Check")
-WAYLAND_ELM_HARNESS_TEST_CASE(CheckVisibilityTest, "Check")
-WAYLAND_ELM_HARNESS_TEST_CASE(CheckStateTest, "Check")
-WAYLAND_ELM_HARNESS_TEST_CASE(CheckPartTextDefaultTest, "Check")
-
-WAYLAND_ELM_HARNESS_TEST_CASE(CheckUserStateTest, "Check")
+WFITS_EFL_HARNESS_TEST_CASE(CheckResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(CheckPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(CheckVisibilityTest)
+WFITS_EFL_HARNESS_TEST_CASE(CheckStateTest)
+WFITS_EFL_HARNESS_TEST_CASE(CheckPartTextDefaultTest)
+WFITS_EFL_HARNESS_TEST_CASE(CheckUserStateTest)
 
 // NOTE: The following tests fail on all engines:
 // see http://trac.enlightenment.org/e/ticket/2285
@@ -257,8 +256,8 @@ WAYLAND_ELM_HARNESS_TEST_CASE(CheckUserStateTest, "Check")
 // std::string offPart("off"), offText("OFF");
 // typedef CheckPartTextTest<onPart, onText> CheckPartTextOnTest;
 // typedef CheckPartTextTest<offPart, offText> CheckPartTextOffTest;
-// WAYLAND_ELM_HARNESS_TEST_CASE(CheckPartTextOnTest, "Check")
-// WAYLAND_ELM_HARNESS_TEST_CASE(CheckPartTextOffTest, "Check")
+// WFITS_EFL_HARNESS_TEST_CASE(CheckPartTextOnTest)
+// WFITS_EFL_HARNESS_TEST_CASE(CheckPartTextOffTest)
 
 } // namespace efl
 } // namespace test

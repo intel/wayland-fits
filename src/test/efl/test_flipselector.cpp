@@ -120,10 +120,10 @@ typedef ResizeObjectTest<Flipselector> FlipSelectorResizeTest;
 typedef PositionObjectTest<Flipselector> FlipSelectorPositionTest;
 typedef VisibleObjectTest<Flipselector> FlipSelectorVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(FlipSelectorItemTest, "FlipSelector")
-WAYLAND_ELM_HARNESS_TEST_CASE(FlipSelectorResizeTest, "FlipSelector")
-WAYLAND_ELM_HARNESS_TEST_CASE(FlipSelectorPositionTest, "FlipSelector")
-WAYLAND_ELM_HARNESS_TEST_CASE(FlipSelectorVisibilityTest, "FlipSelector")
+WFITS_EFL_HARNESS_TEST_CASE(FlipSelectorItemTest)
+WFITS_EFL_HARNESS_TEST_CASE(FlipSelectorResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(FlipSelectorPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(FlipSelectorVisibilityTest)
 
 } // namespace efl
 } // namespace test

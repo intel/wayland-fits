@@ -127,10 +127,10 @@ typedef ResizeObjectTest<Icon> IconResizeTest;
 typedef PositionObjectTest<Icon> IconPositionTest;
 typedef VisibleObjectTest<Icon> IconVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(IconResizeTest, "Icon")
-WAYLAND_ELM_HARNESS_TEST_CASE(IconPositionTest, "Icon")
-WAYLAND_ELM_HARNESS_TEST_CASE(IconVisibilityTest, "Icon")
-WAYLAND_ELM_HARNESS_TEST_CASE(IconStandardTest, "Icon")
+WFITS_EFL_HARNESS_TEST_CASE(IconResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(IconPositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(IconVisibilityTest)
+WFITS_EFL_HARNESS_TEST_CASE(IconStandardTest)
 
 } // namespace efl
 } // namespace test

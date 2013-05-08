@@ -95,7 +95,7 @@ po::variables_map parseArgs(int argc, char** argv)
 //   </TestSuite>
 // </TestLog>
 
-namespace wfit {
+namespace wfits {
 
 class Test
 {
@@ -237,7 +237,7 @@ private:
 	Tests tests_;
 };
 
-} // namespace wfit
+} // namespace wfits
 
 /**
  * The "Check" unit test framework does not create valid xml
@@ -250,8 +250,10 @@ void toXML(SRunner* sr, const std::string& filename)
 	TestResult **results(srunner_results(sr));
 	const int nresults(srunner_ntests_run(sr));
 
-	wfit::TestSuite::Shared master(
-		wfit::TestSuite::create(TheGlobalTestSuite::instance().name)
+	wfits::TestSuite::Shared master(
+		wfits::TestSuite::create(
+			wfits::test::TheGlobalSuite::instance().name
+		)
 	);
 	
 	for (int i(0); i < nresults; ++i)
@@ -274,15 +276,15 @@ int main(int argc, char** argv)
 
 	if (args.count("list"))
 	{
-		std::vector<std::string> names = TheGlobalTestSuite::instance().testNames(args["filter"].as<std::string>());
+		std::vector<std::string> names = wfits::test::TheGlobalSuite::instance().testNames(args["filter"].as<std::string>());
 		std::copy(names.begin(), names.end(), std::ostream_iterator<std::string>(std::cout, "\n"));
 		exit(EXIT_SUCCESS);
 	}
 
-	TheGlobalTestSuite::instance().argc = argc;
-	TheGlobalTestSuite::instance().argv = argv;
+	wfits::test::TheGlobalSuite::instance().argc = argc;
+	wfits::test::TheGlobalSuite::instance().argv = argv;
 
-	SRunner* sr = TheGlobalTestSuite::instance()
+	SRunner* sr = wfits::test::TheGlobalSuite::instance()
 		.createRunner(args["filter"].as<std::string>());
 
 	srunner_run_all (sr, CK_ENV);

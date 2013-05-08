@@ -81,10 +81,10 @@ typedef ResizeObjectTest<Frame> FrameResizeTest;
 typedef PositionObjectTest<Frame> FramePositionTest;
 typedef VisibleObjectTest<Frame> FrameVisibilityTest;
 
-WAYLAND_ELM_HARNESS_TEST_CASE(FrameGoTest, "Frame")
-WAYLAND_ELM_HARNESS_TEST_CASE(FrameResizeTest, "Frame")
-WAYLAND_ELM_HARNESS_TEST_CASE(FramePositionTest, "Frame")
-WAYLAND_ELM_HARNESS_TEST_CASE(FrameVisibilityTest, "Frame")
+WFITS_EFL_HARNESS_TEST_CASE(FrameGoTest)
+WFITS_EFL_HARNESS_TEST_CASE(FrameResizeTest)
+WFITS_EFL_HARNESS_TEST_CASE(FramePositionTest)
+WFITS_EFL_HARNESS_TEST_CASE(FrameVisibilityTest)
 
 } // namespace efl
 } // namespace test
