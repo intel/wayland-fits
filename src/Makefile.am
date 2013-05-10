@@ -1,2 +1,2 @@
-SUBDIRS = common extensions test
+SUBDIRS = extensions test
 
