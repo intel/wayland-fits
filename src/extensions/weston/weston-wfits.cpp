@@ -376,9 +376,9 @@ create_input(struct wfits* wfits)
 	 */
 	global_size(wfits, &width, &height);
 	device.absmin[ABS_X] = 0;
-	device.absmax[ABS_X] = width;
+	device.absmax[ABS_X] = width - 1;
 	device.absmin[ABS_Y] = 0;
-	device.absmax[ABS_Y] = height;
+	device.absmax[ABS_Y] = height - 1;
 
 	if (write(wfits->input_fd, &device, sizeof(device)) < 0) {
 		exit(EXIT_FAILURE);
