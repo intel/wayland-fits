@@ -28,30 +28,38 @@ namespace wfits {
 namespace test {
 namespace efl {
 
-// From "A Tale of Two Cities" by Dickens, Ch 5 (Public Domain, WikiSource)
-static const char* dickens =
-	"A large cask of wine had been dropped and broken, in the street. The accident "
-	"had happened in getting it out of a cart; the cask had tumbled out with a run, "
-	"the hoops had burst, and it lay on the stones just outside the door of the "
-	"wine-shop, shattered like a walnut-shell. "
-	"All the people within reach had suspended their business, or their idleness, to "
-	"run to the spot and drink the wine. The rough, irregular stones of the street, "
-	"pointing every way, and designed, one might have thought, expressly to lame all "
-	"living creatures that approached them, had dammed it into little pools; these "
-	"were surrounded, each by its own jostling group or crowd, according to its "
-	"size. Some men kneeled down, made scoops of their two hands joined, and sipped, "
-	"or tried to help women, who bent over their shoulders, to sip, before the wine "
-	"had all run out between their fingers. Others, men and women, dipped in the "
-	"puddles with little mugs of mutilated earthenware, or even with handkerchiefs "
-	"from women’s heads, which were squeezed dry into infants’ mouths; others made "
-	"small mud-embankments, to stem the wine as it ran; others, directed by "
-	"lookers-on up at high windows, darted here and there, to cut off little streams "
-	"of wine that started away in new directions; others devoted themselves to the "
-	"sodden and lee-dyed pieces of the cask, licking, and even champing the moister "
-	"wine-rotted fragments with eager relish. There was no drainage to carry off the "
-	"wine, and not only did it all get taken up, but so much mud got taken up along "
-	"with it, that there might have been a scavenger in the street, if anybody "
-	"acquainted with it could have believed in such a miraculous presence.";
+static const std::string lipsum(
+"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nunc sapien, "
+"bibendum non pharetra sed, volutpat et sapien. Mauris adipiscing arcu nec mauris "
+"blandit nec imperdiet massa scelerisque. Donec interdum malesuada sapien eleifend "
+"vestibulum. Vestibulum posuere elit et purus rhoncus luctus. Mauris justo "
+"tellus, elementum at iaculis et, tempor vitae arcu. Sed at urna sit amet orci "
+"facilisis adipiscing. Nunc cursus dictum nibh, sit amet sollicitudin velit "
+"lobortis id. Phasellus ipsum justo, volutpat eu convallis gravida, malesuada "
+"id lorem. Mauris ligula elit, aliquet sit amet tincidunt ac, aliquet ut est. "
+"Curabitur cursus sollicitudin mauris sed malesuada. Nunc imperdiet ornare "
+"magna, ac egestas leo rutrum sit amet. Nulla vel erat lacus. In at purus "
+"lorem. Nam ac nisi ac dui sollicitudin adipiscing ut et urna. Vestibulum "
+"bibendum, sem nec placerat pharetra, diam nunc interdum ligula, eu dignissim "
+"augue sem nec dui. Etiam eu magna sapien. "
+"Maecenas nulla turpis, aliquam non pretium ultricies, ullamcorper nec lacus. "
+"Quisque non ligula felis, vitae vehicula lectus. Sed rutrum tellus vel lacus "
+"volutpat fermentum. Fusce pretium luctus diam vitae lacinia. Sed orci enim, "
+"bibendum nec cursus non, lobortis at purus. Sed sed erat nulla. Duis in ligula "
+"vel nisi tincidunt condimentum quis ac dui. Quisque lacinia magna quis erat "
+"ullamcorper pellentesque. Nunc id libero massa. Donec placerat erat ac massa "
+"dignissim eu consequat libero suscipit. "
+"Aliquam laoreet, tellus at molestie gravida, enim nisl feugiat orci, sit amet "
+"auctor neque enim sit amet mi. Integer volutpat dictum tincidunt. Etiam "
+"ultrices gravida metus ut ornare. Duis iaculis, risus non interdum egestas, "
+"odio risus mattis lacus, eu scelerisque metus ligula a magna. Mauris semper "
+"pretium rutrum. Etiam porta, massa sit amet sodales ullamcorper, ligula dolor "
+"vehicula purus, non auctor ante lacus eu nisi. Nam mi dolor, hendrerit et "
+"pharetra sed, aliquet a nisi. Vivamus luctus elementum urna, at vestibulum "
+"turpis mattis non. Nam quis odio tortor. Aliquam nec erat elit. Donec dapibus "
+"nunc pretium lacus pharetra a sagittis nisi vehicula. Duis dolor lacus, ornare "
+"sed gravida eu, scelerisque et elit. Proin non tellus in ante placerat luctus. "
+"Vivamus sit amet tortor augue, nec ultricies felis.");
 
 class Label : public EvasObject
 {
@@ -74,7 +82,7 @@ public:
 		control_.setSize(350, 250);
 		control_.setPosition(25, 25);
 
-		elm_object_text_set(control_, dickens);
+		elm_object_text_set(control_, lipsum.c_str());
 
 		wraps_.push_back(ELM_WRAP_CHAR);
 		wraps_.push_back(ELM_WRAP_WORD);
@@ -117,7 +125,7 @@ public:
 		control_.setSize(350, 250);
 		control_.setPosition(25, 25);
 
-		elm_object_text_set(control_, dickens);
+		elm_object_text_set(control_, lipsum.c_str());
 
 		elm_label_line_wrap_set(control_, ELM_WRAP_MIXED);
 
