@@ -4,7 +4,8 @@ INCLUDES = -I$(top_srcdir)/src
 
 noinst_LTLIBRARIES = libwfits-gtk.la
 
-libwfits_gtk_la_SOURCES =
+libwfits_gtk_la_SOURCES =	\
+	testharness.cpp
 
 AM_CXXFLAGS =			\
 	$(WAYLAND_CFLAGS)	\
