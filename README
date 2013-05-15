@@ -1,3 +1,6 @@
+DESCRIPTION
+--------------------------------------------------------------------------------
+
 Wayland Functional Integration Test Suite (aka. wayland-fits, wfits)
 
 Wayland-fits is a fully automated functional integration test suite.  It's
@@ -22,3 +25,79 @@ employs uinput to emulate various input devices.  For the headless backend, it
 uses the weston input API's directly.  It also exposes various other
 internal compositor states that can be queried by tests, such as surface
 geometry and pointer coordinates.
+
+
+LICENSE
+--------------------------------------------------------------------------------
+
+see COPYING file
+
+
+REQUIREMENTS
+--------------------------------------------------------------------------------
+
+ * check - A unit testing framework for C >= 0.9.8
+ * boost - Boost C++ libraries >= 1.48.0
+ * Wayland >= 1.0.6
+ * Weston >= 1.0.6
+
+ Optional:
+ * EFL/Elementary Wayland >= 1.7.6
+ * GTK+ Wayland
+ * Cogl/Clutter Wayland
+ * Qt Wayland
+
+
+COMPILING
+--------------------------------------------------------------------------------
+
+ $ ./autogen.sh
+ $ make
+ $ make install
+
+ See http://wayland.freedesktop.org/build.html for more information on general
+ Wayland building requirements/options (e.g. installing in a custom location).
+
+
+RUNNING
+--------------------------------------------------------------------------------
+
+ You need to load the wfits test extension into your Wayland compositor (Note:
+ an implementation of the wfits test extension is needed for each compositor,
+ currently Weston is the only one supported at the moment):
+
+ For Weston, this is weston-wfits.so and it's loaded with the --modules option:
+
+  $ weston --modules=weston-wfits.so &
+
+ Next, run the test suite:
+
+  $ wfits
+
+ You can filter the tests you want to run by using the --filter option.  This
+ option takes a boost-regex style expression (POSIX-extended, case-ignored),
+ for example:
+
+  $ wfits --filter core.*
+  $ wfits --filter .*pointer.*
+
+
+BUGS
+--------------------------------------------------------------------------------
+
+ If a test is failing, try to determine if it's an actual bug in the test or a
+ bug in the component that is being tested.  If it's a bug in the test itself,
+ file at:
+
+ https://bugs.freedesktop.org/enter_bug.cgi?product=Wayland&component=wayland-fits
+
+ Otherwise, file a bug in the appropriate database assigned to the failing
+ component if one does not already exist.
+
+
+CONTRIBUTING
+--------------------------------------------------------------------------------
+
+ Send patches to "wayland-devel@lists.freedesktop.org"... see
+ http://wayland.freedesktop.org for more information on contributing.
+

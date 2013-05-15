@@ -1,8 +1,8 @@
 AC_PREREQ([2.64])
 
 AC_INIT([wayland-fits],
-        [0.99.1],
-        [https://bugs.freedesktop.org/enter_bug.cgi?product=wayland],
+        [0.1.0],
+        [https://bugs.freedesktop.org/enter_bug.cgi?product=wayland&component=wayland-fits],
         [wayland-fits],
         [http://wayland.freedesktop.org/])
 

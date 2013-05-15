@@ -1,0 +1,20 @@
+TODO
+----
+
+* keep writing more tests!
+ * drag-n-drop
+ * cut and paste
+ * egl tests in core
+ * Qt-Wayland tests
+ * Clutter-Wayland tests
+ * other integration tests (get creative)
+
+* write wfits test extensions for other wayland compositors
+ * may need to petition them for module/plugin support
+
+* refactor or remove useless/pointless EFL-Wayland tests
+ * at some point, someone was under the impression that quantity was better
+   than quality.  We should revisit some tests here and determine usefulness.
+
+* move away from the "check" dependency
+ * note, it's important that tests are executed in a forked process
