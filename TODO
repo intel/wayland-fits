@@ -17,4 +17,5 @@ TODO
    than quality.  We should revisit some tests here and determine usefulness.
 
 * move away from the "check" dependency
- * note, it's important that tests are executed in a forked process
+ * it's important that tests are executed in a forked process
+ * it's important that tests have a timeout

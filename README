@@ -81,6 +81,7 @@ RUNNING
   $ wfits --filter core.*
   $ wfits --filter .*pointer.*
 
+ Run 'wfits --help' for more options.
 
 BUGS
 --------------------------------------------------------------------------------
