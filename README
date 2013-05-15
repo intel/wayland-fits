@@ -98,6 +98,8 @@ BUGS
 CONTRIBUTING
 --------------------------------------------------------------------------------
 
- Send patches to "wayland-devel@lists.freedesktop.org"... see
- http://wayland.freedesktop.org for more information on contributing.
+ Send patches to "wayland-devel@lists.freedesktop.org".
+
+ See http://wayland.freedesktop.org and http://wayland.freedesktop.org/testing.html
+ for more information on contributing.
 
