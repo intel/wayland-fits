@@ -44,8 +44,8 @@ REQUIREMENTS
  Optional:
  * EFL/Elementary Wayland >= 1.7.6
  * GTK+ Wayland
- * Cogl/Clutter Wayland
- * Qt Wayland
+ * Cogl/Clutter Wayland (future development)
+ * Qt Wayland (future development)
 
 
 COMPILING
@@ -66,9 +66,13 @@ RUNNING
  an implementation of the wfits test extension is needed for each compositor,
  currently Weston is the only one supported at the moment):
 
- For Weston, this is weston-wfits.so and it's loaded with the --modules option:
+ For Weston, this is "weston-wfits.so" and it's loaded with the --modules option:
 
   $ weston --modules=weston-wfits.so &
+
+  NOTE: the weston-wfits.so module supports x11-backend, drm-backend, and the
+  headless-backend.  However, not all tests can be run on the headless-backend;
+  particularly the egl-based ones.
 
  Next, run the test suite:
 
