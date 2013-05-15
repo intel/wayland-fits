@@ -20,18 +20,16 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <stdlib.h>
-#include <string.h>
+#include <string>
+#include <cassert>
+#include <set>
 #include <linux/input.h>
 #include <linux/uinput.h>
 #include <fcntl.h>
-#include <assert.h>
 #include <unistd.h>
-
 #include <xcb/xcb.h>
 #include <X11/Xlib.h>
 #include <X11/Xlib-xcb.h>
-
 #include <wayland-server.h>
 
 /**
@@ -44,14 +42,17 @@ extern "C" {
 #undef private
 }
 
-#include <set>
-
 #include "config.h"
 #include "extensions/protocol/wayland-fits-server-protocol.h"
 #include "common/util.h"
 
 /** TODO: Convert this code to C++-style classes, methods, etc... **/
 
+/**
+ * This struct is a copy from Weston's x11-compositor.c.
+ * When Weston is using the x11-backend, we can safely
+ * cast a "struct weston_compositor" to one of these.
+ **/
 struct x11_compositor {
 	struct weston_compositor base;
 	Display *dpy;
@@ -59,24 +60,39 @@ struct x11_compositor {
 	xcb_screen_t *screen;
 };
 
+/**
+ * This struct is a copy from Weston's x11-compositor.c.
+ * When Weston is using the x11-backend, we can safely
+ * cast a "struct weston_output" to one of these.
+ **/
 struct x11_output {
 	struct weston_output base;
 	xcb_window_t window;
 };
 
+/**
+ * Global state for this plugin.
+ **/
 struct wfits {
 	struct weston_compositor *compositor;
 	struct wl_listener compositor_destroy_listener;
-	int input_fd;
-	bool is_headless;
+	int input_fd; // file descriptor for our uinput device.
+	bool is_headless; // whether weston is using a headless backend.
 };
 
+/**
+ * State for a connected input client.
+ **/
 struct wfits_input_client {
 	struct wfits *wfits;
-	std::set<uint32_t> *active_keys;
+	std::set<uint32_t> *active_keys; // to keep track of currently active (pressed) keys
 };
 
 
+/**
+ * Get the weston_seat associated with the Weston compositor.
+ * Currently, only one (1) seat is supported by this plugin.
+ **/
 static struct weston_seat *
 get_seat(struct wfits *wfits)
 {
@@ -90,6 +106,9 @@ get_seat(struct wfits *wfits)
 	return seat;
 }
 
+/**
+ * Get the current x,y coordinate of the compositor pointer.
+ **/
 static void
 get_pointer_xy(struct wfits *wfits, wl_fixed_t *x, wl_fixed_t *y)
 {
@@ -103,6 +122,10 @@ get_pointer_xy(struct wfits *wfits, wl_fixed_t *x, wl_fixed_t *y)
 #endif
 }
 
+/**
+ * Get the weston_output associated with the Weston compositor.
+ * Currently, only one (1) output is supported by this plugin.
+ **/
 static struct weston_output *
 get_output(struct wfits *wfits)
 {
@@ -117,6 +140,11 @@ get_output(struct wfits *wfits)
 	return container_of(output_list->next, struct weston_output, link);
 }
 
+/**
+ * Get the width and height (size) of the current display output.  If Weston is
+ * using the x11 backend then the result is the size of the X screen.
+ * Otherwise, the size of the Weston compositor output is the result.
+ **/
 static void
 global_size(struct wfits *wfits, int32_t *width, int32_t *height)
 {
@@ -125,7 +153,7 @@ global_size(struct wfits *wfits, int32_t *width, int32_t *height)
 
 	output = get_output(wfits);
 
-	if (strcmp(output->make, "xwayland") == 0) {
+	if (std::string(output->make) == "xwayland") {
 		x11_compositor = (struct x11_compositor*) wfits->compositor;
 		*width = x11_compositor->screen->width_in_pixels;
 		*height = x11_compositor->screen->height_in_pixels;
@@ -135,8 +163,13 @@ global_size(struct wfits *wfits, int32_t *width, int32_t *height)
 	}
 }
 
+/**
+ * Converts a Weston compositor x,y coordinate into a global coordinate.  When
+ * Weston is using the x11 backend, the x,y coordinate is mapped to the X
+ * display output (needed to correctly map a uinput pointer to weston).
+ **/
 static void
-compositor_to_global(struct wfits* wfits, int32_t *x, int32_t *y)
+compositor_to_global(struct wfits *wfits, int32_t *x, int32_t *y)
 {
 	struct weston_output *output;
 	struct x11_compositor *x11_compositor = NULL;
@@ -145,7 +178,7 @@ compositor_to_global(struct wfits* wfits, int32_t *x, int32_t *y)
 	xcb_translate_coordinates_reply_t *trans;
 
 	output = get_output(wfits);
-	if (strcmp(output->make, "xwayland") == 0) {
+	if (std::string(output->make) == "xwayland") {
 		x11_compositor = (struct x11_compositor*) wfits->compositor;
 		x11_output = (struct x11_output*) output;
 
@@ -178,10 +211,17 @@ compositor_to_global(struct wfits* wfits, int32_t *x, int32_t *y)
 	}
 }
 
-void
-move_pointer(struct wfits *wfits, int32_t x, int32_t y)
+/**
+ * Move the pointer to the desired compositor x,y coordinate.
+ **/
+static void
+move_pointer(struct wfits *wfits, const int32_t x, const int32_t y)
 {
 	if (wfits->is_headless) {
+		/**
+		 * Weston is using a headless backend, so originate/trigger
+		 * the event via Weston.
+		 **/
 		struct weston_seat *seat = get_seat(wfits);
 		wl_fixed_t cx, cy;
 		get_pointer_xy(wfits, &cx, &cy);
@@ -192,20 +232,24 @@ move_pointer(struct wfits *wfits, int32_t x, int32_t y)
 		return;
 	}
 
+	/**
+	 * Generate a pointer move event via uinput.
+	 **/
 	struct input_event event;
+	int32_t gx(x), gy(y);
 
-	compositor_to_global(wfits, &x, &y);
+	compositor_to_global(wfits, &gx, &gy);
 
 	memset(&event, 0, sizeof(event));
 
 	event.type = EV_ABS;
 	event.code = ABS_X;
-	event.value = x;
+	event.value = gx;
 	write(wfits->input_fd, &event, sizeof(event));
 
 	event.type = EV_ABS;
 	event.code = ABS_Y;
-	event.value = y;
+	event.value = gy;
 	write(wfits->input_fd, &event, sizeof(event));
 
 	event.type = EV_SYN;
@@ -214,6 +258,9 @@ move_pointer(struct wfits *wfits, int32_t x, int32_t y)
 	write(wfits->input_fd, &event, sizeof(event));
 }
 
+/**
+ * Client interface entry that just calls move_pointer(...).
+ **/
 static void
 input_move_pointer(struct wl_client *client, struct wl_resource *resource,
 		   int32_t x, int32_t y)
@@ -223,10 +270,17 @@ input_move_pointer(struct wl_client *client, struct wl_resource *resource,
 	move_pointer(wfits_input_client->wfits, x, y);
 }
 
+/**
+ * Send a key event (mouse button or keyboard).
+ **/
 static void
-key_send(struct wfits *wfits, uint32_t key, uint32_t state)
+key_send(struct wfits *wfits, const uint32_t key, const uint32_t state)
 {
 	if (wfits->is_headless) {
+		/**
+		 * Weston is using a headless backend, so originate/trigger the
+		 * event via Weston.
+		 **/
 		struct weston_seat *seat = get_seat(wfits);
 
 		wfits->compositor->focus = 1;
@@ -244,6 +298,9 @@ key_send(struct wfits *wfits, uint32_t key, uint32_t state)
 		return;
 	}
 
+	/**
+	 * Generate the event via uinput
+	 **/
 	struct input_event event;
 
 	memset(&event, 0, sizeof(event));
@@ -259,15 +316,19 @@ key_send(struct wfits *wfits, uint32_t key, uint32_t state)
 	write(wfits->input_fd, &event, sizeof(event));
 }
 
+/**
+ * Client interface entry that just calls key_send(...).
+ **/
 static void
 input_key_send(struct wl_client *client, struct wl_resource *resource,
-		  uint32_t key, uint32_t state)
+	       uint32_t key, uint32_t state)
 {
 	struct wfits_input_client *wfits_input_client =
 		static_cast<struct wfits_input_client*>(resource->data);
 
 	key_send(wfits_input_client->wfits, key, state);
 
+	/** Keep track of the keys currently active by this client **/
 	if (state) {
 		wfits_input_client->active_keys->insert(key);
 	} else {
@@ -286,8 +347,8 @@ unbind_input_client(struct wl_resource *resource)
 	struct wfits_input_client *wfits_input_client =
 		static_cast<struct wfits_input_client*>(resource->data);
 
-	foreach (uint32_t key, *wfits_input_client->active_keys)
-	{
+	/** deactivate any keys the client left activated **/
+	foreach (uint32_t key, *wfits_input_client->active_keys) {
 		key_send(wfits_input_client->wfits, key, 0);
 	}
 
@@ -306,9 +367,11 @@ bind_input(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 	wfits_input_client->wfits = static_cast<struct wfits*>(data);
 	wfits_input_client->active_keys = new std::set<uint32_t>;
 
-	resource = wl_client_add_object(client, &wfits_input_interface,
-					&wfits_input_implementation, id,
-					wfits_input_client);
+	resource = wl_client_add_object(
+		client, &wfits_input_interface,
+		&wfits_input_implementation, id,
+		wfits_input_client
+	);
 	resource->destroy = unbind_input_client;
 }
 
@@ -319,7 +382,6 @@ create_input(struct wfits* wfits)
 	struct weston_output *output = get_output(wfits);
 	int32_t width;
 	int32_t height;
-	int32_t i;
 	
 	weston_log("weston-wfits: creating uinput device\n");
 
@@ -333,7 +395,7 @@ create_input(struct wfits* wfits)
 		exit(EXIT_FAILURE);
 	}
 	
-	for (i = 0; i < 255; i++){
+	for (int32_t i(0); i < 255; ++i) {
 		if (ioctl(wfits->input_fd, UI_SET_KEYBIT, i) < 0) {
 			exit(EXIT_FAILURE);
 		}
@@ -370,9 +432,8 @@ create_input(struct wfits* wfits)
 	device.id.product = 0x1;
 	device.id.version = 1;
 
-	/* FIXME: What about multidisplay? What about x11-backend?
-	 * On x11-backend the device should be bound to the compositor
-	 * X-client window viewport.
+	/*
+	 * TODO: Need to handle multidisplay, eventually.
 	 */
 	global_size(wfits, &width, &height);
 	device.absmin[ABS_X] = 0;
@@ -412,7 +473,8 @@ query_surface_geometry(struct wl_client *client, struct wl_resource *resource,
 		wl_fixed_from_double(surface->geometry.x),
 		wl_fixed_from_double(surface->geometry.y),
 		surface->geometry.width,
-		surface->geometry.height);
+		surface->geometry.height
+	);
 	wl_resource_destroy(&result);
 }
 
@@ -451,14 +513,14 @@ bind_query(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 	struct wl_resource *resource;
 
 	resource = wl_client_add_object(client, &wfits_query_interface,
-					&wfits_query_implementation, id, wfits);
+		&wfits_query_implementation, id, wfits);
 }
 
 static void
 compositor_destroy(struct wl_listener *listener, void *data)
 {
 	struct wfits *wfits = container_of(listener, struct wfits,
-					   compositor_destroy_listener);
+		compositor_destroy_listener);
 
 	if (not wfits->is_headless) {
 		weston_log("weston-wfits: destroying uinput device\n");
@@ -473,18 +535,33 @@ static void
 init_input(void *data)
 {
 	struct wfits *wfits = static_cast<struct wfits*>(data);
-	struct weston_seat *seat = get_seat(wfits);
-	weston_seat_init_pointer(seat);
-	weston_seat_init_keyboard(seat, NULL);
+
+	if (not wfits->is_headless) {
+		create_input(wfits);
+		/* sync our input pointer device with weston */
+		wl_fixed_t cx, cy;
+		get_pointer_xy(wfits, &cx, &cy);
+		move_pointer(wfits, wl_fixed_to_int(cx), wl_fixed_to_int(cy));
+	} else {
+		struct weston_seat *seat = get_seat(wfits);
+		weston_seat_init_pointer(seat);
+		weston_seat_init_keyboard(seat, NULL);
+	}
 }
+
+extern "C" {
 
 #if defined(HAVE_WESTON_SDK1)
 WL_EXPORT int
 module_init(struct weston_compositor *compositor)
-#else //defined(HAVE_WESTON_SDK2) || defined(HAVE_WESTON_SDK3)
+#elif defined(HAVE_WESTON_SDK2)
 WL_EXPORT int
 module_init(struct weston_compositor *compositor,
-	int *argc, char *argv[], const char *config_file)
+	    int *argc, char *argv[], const char *config_file)
+#else // defined(HAVE_WESTON_SDK3)
+WL_EXPORT int
+module_init(struct weston_compositor *compositor,
+	    int *argc, char *argv[])
 #endif
 {
 	struct wfits *wfits;
@@ -501,30 +578,26 @@ module_init(struct weston_compositor *compositor,
 
 	if (wl_display_add_global(compositor->wl_display,
 				  &wfits_input_interface,
-				  wfits, bind_input) == NULL)
+				  wfits, bind_input) == NULL) {
 		return -1;
+	}
 
 	if (wl_display_add_global(compositor->wl_display,
 				  &wfits_query_interface,
-				  wfits, bind_query) == NULL)
+				  wfits, bind_query) == NULL) {
 		return -1;
+	}
 
 	output = get_output(wfits);
 	wfits->is_headless = bool(std::string(output->model) == "headless");
-	if (not wfits->is_headless) {
-		create_input(wfits);
-		/* sync our input pointer device with weston */
-		wl_fixed_t cx, cy;
-		get_pointer_xy(wfits, &cx, &cy);
-		move_pointer(wfits, wl_fixed_to_int(cx), wl_fixed_to_int(cy));
-	} else {
-		loop = wl_display_get_event_loop(compositor->wl_display);
-		wl_event_loop_add_idle(loop, init_input, wfits);
-	}
+
+	loop = wl_display_get_event_loop(compositor->wl_display);
+	wl_event_loop_add_idle(loop, init_input, wfits);
 
 	wfits->compositor_destroy_listener.notify = compositor_destroy;
-	wl_signal_add(&compositor->destroy_signal,
-		      &wfits->compositor_destroy_listener);
+	wl_signal_add(&compositor->destroy_signal, &wfits->compositor_destroy_listener);
 
 	return 0;
 }
+
+} // extern "C"
