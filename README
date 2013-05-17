@@ -91,20 +91,19 @@ BUGS
 --------------------------------------------------------------------------------
 
  If a test is failing, try to determine if it's an actual bug in the test or a
- bug in the component that is being tested.  If it's a bug in the test itself,
- file at:
+ bug in the component that is being tested.  If it's a bug in the test, file at:
 
- https://github.com/01org/wayland-fits/issues
+  https://github.com/01org/wayland-fits/issues
 
  Otherwise, file a bug in the appropriate database assigned to the failing
- wayland component if one does not already exist.
+ Wayland component if one does not already exist.
 
 
 CONTRIBUTING
 --------------------------------------------------------------------------------
 
- Send patches to "wayland-devel@lists.freedesktop.org".
+ Send patches to "wayland-devel@lists.freedesktop.org" with the subject prefix
+ of "[PATCH wfits]".  Git example:
 
- See http://wayland.freedesktop.org and http://wayland.freedesktop.org/testing.html
- for more information on contributing.
+   git format-patch --subject-prefix="PATCH wfits" ...
 
