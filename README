@@ -1,7 +1,7 @@
 DESCRIPTION
 --------------------------------------------------------------------------------
 
-Wayland Functional Integration Test Suite (aka. wayland-fits, wfits)
+Wayland Functional Integration Test Suite (aka. wayland-fits)
 
 Wayland-fits is a fully automated functional integration test suite.  It's
 main purpose is to test the functionality and integration of client-side
