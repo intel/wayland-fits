@@ -2,9 +2,9 @@ AC_PREREQ([2.64])
 
 AC_INIT([wayland-fits],
         [0.1.0],
-        [https://bugs.freedesktop.org/enter_bug.cgi?product=wayland&component=wayland-fits],
+        [https://github.com/01org/wayland-fits/issues],
         [wayland-fits],
-        [http://wayland.freedesktop.org/])
+        [https://github.com/01org/wayland-fits])
 
 AM_INIT_AUTOMAKE([1.11 foreign no-dist-gzip dist-xz])
 
