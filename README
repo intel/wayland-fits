@@ -94,10 +94,10 @@ BUGS
  bug in the component that is being tested.  If it's a bug in the test itself,
  file at:
 
- https://bugs.freedesktop.org/enter_bug.cgi?product=Wayland&component=wayland-fits
+ https://github.com/01org/wayland-fits/issues
 
  Otherwise, file a bug in the appropriate database assigned to the failing
- component if one does not already exist.
+ wayland component if one does not already exist.
 
 
 CONTRIBUTING
