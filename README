@@ -11,7 +11,7 @@ the server-side or from an emulated system-level device (depends on the type
 of backend used).  There are also tests with emphasis on cross-validating client
 and server states.
 
-The test framework design includes a wfits test extension that defines two
+The test framework design includes a wayland-fits test extension that defines two
 Wayland protocols. The first protocol is a interface for generating input events
 on the server-side (e.g. mouse, keyboard, touch). The second is a interface for
 querying state information from the server/compositor.  This extension is
@@ -19,7 +19,7 @@ exploited by most of the tests.  Thus, to run these tests on a particular Waylan
 server/compositor, there has to be an implementation of this extension for that
 compositor (i.e. src/extensions/<compositor>).
 
-A Weston implementation of the wfits test extension (weston-wfits.so) is
+A Weston implementation of the wayland-fits test extension (weston-wfits.so) is
 included as a pluggable module to Weston.  For the drm and x11 backends, it
 employs uinput to emulate various input devices.  For the headless backend, it
 uses the weston input API's directly.  It also exposes various other
@@ -62,7 +62,7 @@ COMPILING
 RUNNING
 --------------------------------------------------------------------------------
 
- You need to load the wfits test extension into your Wayland compositor (Note:
+ You need to load the wayland-fits test extension into your Wayland compositor (Note:
  an implementation of the wfits test extension is needed for each compositor,
  currently Weston is the only one supported at the moment):
 
