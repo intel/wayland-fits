@@ -49,19 +49,15 @@ const test::Client& ElmTestHarness::client() const
 
 void ElmTestHarness::run()
 {
-	ecore_wl_init(NULL);
+	setup();
 
 	ASSERT(NULL != ecore_wl_display_get());
-
-	setup();
 
 	ecore_idler_add(idleStep, this);
 
 	elm_run();
 
 	teardown();
-
-	ecore_wl_shutdown();
 
 	ASSERT(not haveStep());
 }
@@ -156,6 +152,7 @@ public:
 
 	void setup()
 	{
+		ecore_wl_init(NULL);
 		++nsetup_;
 		for (unsigned i(0); i < 50; ++i) {
 			queueStep(boost::bind(&SimpleHarnessTest::step, boost::ref(*this)));
@@ -189,6 +186,7 @@ public:
 
 	void setup()
 	{
+		ecore_wl_init(NULL);
 		queueStep(boost::bind(&PointerInterfaceTest::test, boost::ref(*this)));
 	}
 
