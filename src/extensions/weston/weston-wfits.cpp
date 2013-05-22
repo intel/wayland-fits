@@ -211,6 +211,15 @@ compositor_to_global(struct wfits *wfits, int32_t *x, int32_t *y)
 	}
 }
 
+inline void
+write_event_to_fd(int fd, struct input_event *event)
+{
+	if (write(fd, event, sizeof(*event)) == -1)
+	{
+		perror("write");
+	}
+}
+
 /**
  * Move the pointer to the desired compositor x,y coordinate.
  **/
@@ -245,17 +254,17 @@ move_pointer(struct wfits *wfits, const int32_t x, const int32_t y)
 	event.type = EV_ABS;
 	event.code = ABS_X;
 	event.value = gx;
-	write(wfits->input_fd, &event, sizeof(event));
+	write_event_to_fd (wfits->input_fd, &event);
 
 	event.type = EV_ABS;
 	event.code = ABS_Y;
 	event.value = gy;
-	write(wfits->input_fd, &event, sizeof(event));
+	write_event_to_fd (wfits->input_fd, &event);
 
 	event.type = EV_SYN;
 	event.code = SYN_REPORT;
 	event.value = 0;
-	write(wfits->input_fd, &event, sizeof(event));
+	write_event_to_fd (wfits->input_fd, &event);
 }
 
 /**
@@ -308,12 +317,12 @@ key_send(struct wfits *wfits, const uint32_t key, const uint32_t state)
 	event.type = EV_KEY;
 	event.code = key;
 	event.value = state;
-	write(wfits->input_fd, &event, sizeof(event));
+	write_event_to_fd(wfits->input_fd, &event);
 
 	event.type = EV_SYN;
 	event.code = SYN_REPORT;
 	event.value = 0;
-	write(wfits->input_fd, &event, sizeof(event));
+	write_event_to_fd(wfits->input_fd, &event);
 }
 
 /**
