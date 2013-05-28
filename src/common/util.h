@@ -40,11 +40,16 @@ boost::lambda::placeholder3_type _3_;
 
 struct Geometry
 {
-	Geometry()
-		: x(-1)
-		, y(-1)
-		, width(-1)
-		, height(-1)
+	Geometry(
+		const int32_t ix = -1,
+		const int32_t iy = -1,
+		const int32_t iw = -1,
+		const int32_t ih = -1
+	)
+		: x(ix)
+		, y(iy)
+		, width(iw)
+		, height(ih)
 	{
 		return;
 	}
