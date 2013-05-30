@@ -35,6 +35,11 @@ Application::Application()
 		TheGlobalSuite::instance().argv
 	);
 
+	// Eina's default setting doesn't abort on ERR messages so this
+	// forces tests to abort if they emit any ERR or CRITICAL messages.
+	eina_log_abort_on_critical_set(EINA_TRUE);
+	eina_log_abort_on_critical_level_set(EINA_LOG_LEVEL_ERR);
+
 	setEngine(ENGINE_SHM);
 }
 
