@@ -30,18 +30,8 @@
 #include <xcb/xcb.h>
 #include <X11/Xlib.h>
 #include <X11/Xlib-xcb.h>
-#include <wayland-server.h>
 
-/**
- * Weston SDK 1.0.x workaround for
- * https://bugs.freedesktop.org/show_bug.cgi?id=63485
- **/
-extern "C" {
-#define private configure_private
-#include <weston/compositor.h>
-#undef private
-}
-
+#include "weston-wfits.h"
 #include "config.h"
 #include "extensions/protocol/wayland-fits-server-protocol.h"
 #include "common/util.h"
@@ -84,15 +74,6 @@ public:
 	* Send a key event (mouse button, keyboard, etc.).
 	**/
 	virtual void keySend(const uint32_t key, const uint32_t state) const = 0;
-};
-
-/**
- * Global state for this plugin.
- **/
-struct wfits {
-	struct weston_compositor *compositor;
-	struct wl_listener compositor_destroy_listener;
-	InputMode *input;
 };
 
 /**
@@ -580,52 +561,30 @@ init_input(void *data)
 	}
 }
 
-extern "C" {
-
-#if defined(HAVE_WESTON_SDK1)
-WL_EXPORT int
-module_init(struct weston_compositor *compositor)
-#elif defined(HAVE_WESTON_SDK2)
-WL_EXPORT int
-module_init(struct weston_compositor *compositor,
-	    int *argc, char *argv[], const char *config_file)
-#else // defined(HAVE_WESTON_SDK3)
-WL_EXPORT int
-module_init(struct weston_compositor *compositor,
-	    int *argc, char *argv[])
-#endif
+wfits::wfits(struct weston_compositor *c)
+	: compositor(c)
+	, compositor_destroy_listener()
+	, input(NULL)
 {
-	struct wfits *wfits;
 	struct wl_event_loop *loop;
 	struct weston_seat *seat;
 	struct weston_output *output;
 
-	wfits = static_cast<struct wfits*>(malloc(sizeof *wfits));
-	if (wfits == NULL)
-		return -1;
-
-	memset(wfits, 0, sizeof *wfits);
-	wfits->compositor = compositor;
-
 	if (wl_display_add_global(compositor->wl_display,
 				  &wfits_input_interface,
-				  wfits, bind_input) == NULL) {
-		return -1;
+				  this, bind_input) == NULL) {
+		exit(EXIT_FAILURE);
 	}
 
 	if (wl_display_add_global(compositor->wl_display,
 				  &wfits_query_interface,
-				  wfits, bind_query) == NULL) {
-		return -1;
+				  this, bind_query) == NULL) {
+		exit(EXIT_FAILURE);
 	}
 
 	loop = wl_display_get_event_loop(compositor->wl_display);
-	wl_event_loop_add_idle(loop, init_input, wfits);
+	wl_event_loop_add_idle(loop, init_input, this);
 
-	wfits->compositor_destroy_listener.notify = compositor_destroy;
-	wl_signal_add(&compositor->destroy_signal, &wfits->compositor_destroy_listener);
-
-	return 0;
+	compositor_destroy_listener.notify = compositor_destroy;
+	wl_signal_add(&compositor->destroy_signal, &compositor_destroy_listener);
 }
-
-} // extern "C"
