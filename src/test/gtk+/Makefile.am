@@ -7,7 +7,8 @@ noinst_LTLIBRARIES = libwfits-gtk.la
 libwfits_gtk_la_SOURCES =		\
 	testharness.cpp			\
 	test_window_geometry.cpp	\
-	test_window_fullscreen.cpp
+	test_window_fullscreen.cpp	\
+	test_button.cpp
 
 AM_CXXFLAGS =				\
 	$(WAYLAND_CFLAGS)		\
