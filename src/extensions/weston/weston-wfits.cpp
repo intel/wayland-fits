@@ -70,14 +70,29 @@ struct x11_output {
 	xcb_window_t window;
 };
 
+class InputMode
+{
+public:
+	virtual ~InputMode() { }
+
+	/**
+	* Move the pointer to the desired compositor x,y coordinate.
+	**/
+	virtual void movePointer(const int32_t x, const int32_t y) const = 0;
+
+	/**
+	* Send a key event (mouse button, keyboard, etc.).
+	**/
+	virtual void keySend(const uint32_t key, const uint32_t state) const = 0;
+};
+
 /**
  * Global state for this plugin.
  **/
 struct wfits {
 	struct weston_compositor *compositor;
 	struct wl_listener compositor_destroy_listener;
-	int input_fd; // file descriptor for our uinput device.
-	bool is_headless; // whether weston is using a headless backend.
+	InputMode *input;
 };
 
 /**
@@ -87,7 +102,6 @@ struct wfits_input_client {
 	struct wfits *wfits;
 	std::set<uint32_t> *active_keys; // to keep track of currently active (pressed) keys
 };
-
 
 /**
  * Get the weston_seat associated with the Weston compositor.
@@ -211,88 +225,175 @@ compositor_to_global(struct wfits *wfits, int32_t *x, int32_t *y)
 	}
 }
 
-inline void
-write_event_to_fd(int fd, struct input_event *event)
+class InputModeUInput : public InputMode
 {
-	if (write(fd, event, sizeof(*event)) == -1)
+public:
+	InputModeUInput(struct wfits* wfits)
+		: wfits_(wfits)
+		, fd_(-1)
 	{
-		perror("write");
-	}
-}
+		struct uinput_user_dev device;
+		struct weston_output *output = get_output(wfits_);
+		int32_t width, height;
 
-/**
- * Move the pointer to the desired compositor x,y coordinate.
- **/
-static void
-move_pointer(struct wfits *wfits, const int32_t x, const int32_t y)
+		weston_log("weston-wfits: creating uinput device\n");
+
+		fd_ = open("/dev/uinput", O_WRONLY | O_NDELAY);
+		if (fd_ < 0) {
+			weston_log("weston-wfits: failed to create uinput device\n");
+			exit(EXIT_FAILURE);
+		}
+
+		if (ioctl(fd_, UI_SET_EVBIT, EV_KEY) < 0) {
+			exit(EXIT_FAILURE);
+		}
+
+		for (int32_t i(0); i < 255; ++i) {
+			if (ioctl(fd_, UI_SET_KEYBIT, i) < 0) {
+				exit(EXIT_FAILURE);
+			}
+		}
+
+		if (ioctl(fd_, UI_SET_KEYBIT, BTN_LEFT) < 0) {
+			exit(EXIT_FAILURE);
+		}
+
+		if (ioctl(fd_, UI_SET_KEYBIT, BTN_RIGHT) < 0) {
+			exit(EXIT_FAILURE);
+		}
+
+		if (ioctl(fd_, UI_SET_KEYBIT, BTN_MIDDLE) < 0) {
+			exit(EXIT_FAILURE);
+		}
+
+		if (ioctl(fd_, UI_SET_EVBIT, EV_ABS) < 0) {
+			exit(EXIT_FAILURE);
+		}
+
+		if (ioctl(fd_, UI_SET_ABSBIT, ABS_X) < 0) {
+			exit(EXIT_FAILURE);
+		}
+
+		if (ioctl(fd_, UI_SET_ABSBIT, ABS_Y) < 0) {
+			exit(EXIT_FAILURE);
+		}
+
+		memset(&device, 0, sizeof(device));
+		snprintf(device.name, UINPUT_MAX_NAME_SIZE, "WFITS UINPUT");
+		device.id.bustype = BUS_USB;
+		device.id.vendor  = 0x1;
+		device.id.product = 0x1;
+		device.id.version = 1;
+
+		/*
+		* TODO: Need to handle multidisplay, eventually.
+		*/
+		global_size(wfits_, &width, &height);
+		device.absmin[ABS_X] = 0;
+		device.absmax[ABS_X] = width - 1;
+		device.absmin[ABS_Y] = 0;
+		device.absmax[ABS_Y] = height - 1;
+
+		if (write(fd_, &device, sizeof(device)) < 0) {
+			exit(EXIT_FAILURE);
+		}
+
+		if (ioctl(fd_, UI_DEV_CREATE) < 0) {
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	virtual ~InputModeUInput()
+	{
+		weston_log("weston-wfits: destroying uinput device\n");
+
+		if (ioctl(fd_, UI_DEV_DESTROY) < 0) {
+			weston_log("weston-wfits: failed to destroy uinput device\n");
+		}
+	}
+
+	/*virtual*/ void movePointer(const int32_t x, const int32_t y) const
+	{
+		struct input_event event;
+		int32_t gx(x), gy(y);
+
+		compositor_to_global(wfits_, &gx, &gy);
+
+		memset(&event, 0, sizeof(event));
+
+		event.type = EV_ABS;
+		event.code = ABS_X;
+		event.value = gx;
+		writeEvent(&event);
+
+		event.type = EV_ABS;
+		event.code = ABS_Y;
+		event.value = gy;
+		writeEvent(&event);
+
+		event.type = EV_SYN;
+		event.code = SYN_REPORT;
+		event.value = 0;
+		writeEvent(&event);
+	}
+
+	/*virtual*/ void keySend(const uint32_t key, const uint32_t state) const
+	{
+		struct input_event event;
+
+		memset(&event, 0, sizeof(event));
+
+		event.type = EV_KEY;
+		event.code = key;
+		event.value = state;
+		writeEvent(&event);
+
+		event.type = EV_SYN;
+		event.code = SYN_REPORT;
+		event.value = 0;
+		writeEvent(&event);
+	}
+
+private:
+	inline void writeEvent(struct input_event *event) const
+	{
+		if (write(fd_, event, sizeof(*event)) == -1) {
+			perror("write");
+		}
+	}
+
+	struct wfits	*wfits_;
+	int		fd_;
+};
+
+class InputModeServer : public InputMode
 {
-	if (wfits->is_headless) {
-		/**
-		 * Weston is using a headless backend, so originate/trigger
-		 * the event via Weston.
-		 **/
-		struct weston_seat *seat = get_seat(wfits);
+public:
+	InputModeServer(struct wfits *wfits)
+		: wfits_(wfits)
+	{
+		return;
+	}
+
+	/*virtual*/ void movePointer(const int32_t x, const int32_t y) const
+	{
+		struct weston_seat *seat = get_seat(wfits_);
 		wl_fixed_t cx, cy;
-		get_pointer_xy(wfits, &cx, &cy);
+
+		wfits_->compositor->focus = 1;
+
+		get_pointer_xy(wfits_, &cx, &cy);
 
 		notify_motion(seat, 100,
 		      wl_fixed_from_int(x) - cx,
 		      wl_fixed_from_int(y) - cy);
-		return;
 	}
 
-	/**
-	 * Generate a pointer move event via uinput.
-	 **/
-	struct input_event event;
-	int32_t gx(x), gy(y);
+	/*virtual*/ void keySend(const uint32_t key, const uint32_t state) const
+	{
+		struct weston_seat *seat = get_seat(wfits_);
 
-	compositor_to_global(wfits, &gx, &gy);
-
-	memset(&event, 0, sizeof(event));
-
-	event.type = EV_ABS;
-	event.code = ABS_X;
-	event.value = gx;
-	write_event_to_fd (wfits->input_fd, &event);
-
-	event.type = EV_ABS;
-	event.code = ABS_Y;
-	event.value = gy;
-	write_event_to_fd (wfits->input_fd, &event);
-
-	event.type = EV_SYN;
-	event.code = SYN_REPORT;
-	event.value = 0;
-	write_event_to_fd (wfits->input_fd, &event);
-}
-
-/**
- * Client interface entry that just calls move_pointer(...).
- **/
-static void
-input_move_pointer(struct wl_client *client, struct wl_resource *resource,
-		   int32_t x, int32_t y)
-{
-	struct wfits_input_client *wfits_input_client =
-		static_cast<struct wfits_input_client*>(resource->data);
-	move_pointer(wfits_input_client->wfits, x, y);
-}
-
-/**
- * Send a key event (mouse button or keyboard).
- **/
-static void
-key_send(struct wfits *wfits, const uint32_t key, const uint32_t state)
-{
-	if (wfits->is_headless) {
-		/**
-		 * Weston is using a headless backend, so originate/trigger the
-		 * event via Weston.
-		 **/
-		struct weston_seat *seat = get_seat(wfits);
-
-		wfits->compositor->focus = 1;
+		wfits_->compositor->focus = 1;
 
 		if (key == BTN_LEFT or key == BTN_MIDDLE or key == BTN_RIGHT) {
 			notify_button(seat, 100, key,
@@ -303,26 +404,23 @@ key_send(struct wfits *wfits, const uint32_t key, const uint32_t state)
 				static_cast<wl_keyboard_key_state>(state),
 				STATE_UPDATE_AUTOMATIC);
 		}
-
-		return;
 	}
 
-	/**
-	 * Generate the event via uinput
-	 **/
-	struct input_event event;
+private:
+	struct wfits	*wfits_;
+};
 
-	memset(&event, 0, sizeof(event));
 
-	event.type = EV_KEY;
-	event.code = key;
-	event.value = state;
-	write_event_to_fd(wfits->input_fd, &event);
-
-	event.type = EV_SYN;
-	event.code = SYN_REPORT;
-	event.value = 0;
-	write_event_to_fd(wfits->input_fd, &event);
+/**
+ * Client interface entry.
+ **/
+static void
+input_move_pointer(struct wl_client *client, struct wl_resource *resource,
+		   int32_t x, int32_t y)
+{
+	struct wfits_input_client *wfits_input_client =
+		static_cast<struct wfits_input_client*>(resource->data);
+	wfits_input_client->wfits->input->movePointer(x, y);
 }
 
 /**
@@ -335,7 +433,7 @@ input_key_send(struct wl_client *client, struct wl_resource *resource,
 	struct wfits_input_client *wfits_input_client =
 		static_cast<struct wfits_input_client*>(resource->data);
 
-	key_send(wfits_input_client->wfits, key, state);
+	wfits_input_client->wfits->input->keySend(key, state);
 
 	/** Keep track of the keys currently active by this client **/
 	if (state) {
@@ -358,7 +456,7 @@ unbind_input_client(struct wl_resource *resource)
 
 	/** deactivate any keys the client left activated **/
 	foreach (uint32_t key, *wfits_input_client->active_keys) {
-		key_send(wfits_input_client->wfits, key, 0);
+		wfits_input_client->wfits->input->keySend(key, 0);
 	}
 
 	delete wfits_input_client->active_keys;
@@ -382,81 +480,6 @@ bind_input(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 		wfits_input_client
 	);
 	resource->destroy = unbind_input_client;
-}
-
-static void
-create_input(struct wfits* wfits)
-{
-	struct uinput_user_dev device;
-	struct weston_output *output = get_output(wfits);
-	int32_t width;
-	int32_t height;
-	
-	weston_log("weston-wfits: creating uinput device\n");
-
-	wfits->input_fd = open("/dev/uinput", O_WRONLY | O_NDELAY);
-	if (wfits->input_fd < 0) {
-		weston_log("weston-wfits: failed to create uinput device\n");
-		exit(EXIT_FAILURE);
-	}
-
-	if (ioctl(wfits->input_fd, UI_SET_EVBIT, EV_KEY) < 0) {
-		exit(EXIT_FAILURE);
-	}
-	
-	for (int32_t i(0); i < 255; ++i) {
-		if (ioctl(wfits->input_fd, UI_SET_KEYBIT, i) < 0) {
-			exit(EXIT_FAILURE);
-		}
-	}
-	
-	if (ioctl(wfits->input_fd, UI_SET_KEYBIT, BTN_LEFT) < 0) {
-		exit(EXIT_FAILURE);
-	}
-
-	if (ioctl(wfits->input_fd, UI_SET_KEYBIT, BTN_RIGHT) < 0) {
-		exit(EXIT_FAILURE);
-	}
-
-	if (ioctl(wfits->input_fd, UI_SET_KEYBIT, BTN_MIDDLE) < 0) {
-		exit(EXIT_FAILURE);
-	}
-
-	if (ioctl(wfits->input_fd, UI_SET_EVBIT, EV_ABS) < 0) {
-		exit(EXIT_FAILURE);
-	}
-
-	if (ioctl(wfits->input_fd, UI_SET_ABSBIT, ABS_X) < 0) {
-		exit(EXIT_FAILURE);
-	}
-
-	if (ioctl(wfits->input_fd, UI_SET_ABSBIT, ABS_Y) < 0) {
-		exit(EXIT_FAILURE);
-	}
-
-	memset(&device, 0, sizeof(device));
-	snprintf(device.name, UINPUT_MAX_NAME_SIZE, "WFITS INPUT");
-	device.id.bustype = BUS_USB;
-	device.id.vendor  = 0x1;
-	device.id.product = 0x1;
-	device.id.version = 1;
-
-	/*
-	 * TODO: Need to handle multidisplay, eventually.
-	 */
-	global_size(wfits, &width, &height);
-	device.absmin[ABS_X] = 0;
-	device.absmax[ABS_X] = width - 1;
-	device.absmin[ABS_Y] = 0;
-	device.absmax[ABS_Y] = height - 1;
-
-	if (write(wfits->input_fd, &device, sizeof(device)) < 0) {
-		exit(EXIT_FAILURE);
-	}
-
-	if (ioctl(wfits->input_fd, UI_DEV_CREATE) < 0) {
-		exit(EXIT_FAILURE);
-	}
 }
 
 static void
@@ -531,30 +554,29 @@ compositor_destroy(struct wl_listener *listener, void *data)
 	struct wfits *wfits = container_of(listener, struct wfits,
 		compositor_destroy_listener);
 
-	if (not wfits->is_headless) {
-		weston_log("weston-wfits: destroying uinput device\n");
-
-		if (ioctl(wfits->input_fd, UI_DEV_DESTROY) < 0) {
-			weston_log("weston-wfits: failed to destroy uinput device\n");
-		}
-	}
+	delete wfits->input;
+	delete wfits;
 }
 
 static void
 init_input(void *data)
 {
 	struct wfits *wfits = static_cast<struct wfits*>(data);
+	struct weston_output *output = get_output(wfits);
 
-	if (not wfits->is_headless) {
-		create_input(wfits);
+	if (not bool(std::string(output->model) == "headless")) {
+		wfits->input = new InputModeUInput(wfits);
+
 		/* sync our input pointer device with weston */
 		wl_fixed_t cx, cy;
 		get_pointer_xy(wfits, &cx, &cy);
-		move_pointer(wfits, wl_fixed_to_int(cx), wl_fixed_to_int(cy));
+		wfits->input->movePointer(wl_fixed_to_int(cx), wl_fixed_to_int(cy));
 	} else {
 		struct weston_seat *seat = get_seat(wfits);
 		weston_seat_init_pointer(seat);
 		weston_seat_init_keyboard(seat, NULL);
+
+		wfits->input = new InputModeServer(wfits);
 	}
 }
 
@@ -596,9 +618,6 @@ module_init(struct weston_compositor *compositor,
 				  wfits, bind_query) == NULL) {
 		return -1;
 	}
-
-	output = get_output(wfits);
-	wfits->is_headless = bool(std::string(output->model) == "headless");
 
 	loop = wl_display_get_event_loop(compositor->wl_display);
 	wl_event_loop_add_idle(loop, init_input, wfits);
