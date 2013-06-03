@@ -42,7 +42,6 @@ struct wfits {
 	wfits(struct weston_compositor *);
 
 	struct weston_compositor *compositor;
-	struct wl_listener compositor_destroy_listener;
 	class InputMode *input;
 };
 

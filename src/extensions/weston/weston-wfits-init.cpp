@@ -23,6 +23,24 @@
 #include "config.h"
 #include "weston-wfits.h"
 
+struct wfits_context {
+	struct wfits* wfits;
+	struct wl_listener compositor_destroy_listener;
+};
+
+static void
+compositor_destroy(struct wl_listener *listener, void *data)
+{
+	struct wfits_context *context = container_of(
+		listener,
+		struct wfits_context,
+		compositor_destroy_listener
+	);
+
+	delete context->wfits;
+	delete context;
+}
+
 extern "C" {
 
 #if defined(HAVE_WESTON_SDK1)
@@ -38,7 +56,12 @@ module_init(struct weston_compositor *compositor,
 	    int *argc, char *argv[])
 #endif
 {
-	struct wfits *wfits(new struct wfits(compositor));
+	struct wfits_context *context(
+		new struct wfits_context
+	);
+	context->wfits = new struct wfits(compositor);
+	context->compositor_destroy_listener.notify = compositor_destroy;
+	wl_signal_add(&compositor->destroy_signal, &context->compositor_destroy_listener);
 
 	return 0;
 }

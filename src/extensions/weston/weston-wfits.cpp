@@ -530,16 +530,6 @@ bind_query(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 }
 
 static void
-compositor_destroy(struct wl_listener *listener, void *data)
-{
-	struct wfits *wfits = container_of(listener, struct wfits,
-		compositor_destroy_listener);
-
-	delete wfits->input;
-	delete wfits;
-}
-
-static void
 init_input(void *data)
 {
 	struct wfits *wfits = static_cast<struct wfits*>(data);
@@ -563,12 +553,9 @@ init_input(void *data)
 
 wfits::wfits(struct weston_compositor *c)
 	: compositor(c)
-	, compositor_destroy_listener()
 	, input(NULL)
 {
 	struct wl_event_loop *loop;
-	struct weston_seat *seat;
-	struct weston_output *output;
 
 	if (wl_display_add_global(compositor->wl_display,
 				  &wfits_input_interface,
@@ -584,7 +571,4 @@ wfits::wfits(struct weston_compositor *c)
 
 	loop = wl_display_get_event_loop(compositor->wl_display);
 	wl_event_loop_add_idle(loop, init_input, this);
-
-	compositor_destroy_listener.notify = compositor_destroy;
-	wl_signal_add(&compositor->destroy_signal, &compositor_destroy_listener);
 }
