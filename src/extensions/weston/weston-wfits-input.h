@@ -20,41 +20,40 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef __WESTON_WFITS_H__
-#define __WESTON_WFITS_H__
+#ifndef __WESTON_WFITS_INPUT_H__
+#define __WESTON_WFITS_INPUT_H__
 
-/**
- * Weston SDK 1.0.x workaround for
- * https://bugs.freedesktop.org/show_bug.cgi?id=63485
- **/
-extern "C" {
-#define private configure_private
-#include <weston/compositor.h>
-#undef private
-}
-#include <wayland-server.h>
-
-#include "extensions/protocol/wayland-fits-server-protocol.h"
+#include <set>
+#include "weston-wfits.h"
 
 namespace wfits {
 namespace weston {
 
-class Globals
+class InputEmulator;
+
+class InputInterface
 {
+	typedef std::set<uint32_t> ActiveKeys;
 public:
-	static void init(struct weston_compositor *);
+	static void init();
 	static void destroy();
 
-	static struct weston_compositor *compositor();
-	static struct wl_display *display();
-	static struct wl_event_loop *eventLoop();
-	static struct weston_seat *seat();
-	static struct weston_output *output();
-	static void pointerXY(wl_fixed_t *x, wl_fixed_t *y);
-	static bool isHeadless();
+	static void keySend(const uint32_t key, const uint32_t state);
+	static void movePointer(const int32_t x, const int32_t y);
 
 private:
-	static struct weston_compositor *compositor_;
+	static void initEmulator(void *);
+
+	static void bind(struct wl_client *, void *, uint32_t, uint32_t);
+	static void unbind(struct wl_resource *);
+	static void keySend(struct wl_client *, struct wl_resource *,
+		uint32_t, uint32_t);
+	static void movePointer(struct wl_client *, struct wl_resource *,
+		int32_t, int32_t);
+
+	static const struct wfits_input_interface implementation;
+
+	static InputEmulator *emulator_;
 	static bool initialized_;
 };
 

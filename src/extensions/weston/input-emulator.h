@@ -20,42 +20,29 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef __WESTON_WFITS_H__
-#define __WESTON_WFITS_H__
+#ifndef __INPUT_EMULATOR_H__
+#define __INPUT_EMULATOR_H__
 
-/**
- * Weston SDK 1.0.x workaround for
- * https://bugs.freedesktop.org/show_bug.cgi?id=63485
- **/
-extern "C" {
-#define private configure_private
-#include <weston/compositor.h>
-#undef private
-}
-#include <wayland-server.h>
-
-#include "extensions/protocol/wayland-fits-server-protocol.h"
+#include "weston-wfits.h"
 
 namespace wfits {
 namespace weston {
 
-class Globals
+class InputEmulator
 {
 public:
-	static void init(struct weston_compositor *);
-	static void destroy();
+	InputEmulator() { }
+	virtual ~InputEmulator() { }
 
-	static struct weston_compositor *compositor();
-	static struct wl_display *display();
-	static struct wl_event_loop *eventLoop();
-	static struct weston_seat *seat();
-	static struct weston_output *output();
-	static void pointerXY(wl_fixed_t *x, wl_fixed_t *y);
-	static bool isHeadless();
+	/**
+	* Move the pointer to the desired compositor x,y coordinate.
+	**/
+	virtual void movePointer(const int32_t x, const int32_t y) const = 0;
 
-private:
-	static struct weston_compositor *compositor_;
-	static bool initialized_;
+	/**
+	* Send a key event (mouse button, keyboard, etc.).
+	**/
+	virtual void keySend(const uint32_t key, const uint32_t state) const = 0;
 };
 
 } // namespace weston

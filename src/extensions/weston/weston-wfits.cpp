@@ -20,81 +20,61 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <string>
-#include <cassert>
-#include <set>
-#include <linux/input.h>
-#include <linux/uinput.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <xcb/xcb.h>
-#include <X11/Xlib.h>
-#include <X11/Xlib-xcb.h>
-
-#include "weston-wfits.h"
 #include "config.h"
-#include "extensions/protocol/wayland-fits-server-protocol.h"
 #include "common/util.h"
+#include "weston-wfits.h"
 
-/** TODO: Convert this code to C++-style classes, methods, etc... **/
+namespace wfits {
+namespace weston {
 
-/**
- * This struct is a copy from Weston's x11-compositor.c.
- * When Weston is using the x11-backend, we can safely
- * cast a "struct weston_compositor" to one of these.
- **/
-struct x11_compositor {
-	struct weston_compositor base;
-	Display *dpy;
-	xcb_connection_t *conn;
-	xcb_screen_t *screen;
-};
+/*static*/ struct weston_compositor *Globals::compositor_(NULL);
+/*static*/ bool Globals::initialized_(false);
 
-/**
- * This struct is a copy from Weston's x11-compositor.c.
- * When Weston is using the x11-backend, we can safely
- * cast a "struct weston_output" to one of these.
- **/
-struct x11_output {
-	struct weston_output base;
-	xcb_window_t window;
-};
-
-class InputMode
+/*static*/
+void Globals::init(struct weston_compositor *compositor)
 {
-public:
-	virtual ~InputMode() { }
+	if (initialized_) return;
 
-	/**
-	* Move the pointer to the desired compositor x,y coordinate.
-	**/
-	virtual void movePointer(const int32_t x, const int32_t y) const = 0;
+	compositor_ = compositor;
+	initialized_ = true;
+}
 
-	/**
-	* Send a key event (mouse button, keyboard, etc.).
-	**/
-	virtual void keySend(const uint32_t key, const uint32_t state) const = 0;
-};
+/*static*/
+void Globals::destroy()
+{
+	weston_log("weston-wfits: %s\n", BOOST_CURRENT_FUNCTION);
+}
 
-/**
- * State for a connected input client.
- **/
-struct wfits_input_client {
-	struct wfits *wfits;
-	std::set<uint32_t> *active_keys; // to keep track of currently active (pressed) keys
-};
+/*static*/
+struct weston_compositor* Globals::compositor()
+{
+	assert(initialized_);
+
+	return compositor_;
+}
+
+/*static*/
+struct wl_display* Globals::display()
+{
+	return compositor()->wl_display;
+}
+
+/*static*/
+struct wl_event_loop* Globals::eventLoop()
+{
+	return wl_display_get_event_loop(display());
+}
 
 /**
  * Get the weston_seat associated with the Weston compositor.
  * Currently, only one (1) seat is supported by this plugin.
  **/
-static struct weston_seat *
-get_seat(struct wfits *wfits)
+struct weston_seat * Globals::seat()
 {
 	struct wl_list *seat_list;
 	struct weston_seat *seat;
 
-	seat_list = &wfits->compositor->seat_list;
+	seat_list = &compositor()->seat_list;
 	assert(wl_list_length(seat_list) == 1);
 	seat = container_of(seat_list->next, struct weston_seat, link);
 
@@ -104,10 +84,9 @@ get_seat(struct wfits *wfits)
 /**
  * Get the current x,y coordinate of the compositor pointer.
  **/
-static void
-get_pointer_xy(struct wfits *wfits, wl_fixed_t *x, wl_fixed_t *y)
+void Globals::pointerXY(wl_fixed_t *x, wl_fixed_t *y)
 {
-	struct weston_seat *seat = get_seat(wfits);
+	struct weston_seat *seat(Globals::seat());
 #if defined(HAVE_WESTON_SDK3)
 	*x = seat->pointer->x;
 	*y = seat->pointer->y;
@@ -117,16 +96,21 @@ get_pointer_xy(struct wfits *wfits, wl_fixed_t *x, wl_fixed_t *y)
 #endif
 }
 
+bool Globals::isHeadless()
+{
+	struct weston_output *output(Globals::output());
+	return "headless" == std::string(output->model);
+}
+
 /**
  * Get the weston_output associated with the Weston compositor.
  * Currently, only one (1) output is supported by this plugin.
  **/
-static struct weston_output *
-get_output(struct wfits *wfits)
+struct weston_output * Globals::output()
 {
 	struct wl_list *output_list;
 
-	output_list = &wfits->compositor->output_list;
+	output_list = &compositor()->output_list;
 	if (wl_list_length(output_list) != 1) {
 		weston_log("weston-wfits: ERROR: single output support only!\n");
 		assert(wl_list_length(output_list) == 1);
@@ -135,440 +119,5 @@ get_output(struct wfits *wfits)
 	return container_of(output_list->next, struct weston_output, link);
 }
 
-/**
- * Get the width and height (size) of the current display output.  If Weston is
- * using the x11 backend then the result is the size of the X screen.
- * Otherwise, the size of the Weston compositor output is the result.
- **/
-static void
-global_size(struct wfits *wfits, int32_t *width, int32_t *height)
-{
-	struct weston_output *output;
-	struct x11_compositor *x11_compositor = NULL;
-
-	output = get_output(wfits);
-
-	if (std::string(output->make) == "xwayland") {
-		x11_compositor = (struct x11_compositor*) wfits->compositor;
-		*width = x11_compositor->screen->width_in_pixels;
-		*height = x11_compositor->screen->height_in_pixels;
-	} else {
-		*width = output->width;
-		*height = output->height;
-	}
-}
-
-/**
- * Converts a Weston compositor x,y coordinate into a global coordinate.  When
- * Weston is using the x11 backend, the x,y coordinate is mapped to the X
- * display output (needed to correctly map a uinput pointer to weston).
- **/
-static void
-compositor_to_global(struct wfits *wfits, int32_t *x, int32_t *y)
-{
-	struct weston_output *output;
-	struct x11_compositor *x11_compositor = NULL;
-	struct x11_output *x11_output = NULL;
-	xcb_get_geometry_reply_t *geom;
-	xcb_translate_coordinates_reply_t *trans;
-
-	output = get_output(wfits);
-	if (std::string(output->make) == "xwayland") {
-		x11_compositor = (struct x11_compositor*) wfits->compositor;
-		x11_output = (struct x11_output*) output;
-
-		geom = xcb_get_geometry_reply(
-			x11_compositor->conn,
-			xcb_get_geometry(
-				x11_compositor->conn,
-				x11_output->window
-			),
-			NULL
-		);
-
-		trans = xcb_translate_coordinates_reply(
-			x11_compositor->conn,
-			xcb_translate_coordinates(
-				x11_compositor->conn,
-				x11_output->window,
-				geom->root,
-				-(geom->border_width),
-				-(geom->border_width)
-			),
-			NULL
-		);
-
-		*x += (int16_t)trans->dst_x;
-		*y += (int16_t)trans->dst_y;
-
-		free(trans);
-		free(geom);
-	}
-}
-
-class InputModeUInput : public InputMode
-{
-public:
-	InputModeUInput(struct wfits* wfits)
-		: wfits_(wfits)
-		, fd_(-1)
-	{
-		struct uinput_user_dev device;
-		struct weston_output *output = get_output(wfits_);
-		int32_t width, height;
-
-		weston_log("weston-wfits: creating uinput device\n");
-
-		fd_ = open("/dev/uinput", O_WRONLY | O_NDELAY);
-		if (fd_ < 0) {
-			weston_log("weston-wfits: failed to create uinput device\n");
-			exit(EXIT_FAILURE);
-		}
-
-		if (ioctl(fd_, UI_SET_EVBIT, EV_KEY) < 0) {
-			exit(EXIT_FAILURE);
-		}
-
-		for (int32_t i(0); i < 255; ++i) {
-			if (ioctl(fd_, UI_SET_KEYBIT, i) < 0) {
-				exit(EXIT_FAILURE);
-			}
-		}
-
-		if (ioctl(fd_, UI_SET_KEYBIT, BTN_LEFT) < 0) {
-			exit(EXIT_FAILURE);
-		}
-
-		if (ioctl(fd_, UI_SET_KEYBIT, BTN_RIGHT) < 0) {
-			exit(EXIT_FAILURE);
-		}
-
-		if (ioctl(fd_, UI_SET_KEYBIT, BTN_MIDDLE) < 0) {
-			exit(EXIT_FAILURE);
-		}
-
-		if (ioctl(fd_, UI_SET_EVBIT, EV_ABS) < 0) {
-			exit(EXIT_FAILURE);
-		}
-
-		if (ioctl(fd_, UI_SET_ABSBIT, ABS_X) < 0) {
-			exit(EXIT_FAILURE);
-		}
-
-		if (ioctl(fd_, UI_SET_ABSBIT, ABS_Y) < 0) {
-			exit(EXIT_FAILURE);
-		}
-
-		memset(&device, 0, sizeof(device));
-		snprintf(device.name, UINPUT_MAX_NAME_SIZE, "WFITS UINPUT");
-		device.id.bustype = BUS_USB;
-		device.id.vendor  = 0x1;
-		device.id.product = 0x1;
-		device.id.version = 1;
-
-		/*
-		* TODO: Need to handle multidisplay, eventually.
-		*/
-		global_size(wfits_, &width, &height);
-		device.absmin[ABS_X] = 0;
-		device.absmax[ABS_X] = width - 1;
-		device.absmin[ABS_Y] = 0;
-		device.absmax[ABS_Y] = height - 1;
-
-		if (write(fd_, &device, sizeof(device)) < 0) {
-			exit(EXIT_FAILURE);
-		}
-
-		if (ioctl(fd_, UI_DEV_CREATE) < 0) {
-			exit(EXIT_FAILURE);
-		}
-	}
-
-	virtual ~InputModeUInput()
-	{
-		weston_log("weston-wfits: destroying uinput device\n");
-
-		if (ioctl(fd_, UI_DEV_DESTROY) < 0) {
-			weston_log("weston-wfits: failed to destroy uinput device\n");
-		}
-	}
-
-	/*virtual*/ void movePointer(const int32_t x, const int32_t y) const
-	{
-		struct input_event event;
-		int32_t gx(x), gy(y);
-
-		compositor_to_global(wfits_, &gx, &gy);
-
-		memset(&event, 0, sizeof(event));
-
-		event.type = EV_ABS;
-		event.code = ABS_X;
-		event.value = gx;
-		writeEvent(&event);
-
-		event.type = EV_ABS;
-		event.code = ABS_Y;
-		event.value = gy;
-		writeEvent(&event);
-
-		event.type = EV_SYN;
-		event.code = SYN_REPORT;
-		event.value = 0;
-		writeEvent(&event);
-	}
-
-	/*virtual*/ void keySend(const uint32_t key, const uint32_t state) const
-	{
-		struct input_event event;
-
-		memset(&event, 0, sizeof(event));
-
-		event.type = EV_KEY;
-		event.code = key;
-		event.value = state;
-		writeEvent(&event);
-
-		event.type = EV_SYN;
-		event.code = SYN_REPORT;
-		event.value = 0;
-		writeEvent(&event);
-	}
-
-private:
-	inline void writeEvent(struct input_event *event) const
-	{
-		if (write(fd_, event, sizeof(*event)) == -1) {
-			perror("write");
-		}
-	}
-
-	struct wfits	*wfits_;
-	int		fd_;
-};
-
-class InputModeServer : public InputMode
-{
-public:
-	InputModeServer(struct wfits *wfits)
-		: wfits_(wfits)
-	{
-		return;
-	}
-
-	/*virtual*/ void movePointer(const int32_t x, const int32_t y) const
-	{
-		struct weston_seat *seat = get_seat(wfits_);
-		wl_fixed_t cx, cy;
-
-		wfits_->compositor->focus = 1;
-
-		get_pointer_xy(wfits_, &cx, &cy);
-
-		notify_motion(seat, 100,
-		      wl_fixed_from_int(x) - cx,
-		      wl_fixed_from_int(y) - cy);
-	}
-
-	/*virtual*/ void keySend(const uint32_t key, const uint32_t state) const
-	{
-		struct weston_seat *seat = get_seat(wfits_);
-
-		wfits_->compositor->focus = 1;
-
-		if (key == BTN_LEFT or key == BTN_MIDDLE or key == BTN_RIGHT) {
-			notify_button(seat, 100, key,
-				static_cast<wl_pointer_button_state>(state));
-		} else {
-			assert(key >= 0 and key < 255);
-			notify_key(seat, 100, key,
-				static_cast<wl_keyboard_key_state>(state),
-				STATE_UPDATE_AUTOMATIC);
-		}
-	}
-
-private:
-	struct wfits	*wfits_;
-};
-
-
-/**
- * Client interface entry.
- **/
-static void
-input_move_pointer(struct wl_client *client, struct wl_resource *resource,
-		   int32_t x, int32_t y)
-{
-	struct wfits_input_client *wfits_input_client =
-		static_cast<struct wfits_input_client*>(resource->data);
-	wfits_input_client->wfits->input->movePointer(x, y);
-}
-
-/**
- * Client interface entry that just calls key_send(...).
- **/
-static void
-input_key_send(struct wl_client *client, struct wl_resource *resource,
-	       uint32_t key, uint32_t state)
-{
-	struct wfits_input_client *wfits_input_client =
-		static_cast<struct wfits_input_client*>(resource->data);
-
-	wfits_input_client->wfits->input->keySend(key, state);
-
-	/** Keep track of the keys currently active by this client **/
-	if (state) {
-		wfits_input_client->active_keys->insert(key);
-	} else {
-		wfits_input_client->active_keys->erase(key);
-	}
-}
-
-static const struct wfits_input_interface wfits_input_implementation = {
-	input_move_pointer,
-	input_key_send,
-};
-
-static void
-unbind_input_client(struct wl_resource *resource)
-{
-	struct wfits_input_client *wfits_input_client =
-		static_cast<struct wfits_input_client*>(resource->data);
-
-	/** deactivate any keys the client left activated **/
-	foreach (uint32_t key, *wfits_input_client->active_keys) {
-		wfits_input_client->wfits->input->keySend(key, 0);
-	}
-
-	delete wfits_input_client->active_keys;
-	delete wfits_input_client;
-	free(resource);
-}
-
-static void
-bind_input(struct wl_client *client, void *data, uint32_t version, uint32_t id)
-{
-	struct wl_resource *resource;
-	struct wfits_input_client *wfits_input_client(
-		new struct wfits_input_client);
-
-	wfits_input_client->wfits = static_cast<struct wfits*>(data);
-	wfits_input_client->active_keys = new std::set<uint32_t>;
-
-	resource = wl_client_add_object(
-		client, &wfits_input_interface,
-		&wfits_input_implementation, id,
-		wfits_input_client
-	);
-	resource->destroy = unbind_input_client;
-}
-
-static void
-query_surface_geometry(struct wl_client *client, struct wl_resource *resource,
-		       struct wl_resource *surface_resource, uint32_t result_id)
-{
-	struct wl_resource result;
-	struct wfits *wfits = static_cast<struct wfits*>(resource->data);
-	struct weston_surface *surface =
-		static_cast<struct weston_surface*>(surface_resource->data);
-
-	memset(&result, 0, sizeof(result));
-	result.object.interface = &wfits_query_result_interface;
-	result.object.id = result_id;
-	result.destroy = NULL;
-	result.client = client;
-	result.data = NULL;
-
-	wl_client_add_resource(client, &result);
-
-	wfits_query_result_send_surface_geometry(
-		&result,
-		wl_fixed_from_double(surface->geometry.x),
-		wl_fixed_from_double(surface->geometry.y),
-		surface->geometry.width,
-		surface->geometry.height
-	);
-	wl_resource_destroy(&result);
-}
-
-static void
-query_global_pointer_position(struct wl_client *client,
-			      struct wl_resource *resource,
-			      uint32_t result_id)
-{
-	struct wl_resource result;
-	struct wfits *wfits = static_cast<struct wfits*>(resource->data);
-	struct weston_seat *seat = get_seat(wfits);
-	wl_fixed_t cx, cy;
-	get_pointer_xy(wfits, &cx, &cy);
-
-	memset(&result, 0, sizeof(result));
-	result.object.interface = &wfits_query_result_interface;
-	result.object.id = result_id;
-	result.destroy = NULL;
-	result.client = client;
-	result.data = NULL;
-
-	wl_client_add_resource(client, &result);
-	wfits_query_result_send_global_pointer_position(&result, cx, cy);
-	wl_resource_destroy(&result);
-}
-
-static const struct wfits_query_interface wfits_query_implementation = {
-	query_surface_geometry,
-	query_global_pointer_position,
-};
-
-static void
-bind_query(struct wl_client *client, void *data, uint32_t version, uint32_t id)
-{
-	struct wfits *wfits = static_cast<struct wfits*>(data);
-	struct wl_resource *resource;
-
-	resource = wl_client_add_object(client, &wfits_query_interface,
-		&wfits_query_implementation, id, wfits);
-}
-
-static void
-init_input(void *data)
-{
-	struct wfits *wfits = static_cast<struct wfits*>(data);
-	struct weston_output *output = get_output(wfits);
-
-	if (not bool(std::string(output->model) == "headless")) {
-		wfits->input = new InputModeUInput(wfits);
-
-		/* sync our input pointer device with weston */
-		wl_fixed_t cx, cy;
-		get_pointer_xy(wfits, &cx, &cy);
-		wfits->input->movePointer(wl_fixed_to_int(cx), wl_fixed_to_int(cy));
-	} else {
-		struct weston_seat *seat = get_seat(wfits);
-		weston_seat_init_pointer(seat);
-		weston_seat_init_keyboard(seat, NULL);
-
-		wfits->input = new InputModeServer(wfits);
-	}
-}
-
-wfits::wfits(struct weston_compositor *c)
-	: compositor(c)
-	, input(NULL)
-{
-	struct wl_event_loop *loop;
-
-	if (wl_display_add_global(compositor->wl_display,
-				  &wfits_input_interface,
-				  this, bind_input) == NULL) {
-		exit(EXIT_FAILURE);
-	}
-
-	if (wl_display_add_global(compositor->wl_display,
-				  &wfits_query_interface,
-				  this, bind_query) == NULL) {
-		exit(EXIT_FAILURE);
-	}
-
-	loop = wl_display_get_event_loop(compositor->wl_display);
-	wl_event_loop_add_idle(loop, init_input, this);
-}
+} // namespace weston
+} // namespace wfits

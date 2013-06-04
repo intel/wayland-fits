@@ -18,6 +18,10 @@ weston_wfits_la_LIBADD =			\
 weston_wfits_la_SOURCES =						\
 	weston-wfits.cpp						\
 	weston-wfits-init.cpp						\
+	weston-wfits-query.cpp						\
+	weston-wfits-input.cpp						\
+	input-emulator-uinput.cpp					\
+	input-emulator-server.cpp					\
 	$(top_srcdir)/src/extensions/protocol/wayland-fits-protocol.c
 
 endif

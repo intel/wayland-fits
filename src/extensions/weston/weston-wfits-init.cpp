@@ -22,23 +22,16 @@
 
 #include "config.h"
 #include "weston-wfits.h"
-
-struct wfits_context {
-	struct wfits* wfits;
-	struct wl_listener compositor_destroy_listener;
-};
+#include "weston-wfits-input.h"
+#include "weston-wfits-query.h"
 
 static void
 compositor_destroy(struct wl_listener *listener, void *data)
 {
-	struct wfits_context *context = container_of(
-		listener,
-		struct wfits_context,
-		compositor_destroy_listener
-	);
-
-	delete context->wfits;
-	delete context;
+	delete listener;
+	wfits::weston::QueryInterface::destroy();
+	wfits::weston::InputInterface::destroy();
+	wfits::weston::Globals::destroy();
 }
 
 extern "C" {
@@ -56,12 +49,14 @@ module_init(struct weston_compositor *compositor,
 	    int *argc, char *argv[])
 #endif
 {
-	struct wfits_context *context(
-		new struct wfits_context
-	);
-	context->wfits = new struct wfits(compositor);
-	context->compositor_destroy_listener.notify = compositor_destroy;
-	wl_signal_add(&compositor->destroy_signal, &context->compositor_destroy_listener);
+	struct wl_listener *listener(new struct wl_listener);
+
+	wfits::weston::Globals::init(compositor);
+	wfits::weston::InputInterface::init();
+	wfits::weston::QueryInterface::init();
+
+	listener->notify = compositor_destroy;
+	wl_signal_add(&compositor->destroy_signal, listener);
 
 	return 0;
 }

@@ -20,45 +20,66 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef __WESTON_WFITS_H__
-#define __WESTON_WFITS_H__
+#include <cassert>
+#include <linux/input.h>
 
-/**
- * Weston SDK 1.0.x workaround for
- * https://bugs.freedesktop.org/show_bug.cgi?id=63485
- **/
-extern "C" {
-#define private configure_private
-#include <weston/compositor.h>
-#undef private
-}
-#include <wayland-server.h>
-
-#include "extensions/protocol/wayland-fits-server-protocol.h"
+#include "common/util.h"
+#include "weston-wfits.h"
+#include "input-emulator-server.h"
 
 namespace wfits {
 namespace weston {
 
-class Globals
+InputEmulatorServer::InputEmulatorServer()
+	: InputEmulator::InputEmulator()
 {
-public:
-	static void init(struct weston_compositor *);
-	static void destroy();
+	return;
+}
 
-	static struct weston_compositor *compositor();
-	static struct wl_display *display();
-	static struct wl_event_loop *eventLoop();
-	static struct weston_seat *seat();
-	static struct weston_output *output();
-	static void pointerXY(wl_fixed_t *x, wl_fixed_t *y);
-	static bool isHeadless();
+/*virtual*/
+InputEmulatorServer::~InputEmulatorServer()
+{
+	weston_log("weston-wfits: %s\n", BOOST_CURRENT_FUNCTION);
+}
 
-private:
-	static struct weston_compositor *compositor_;
-	static bool initialized_;
-};
+/*virtual*/
+void InputEmulatorServer::movePointer(const int32_t x, const int32_t y) const
+{
+	struct weston_seat *seat(Globals::seat());
+	wl_fixed_t cx, cy;
+
+	Globals::compositor()->focus = 1;
+
+	Globals::pointerXY(&cx, &cy);
+
+	notify_motion(
+		seat, 100,
+		wl_fixed_from_int(x) - cx,
+		wl_fixed_from_int(y) - cy
+	);
+}
+
+/*virtual*/
+void InputEmulatorServer::keySend(const uint32_t key, const uint32_t state) const
+{
+	struct weston_seat *seat(Globals::seat());
+
+	Globals::compositor()->focus = 1;
+
+	if (key == BTN_LEFT or key == BTN_MIDDLE or key == BTN_RIGHT) {
+		notify_button(
+			seat, 100, key,
+			static_cast<wl_pointer_button_state>(state)
+		);
+	} else {
+		assert(key >= 0 and key < 255);
+		notify_key(
+			seat, 100, key,
+			static_cast<wl_keyboard_key_state>(state),
+			STATE_UPDATE_AUTOMATIC
+		);
+	}
+}
 
 } // namespace weston
 } // namespace wfits
-
-#endif

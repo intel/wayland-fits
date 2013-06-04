@@ -20,41 +20,29 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef __WESTON_WFITS_H__
-#define __WESTON_WFITS_H__
+#ifndef __WESTON_WFITS_QUERY_H__
+#define __WESTON_WFITS_QUERY_H__
 
-/**
- * Weston SDK 1.0.x workaround for
- * https://bugs.freedesktop.org/show_bug.cgi?id=63485
- **/
-extern "C" {
-#define private configure_private
-#include <weston/compositor.h>
-#undef private
-}
-#include <wayland-server.h>
-
-#include "extensions/protocol/wayland-fits-server-protocol.h"
+#include "weston-wfits.h"
 
 namespace wfits {
 namespace weston {
 
-class Globals
+class QueryInterface
 {
 public:
-	static void init(struct weston_compositor *);
+	static void init();
 	static void destroy();
 
-	static struct weston_compositor *compositor();
-	static struct wl_display *display();
-	static struct wl_event_loop *eventLoop();
-	static struct weston_seat *seat();
-	static struct weston_output *output();
-	static void pointerXY(wl_fixed_t *x, wl_fixed_t *y);
-	static bool isHeadless();
-
 private:
-	static struct weston_compositor *compositor_;
+	static void bind(struct wl_client *, void *, uint32_t, uint32_t);
+	static void surfaceGeometry(struct wl_client *, struct wl_resource *,
+		struct wl_resource *, uint32_t);
+	static void globalPointerPosition(struct wl_client *,
+		struct wl_resource *, uint32_t);
+
+	static const struct wfits_query_interface implementation;
+
 	static bool initialized_;
 };
 
