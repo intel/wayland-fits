@@ -40,11 +40,8 @@ void Globals::init(struct weston_compositor *compositor)
 
 	struct weston_seat *seat(Globals::seat());
 
-	if (not seat->pointer) {
+	if (isHeadless()) {
 		weston_seat_init_pointer(seat);
-	}
-
-	if (not seat->keyboard) {
 		weston_seat_init_keyboard(seat, NULL);
 	}
 }
