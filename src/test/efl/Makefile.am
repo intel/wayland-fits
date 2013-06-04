@@ -36,7 +36,6 @@ libwfits_efl_la_SOURCES = \
 	test_inwin.cpp			\
 	test_list.cpp			\
 	test_label.cpp			\
-	test_map.cpp			\
 	test_mapbuf.cpp			\
 	test_notify.cpp			\
 	test_panel.cpp			\
