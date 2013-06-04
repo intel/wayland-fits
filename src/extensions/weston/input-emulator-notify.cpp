@@ -35,7 +35,7 @@ namespace weston {
 InputEmulatorNotify::InputEmulatorNotify()
 	: InputEmulator::InputEmulator()
 {
-	return;
+	weston_log("weston-wfits: %s\n", BOOST_CURRENT_FUNCTION);
 }
 
 /*virtual*/
