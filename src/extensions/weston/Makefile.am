@@ -21,7 +21,7 @@ weston_wfits_la_SOURCES =						\
 	weston-wfits-query.cpp						\
 	weston-wfits-input.cpp						\
 	input-emulator-uinput.cpp					\
-	input-emulator-server.cpp					\
+	input-emulator-notify.cpp					\
 	$(top_srcdir)/src/extensions/protocol/wayland-fits-protocol.c
 
 endif

@@ -23,7 +23,7 @@
 #include "common/util.h"
 #include "input-emulator.h"
 #include "input-emulator-uinput.h"
-#include "input-emulator-server.h"
+#include "input-emulator-notify.h"
 
 #include "weston-wfits-input.h"
 
@@ -104,7 +104,7 @@ void InputInterface::initEmulator(void *data)
 		Globals::pointerXY(&cx, &cy);
 		InputInterface::movePointer(wl_fixed_to_int(cx), wl_fixed_to_int(cy));
 	} else {
-		emulator_ = new InputEmulatorServer();
+		emulator_ = new InputEmulatorNotify();
 
 		struct weston_seat *seat(Globals::seat());
 		weston_seat_init_pointer(seat);

@@ -20,19 +20,19 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef __INPUT_EMULATOR_SERVER_H__
-#define __INPUT_EMULATOR_SERVER_H__
+#ifndef __INPUT_EMULATOR_NOTIFY_H__
+#define __INPUT_EMULATOR_NOTIFY_H__
 
 #include "input-emulator.h"
 
 namespace wfits {
 namespace weston {
 
-class InputEmulatorServer : public InputEmulator
+class InputEmulatorNotify : public InputEmulator
 {
 public:
-	InputEmulatorServer();
-	virtual ~InputEmulatorServer();
+	InputEmulatorNotify();
+	virtual ~InputEmulatorNotify();
 
 	/*virtual*/ void movePointer(const int32_t x, const int32_t y) const;
 	/*virtual*/ void keySend(const uint32_t key, const uint32_t state) const;

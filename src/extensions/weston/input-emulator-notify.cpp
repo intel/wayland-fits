@@ -25,25 +25,25 @@
 
 #include "common/util.h"
 #include "weston-wfits.h"
-#include "input-emulator-server.h"
+#include "input-emulator-notify.h"
 
 namespace wfits {
 namespace weston {
 
-InputEmulatorServer::InputEmulatorServer()
+InputEmulatorNotify::InputEmulatorNotify()
 	: InputEmulator::InputEmulator()
 {
 	return;
 }
 
 /*virtual*/
-InputEmulatorServer::~InputEmulatorServer()
+InputEmulatorNotify::~InputEmulatorNotify()
 {
 	weston_log("weston-wfits: %s\n", BOOST_CURRENT_FUNCTION);
 }
 
 /*virtual*/
-void InputEmulatorServer::movePointer(const int32_t x, const int32_t y) const
+void InputEmulatorNotify::movePointer(const int32_t x, const int32_t y) const
 {
 	struct weston_seat *seat(Globals::seat());
 	wl_fixed_t cx, cy;
@@ -60,7 +60,7 @@ void InputEmulatorServer::movePointer(const int32_t x, const int32_t y) const
 }
 
 /*virtual*/
-void InputEmulatorServer::keySend(const uint32_t key, const uint32_t state) const
+void InputEmulatorNotify::keySend(const uint32_t key, const uint32_t state) const
 {
 	struct weston_seat *seat(Globals::seat());
 
