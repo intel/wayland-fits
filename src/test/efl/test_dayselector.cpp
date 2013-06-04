@@ -21,12 +21,14 @@
  */
 
 #include <Elementary.h>
+#include <boost/lexical_cast.hpp>
 #include <boost/bind.hpp>
 
+#include <string>
 #include <vector>
 
-#include "window.h"
 
+#include "window.h"
 #include "elmtestharness.h"
 #include "templates.h"
 
@@ -149,6 +151,121 @@ private:
 	EvasObject	control_;
 };
 
+class DayselectorUserTest : public ElmTestHarness
+{
+public:
+	DayselectorUserTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_("DayselectorUserTest", "Dayselector User Test", 350, 120)
+		, dayselector_(elm_dayselector_add(window_))
+		, rendered_(false)
+		, changed_(false)
+	{
+		return;
+	}
+
+	void setup()
+	{
+		evas_object_size_hint_weight_set(dayselector_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+		elm_win_resize_object_add(window_, dayselector_);
+
+		evas_event_callback_add(
+			evas_object_evas_get(window_),
+			EVAS_CALLBACK_RENDER_POST,
+			onPostRender, this
+		);
+
+		evas_object_smart_callback_add(dayselector_, "dayselector,changed", onDayselectorChanged, this);
+
+		window_.show();
+		dayselector_.show();
+
+		queueStep(boost::bind(&DayselectorUserTest::test, boost::ref(*this)));
+	}
+
+	void test(){
+		YIELD_UNTIL(rendered_);
+
+		for (unsigned i(0); i <= 5; ++i) {
+			const std::string dayStr("day" + boost::lexical_cast<std::string>(i));
+
+			changed_ = false;
+			clickDay(dayStr);
+			YIELD_UNTIL(changed_);
+
+			const Eina_Bool result = elm_dayselector_day_selected_get(
+				dayselector_,
+				static_cast<Elm_Dayselector_Day>(i + 1)
+			);
+			FAIL_IF(result == EINA_FALSE);
+		}
+
+		//This is done outside the loop because ELM_DAYSELECTOR_SUN=0
+		changed_ = false;
+		clickDay("day6");
+		YIELD_UNTIL(changed_);
+		const Eina_Bool result = elm_dayselector_day_selected_get(
+			dayselector_, ELM_DAYSELECTOR_SUN
+		);
+		FAIL_IF(result == EINA_FALSE);
+
+		//Test all are clicked.
+		testAllSelected();
+	}
+
+	void clickDay(const std::string &str)
+	{
+		EvasObject currentDay(elm_layout_content_get(dayselector_, str.c_str()), false);
+		Geometry gc(currentDay.getGeometry());
+		Geometry gw(getSurfaceGeometry(window_.get_wl_surface()));
+		Geometry gf(window_.getFramespaceGeometry());
+		Geometry gb(dayselector_.getGeometry());
+
+		setGlobalPointerPosition(
+			gw.x + gf.x + gc.x + gc.width / 2,
+			gw.y + gf.y + gc.y + gc.height / 2
+		);
+
+		inputKeySend(BTN_LEFT, 1);
+		inputKeySend(BTN_LEFT, 0);
+	}
+
+	void testAllSelected()
+	{
+		for (unsigned i(0); i <= 6; ++i) {
+			const Elm_Dayselector_Day day(
+				static_cast<Elm_Dayselector_Day>(i)
+			);
+			const Eina_Bool result(
+				elm_dayselector_day_selected_get(dayselector_, day)
+			);
+			FAIL_IF(result == EINA_FALSE);
+		}
+	}
+
+	static void onPostRender(void *data, Evas *e, void *info)
+	{
+		 evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, onPostRender);
+
+		 DayselectorUserTest *test = static_cast<DayselectorUserTest*>(data);
+		 test->rendered_ = true;
+		 std::cout << "...received post render event" << std::endl;
+	}
+
+	static void onDayselectorChanged(void *data, Evas *e, void *info)
+	{
+		 DayselectorUserTest *test = static_cast<DayselectorUserTest*>(data);
+		 test->changed_ = true;
+		 std::cout << "...received changed event" << std::endl;
+	}
+
+private:
+	Window		window_;
+	EvasObject	dayselector_;
+	bool		rendered_;
+	bool		changed_;
+};
+
 typedef ResizeObjectTest<Dayselector> DayselectorResizeTest;
 typedef PositionObjectTest<Dayselector> DayselectorPositionTest;
 typedef VisibleObjectTest<Dayselector> DayselectorVisibilityTest;
@@ -159,6 +276,7 @@ WFITS_EFL_HARNESS_TEST_CASE(DayselectorVisibilityTest)
 WFITS_EFL_HARNESS_TEST_CASE(DayselectorDayTest)
 WFITS_EFL_HARNESS_TEST_CASE(DayselectorLocaleTest)
 
+WFITS_EFL_HARNESS_TEST_CASE(DayselectorUserTest)
 } // namespace efl
 } // namespace test
 } // namespace wfits
