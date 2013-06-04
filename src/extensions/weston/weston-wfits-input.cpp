@@ -22,9 +22,6 @@
 
 #include "common/util.h"
 #include "input-emulator.h"
-#include "input-emulator-uinput.h"
-#include "input-emulator-notify.h"
-
 #include "weston-wfits-input.h"
 
 namespace wfits {
@@ -96,20 +93,24 @@ void InputInterface::unbind(struct wl_resource *resource)
 /*static*/
 void InputInterface::initEmulator(void *data)
 {
-	if (not Globals::isHeadless()) {
-		emulator_ = new InputEmulatorUInput();
+	const char* emu(getenv("WESTON_WFITS_INPUT_EMULATOR"));
+	std::string stremu;
 
-		/* sync our input pointer device with weston */
-		wl_fixed_t cx, cy;
-		Globals::pointerXY(&cx, &cy);
-		InputInterface::movePointer(wl_fixed_to_int(cx), wl_fixed_to_int(cy));
-	} else {
-		emulator_ = new InputEmulatorNotify();
-
-		struct weston_seat *seat(Globals::seat());
-		weston_seat_init_pointer(seat);
-		weston_seat_init_keyboard(seat, NULL);
+	if (not emu) {
+		if (Globals::isHeadless()) {
+			stremu = "notify";
+		}
+		else {
+			stremu = "uinput";
+		}
 	}
+	else {
+		stremu = std::string(emu);
+	}
+
+	emulator_ = InputEmulatorFactory::create(stremu);
+
+	assert(emulator_);
 }
 
 void InputInterface::keySend(const uint32_t key, const uint32_t state)

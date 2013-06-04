@@ -56,6 +56,8 @@ struct x11_output {
 namespace wfits {
 namespace weston {
 
+/*static*/ bool InputEmulatorUInput::registered_ = InputEmulatorFactory::registerEmulator("uinput", Create<InputEmulatorUInput>());
+
 /**
  * Get the width and height (size) of the current display output.  If Weston is
  * using the x11 backend then the result is the size of the X screen.
@@ -127,10 +129,10 @@ InputEmulatorUInput::InputEmulatorUInput()
 	, fd_(-1)
 {
 	struct uinput_user_dev device;
-	struct weston_output *output(Globals::output());
-	int32_t width, height;
 
-	weston_log("weston-wfits: creating uinput device\n");
+	weston_log("weston-wfits: %s\n", BOOST_CURRENT_FUNCTION);
+
+	assert(not Globals::isHeadless());
 
 	fd_ = open("/dev/uinput", O_WRONLY | O_NDELAY);
 	if (fd_ < 0) {
@@ -182,6 +184,7 @@ InputEmulatorUInput::InputEmulatorUInput()
 	/*
 	* TODO: Need to handle multidisplay, eventually.
 	*/
+	int32_t width, height;
 	screenSize(&width, &height);
 	device.absmin[ABS_X] = 0;
 	device.absmax[ABS_X] = width - 1;
@@ -195,6 +198,11 @@ InputEmulatorUInput::InputEmulatorUInput()
 	if (ioctl(fd_, UI_DEV_CREATE) < 0) {
 		exit(EXIT_FAILURE);
 	}
+
+	/* sync our input pointer device with weston */
+	wl_fixed_t cx, cy;
+	Globals::pointerXY(&cx, &cy);
+	movePointer(wl_fixed_to_int(cx), wl_fixed_to_int(cy));
 }
 
 /*virtual*/

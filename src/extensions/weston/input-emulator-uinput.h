@@ -41,6 +41,8 @@ private:
 	void writeEvent(struct input_event *event) const;
 
 	int fd_;
+
+	static bool registered_;
 };
 
 } // namespace weston

@@ -36,6 +36,9 @@ public:
 
 	/*virtual*/ void movePointer(const int32_t x, const int32_t y) const;
 	/*virtual*/ void keySend(const uint32_t key, const uint32_t state) const;
+
+private:
+	static bool registered_;
 };
 
 } // namespace weston

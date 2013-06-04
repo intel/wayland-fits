@@ -20,6 +20,7 @@ weston_wfits_la_SOURCES =						\
 	weston-wfits-init.cpp						\
 	weston-wfits-query.cpp						\
 	weston-wfits-input.cpp						\
+	input-emulator.cpp						\
 	input-emulator-uinput.cpp					\
 	input-emulator-notify.cpp					\
 	$(top_srcdir)/src/extensions/protocol/wayland-fits-protocol.c

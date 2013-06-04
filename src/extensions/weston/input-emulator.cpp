@@ -20,67 +20,30 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <cassert>
-#include <linux/input.h>
-
-#include "common/util.h"
-#include "weston-wfits.h"
-#include "input-emulator-notify.h"
+#include "input-emulator.h"
 
 namespace wfits {
 namespace weston {
 
-/*static*/ bool InputEmulatorNotify::registered_ = InputEmulatorFactory::registerEmulator("notify", Create<InputEmulatorNotify>());
+/*static*/ InputEmulatorFactory::Creators InputEmulatorFactory::creators_;
 
-InputEmulatorNotify::InputEmulatorNotify()
-	: InputEmulator::InputEmulator()
+/*static*/ bool InputEmulatorFactory::registerEmulator(const std::string& name, Creator creator)
 {
-	return;
+	std::pair<Creators::iterator, bool> result;
+	result = creators_.insert(std::make_pair(name, creator));
+	return result.second;
 }
 
-/*virtual*/
-InputEmulatorNotify::~InputEmulatorNotify()
+/*static*/ InputEmulator* InputEmulatorFactory::create(const std::string& name)
 {
-	weston_log("weston-wfits: %s\n", BOOST_CURRENT_FUNCTION);
-}
-
-/*virtual*/
-void InputEmulatorNotify::movePointer(const int32_t x, const int32_t y) const
-{
-	struct weston_seat *seat(Globals::seat());
-	wl_fixed_t cx, cy;
-
-	Globals::compositor()->focus = 1;
-
-	Globals::pointerXY(&cx, &cy);
-
-	notify_motion(
-		seat, 100,
-		wl_fixed_from_int(x) - cx,
-		wl_fixed_from_int(y) - cy
-	);
-}
-
-/*virtual*/
-void InputEmulatorNotify::keySend(const uint32_t key, const uint32_t state) const
-{
-	struct weston_seat *seat(Globals::seat());
-
-	Globals::compositor()->focus = 1;
-
-	if (key == BTN_LEFT or key == BTN_MIDDLE or key == BTN_RIGHT) {
-		notify_button(
-			seat, 100, key,
-			static_cast<wl_pointer_button_state>(state)
-		);
-	} else {
-		assert(key >= 0 and key < 255);
-		notify_key(
-			seat, 100, key,
-			static_cast<wl_keyboard_key_state>(state),
-			STATE_UPDATE_AUTOMATIC
-		);
+	const Creators::const_iterator creator(creators_.find(name));
+	if (creator == creators_.end())
+	{
+		weston_log("weston-wfits: warning, no input emulator named '%s' found\n", name.c_str());
+		return NULL;
 	}
+
+	return creator->second();
 }
 
 } // namespace weston

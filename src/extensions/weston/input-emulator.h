@@ -23,6 +23,8 @@
 #ifndef __INPUT_EMULATOR_H__
 #define __INPUT_EMULATOR_H__
 
+#include <map>
+#include "common/util.h"
 #include "weston-wfits.h"
 
 namespace wfits {
@@ -43,6 +45,29 @@ public:
 	* Send a key event (mouse button, keyboard, etc.).
 	**/
 	virtual void keySend(const uint32_t key, const uint32_t state) const = 0;
+};
+
+class InputEmulatorFactory
+{
+public:
+	typedef boost::function<InputEmulator* (void)> Creator;
+	typedef std::map<std::string, Creator> Creators;
+
+	static bool registerEmulator(const std::string&, Creator);
+	static InputEmulator* create(const std::string&);
+
+private:
+	static Creators creators_;
+};
+
+template <class T>
+class Create
+{
+public:
+	T* operator()()
+	{
+		return new T;
+	}
 };
 
 } // namespace weston

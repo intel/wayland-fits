@@ -37,6 +37,16 @@ void Globals::init(struct weston_compositor *compositor)
 
 	compositor_ = compositor;
 	initialized_ = true;
+
+	struct weston_seat *seat(Globals::seat());
+
+	if (not seat->pointer) {
+		weston_seat_init_pointer(seat);
+	}
+
+	if (not seat->keyboard) {
+		weston_seat_init_keyboard(seat, NULL);
+	}
 }
 
 /*static*/
