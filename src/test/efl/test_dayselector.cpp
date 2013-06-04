@@ -252,7 +252,7 @@ public:
 		 std::cout << "...received post render event" << std::endl;
 	}
 
-	static void onDayselectorChanged(void *data, Evas *e, void *info)
+	static void onDayselectorChanged(void *data, Evas_Object *eo, void *info)
 	{
 		 DayselectorUserTest *test = static_cast<DayselectorUserTest*>(data);
 		 test->changed_ = true;
