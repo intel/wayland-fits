@@ -27,7 +27,7 @@ m4_define([check_req_version],		[0.9.8])
 m4_define([wayland_req_version],	[1.0.6])
 m4_define([weston_req_version],		[1.0.6])
 m4_define([efl_req_version],		[1.7.6])
-m4_define([gtk_req_version],		[3.9.0])
+m4_define([gtk_req_version],		[3.8.0])
 
 PKG_CHECK_MODULES([CHECK], [check >= check_req_version])
 PKG_CHECK_MODULES([WAYLAND],
