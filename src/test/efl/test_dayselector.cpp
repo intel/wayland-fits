@@ -201,8 +201,26 @@ public:
 			FAIL_IF(result == EINA_FALSE);
 		}
 
-		//Test all are clicked.
-		testAllSelected();
+		//Test all are selected.
+		testAllSelected(EINA_TRUE);
+
+		for (unsigned i(0); i <= 6; ++i) {
+			// ELM_DAYSELECTOR_SUN=0; dayStr = day6
+			const std::string dayStr("day" + boost::lexical_cast<std::string>(i));
+
+			changed_ = false;
+			clickDay(dayStr);
+			YIELD_UNTIL(changed_);
+
+			const Eina_Bool result = elm_dayselector_day_selected_get(
+				dayselector_,
+				static_cast<Elm_Dayselector_Day>( (i + 1) % 7)
+			);
+			FAIL_IF(result == EINA_TRUE);
+		}
+
+		//Test all are deselected.
+		testAllSelected(EINA_FALSE);
 	}
 
 	void clickDay(const std::string &str)
@@ -222,7 +240,7 @@ public:
 		inputKeySend(BTN_LEFT, 0);
 	}
 
-	void testAllSelected()
+	void testAllSelected(Eina_Bool selected)
 	{
 		for (unsigned i(0); i <= 6; ++i) {
 			const Elm_Dayselector_Day day(
@@ -231,7 +249,7 @@ public:
 			const Eina_Bool result(
 				elm_dayselector_day_selected_get(dayselector_, day)
 			);
-			FAIL_IF(result == EINA_FALSE);
+			FAIL_UNLESS_EQUAL(result, selected);
 		}
 	}
 
