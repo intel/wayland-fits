@@ -186,7 +186,8 @@ public:
 	void test(){
 		YIELD_UNTIL(rendered_);
 
-		for (unsigned i(0); i <= 5; ++i) {
+		for (unsigned i(0); i <= 6; ++i) {
+			// ELM_DAYSELECTOR_SUN=0; dayStr = day6
 			const std::string dayStr("day" + boost::lexical_cast<std::string>(i));
 
 			changed_ = false;
@@ -195,19 +196,10 @@ public:
 
 			const Eina_Bool result = elm_dayselector_day_selected_get(
 				dayselector_,
-				static_cast<Elm_Dayselector_Day>(i + 1)
+				static_cast<Elm_Dayselector_Day>( (i + 1) % 7)
 			);
 			FAIL_IF(result == EINA_FALSE);
 		}
-
-		//This is done outside the loop because ELM_DAYSELECTOR_SUN=0
-		changed_ = false;
-		clickDay("day6");
-		YIELD_UNTIL(changed_);
-		const Eina_Bool result = elm_dayselector_day_selected_get(
-			dayselector_, ELM_DAYSELECTOR_SUN
-		);
-		FAIL_IF(result == EINA_FALSE);
 
 		//Test all are clicked.
 		testAllSelected();
