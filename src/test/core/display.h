@@ -43,16 +43,21 @@ public:
 	template <typename T>
 	T* bind(
 		const std::string& interface,
-		const wl_interface *wl_interface) const
+		const wl_interface *wl_interface,
+		uint32_t version = 0) const
 	{
 		const Globals::const_iterator match(globals_.find(interface));
 
 		ASSERT(match != globals_.end());
 
+		if (0 == version) {
+			version = match->second.second;
+		}
+
 		return static_cast<T*>(
 			wl_registry_bind(
 				wl_registry_, match->second.first, wl_interface,
-				match->second.second));
+				version));
 	}
 
 	void roundtrip() const;

@@ -28,7 +28,7 @@ namespace core {
 
 Seat::Seat(const Display& display)
 	: display_(display)
-	, wl_seat_(display.bind<wl_seat>("wl_seat", &wl_seat_interface))
+	, wl_seat_(display.bind<wl_seat>("wl_seat", &wl_seat_interface, 1))
 	, capabilities_(0)
 {
 	ASSERT(wl_seat_ != NULL);
