@@ -42,7 +42,8 @@ public:
 
 private:
 	static void capabilities(void*, wl_seat*, uint32_t);
-	
+	static void name(void*, wl_seat*, const char*);
+
 	const Display&		display_;
 	wl_seat*		wl_seat_;
 	uint32_t		capabilities_;

@@ -35,7 +35,7 @@ Seat::Seat(const Display& display)
 
 	wl_seat_set_user_data(*this, this);
 
-	static const wl_seat_listener listener = {capabilities};
+	static const wl_seat_listener listener = {capabilities, name};
 	wl_seat_add_listener(*this, &listener, this);
 
 	display.roundtrip();
@@ -53,6 +53,11 @@ Seat::Seat(const Display& display)
 	ASSERT(wl_seat == *seat);
 
 	seat->capabilities_ = caps;
+}
+
+/*static*/ void Seat::name(void *data, wl_seat *wl_seat, const char *name)
+{
+	return;
 }
 
 namespace wrapper {
