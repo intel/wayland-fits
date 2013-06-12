@@ -55,7 +55,7 @@ void InputEmulatorNotify::movePointer(const int32_t x, const int32_t y) const
 	Globals::pointerXY(&cx, &cy);
 
 	notify_motion(
-		seat, 100,
+		seat, weston_compositor_get_time(),
 		wl_fixed_from_int(x) - cx,
 		wl_fixed_from_int(y) - cy
 	);
@@ -70,13 +70,13 @@ void InputEmulatorNotify::keySend(const uint32_t key, const uint32_t state) cons
 
 	if (key == BTN_LEFT or key == BTN_MIDDLE or key == BTN_RIGHT) {
 		notify_button(
-			seat, 100, key,
+			seat, weston_compositor_get_time(), key,
 			static_cast<wl_pointer_button_state>(state)
 		);
 	} else {
 		assert(key >= 0 and key < 255);
 		notify_key(
-			seat, 100, key,
+			seat, weston_compositor_get_time(), key,
 			static_cast<wl_keyboard_key_state>(state),
 			STATE_UPDATE_AUTOMATIC
 		);
