@@ -63,7 +63,7 @@ void Harness::runNextStep()
 	step();
 }
 
-Geometry Harness::getSurfaceGeometry(wl_surface *surface)
+Geometry Harness::getSurfaceGeometry(wl_surface *surface) const
 {
 	Client::QueryRequest* request = client().makeGeometryRequest(surface);
 

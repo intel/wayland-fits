@@ -52,7 +52,7 @@ public:
 	void		runNextStep();
 	bool		haveStep() const;
 
-	Geometry	getSurfaceGeometry(wl_surface*);
+	Geometry	getSurfaceGeometry(wl_surface*) const;
 	void		setGlobalPointerPosition(int32_t, int32_t) const;
 	void		setGlobalPointerPosition(const Position&) const;
 	Position	getGlobalPointerPosition() const;
