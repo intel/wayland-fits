@@ -103,7 +103,7 @@ public:
 
 	void checkFocus(const bool focus)
 	{
-		YIELD_UNTIL(pointer_.hasFocus(&surface_) == focus);
+		YIELD_UNTIL(pointer_.hasFocus(surface_) == focus);
 	}
 
 	void checkPointer(const uint32_t x, const uint32_t y)

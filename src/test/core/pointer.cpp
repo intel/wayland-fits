@@ -20,7 +20,6 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "surface.h"
 #include "pointer.h"
 
 namespace wfits {
@@ -37,6 +36,7 @@ Pointer::Pointer(const Seat& seat)
 	, axis_(0)
 	, axisValue_(0.f)
 	, wl_pointer_(NULL)
+	, btnNotify_()
 {
 	ASSERT(seat.capabilities() & WL_SEAT_CAPABILITY_POINTER);
 
@@ -57,7 +57,7 @@ Pointer::Pointer(const Seat& seat)
 	wl_pointer_destroy(*this);
 }
 
-bool Pointer::hasFocus(const Surface* surface)
+bool Pointer::hasFocus(wl_surface* surface)
 {
 	return focus() == surface;
 }
@@ -72,8 +72,7 @@ bool Pointer::hasFocus(const Surface* surface)
 // 	std::cout << "Pointer::enter(): " << wl_fixed_to_int(x) << " "
 // 		<< wl_fixed_to_int(y) << std::endl;
 	
-	pointer->focus_ = static_cast<Surface*>(
-		wl_surface_get_user_data(wl_surface));
+	pointer->focus_ = wl_surface;
 	pointer->x_ = wl_fixed_to_int(x);
 	pointer->y_ = wl_fixed_to_int(y);
 }
@@ -118,6 +117,13 @@ bool Pointer::hasFocus(const Surface* surface)
 
 	pointer->button_ = button;
 	pointer->buttonState_ = state;
+
+	ButtonEvent event;
+	event.serial	= serial;
+	event.time	= time;
+	event.button	= button;
+	event.state	= state;
+	pointer->btnNotify_(*pointer, event);
 }
 
 /*static*/ void Pointer::axis(
@@ -132,6 +138,11 @@ bool Pointer::hasFocus(const Surface* surface)
 
 	pointer->axis_ = axis;
 	pointer->axisValue_ = wl_fixed_to_double(value);
+}
+
+boost::signals2::connection Pointer::bind(const OnButtonCallback& callback)
+{
+	return btnNotify_.connect(callback);
 }
 
 namespace wrapper {
