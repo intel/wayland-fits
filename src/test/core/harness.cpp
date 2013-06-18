@@ -29,6 +29,7 @@ namespace core {
 Harness::Harness()
 	: test::Harness::Harness()
 	, display_()
+	, client_(display_)
 {
 	return;
 }
@@ -57,8 +58,7 @@ void Harness::yield(const unsigned time) const
 
 const test::Client& Harness::client() const
 {
-	static const test::Client c(display_);
-	return c;
+	return client_;
 }
 
 class SimpleTest : public Harness

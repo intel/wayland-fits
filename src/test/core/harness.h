@@ -48,6 +48,7 @@ private:
 	void runStep(TestStep step) const;
 
 	Display display_;
+	Client client_;
 };
 
 #define WFITS_CORE_HARNESS_TEST_CASE(HarnessClass) \
