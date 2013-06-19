@@ -134,7 +134,7 @@ public:
 		std::cout << "...target geometry: " << gt << std::endl;
 
 		std::cout << "...moving pointer to source" << std::endl;
-		setGlobalPointerPosition(gs.x + 2, gs.y + 2);
+		setGlobalPointerPosition(gs.x + 2, gs.y + 3);
 
 		std::cout << "...checking source has pointer focus" << std::endl;
 		YIELD_UNTIL(pointer_.hasFocus(source_));
@@ -150,8 +150,38 @@ public:
 		std::cout << "...checking NULL has pointer focus" << std::endl;
 		YIELD_UNTIL(pointer_.hasFocus(NULL));
 
+		// drag will be presented to source initially
+		std::cout << "...checking data offered to source" << std::endl;
+		YIELD_UNTIL(source_.offer() != NULL);
+
+		std::cout << "...checking offer position" << std::endl;
+		Position p(source_.offer()->position());
+		FAIL_UNLESS_EQUAL(p.x, 2);
+		FAIL_UNLESS_EQUAL(p.y, 3);
+
 		std::cout << "...moving pointer to target" << std::endl;
-		setGlobalPointerPosition(gt.x + 5, gt.y + 5);
+		setGlobalPointerPosition(gt.x + 5, gt.y + 4);
+
+		std::cout << "...checking offer leave source" << std::endl;
+		YIELD_UNTIL(source_.offer() == NULL);
+
+		std::cout << "...checking data offered to target" << std::endl;
+		YIELD_UNTIL(target_.offer() != NULL);
+
+		std::cout << "...checking offer position" << std::endl;
+		p = target_.offer()->position();
+		FAIL_UNLESS_EQUAL(p.x, 5);
+		FAIL_UNLESS_EQUAL(p.y, 4);
+
+		// trigger data device "motion"
+		std::cout << "...moving pointer around target" << std::endl;
+		setGlobalPointerPosition(gt.x + 6, gt.y + 5);
+
+		std::cout << "...checking offer position" << std::endl;
+		YIELD_UNTIL(
+			target_.offer()->position().x == 6
+			and target_.offer()->position().y == 5
+		);
 
 		std::cout << "...releasing mouse left button" << std::endl;
 		inputKeySend(BTN_LEFT, 0);
@@ -160,9 +190,12 @@ public:
 		std::cout << "...checking for drop sent" << std::endl;
 		YIELD_UNTIL(source_.sent());
 
-		std::cout << "...checking for drop received" << std::endl;
+		std::cout << "...checking target received drop" << std::endl;
 		std::string data(target_.readDropData());
 		FAIL_UNLESS_EQUAL(data, "Test Drag-N-Drop!!");
+
+		std::cout << "...checking offer leave target" << std::endl;
+		YIELD_UNTIL(target_.offer() == NULL);
 	}
 
 private:
