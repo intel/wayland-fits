@@ -40,6 +40,7 @@ DataTarget::DataTarget(const std::string& t)
 
 void DataTarget::offer(const DataOffer& offer)
 {
+	offer_ = NULL;
 	if (offer.type() == type_) {
 		offer_ = &offer;
 		offer.accept();
@@ -52,6 +53,11 @@ void DataTarget::drop(const DataOffer& offer)
 		ASSERT(offer_ == &offer);
 		fd_ = offer.receive();
 	}
+}
+
+void DataTarget::leave()
+{
+	offer_ = NULL;
 }
 
 const char * DataTarget::readDropData()

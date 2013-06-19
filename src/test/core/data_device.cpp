@@ -75,6 +75,8 @@ void DataDevice::leave()
 {
 	delete offer_;
 
+	target_->leave();
+
 	offer_ = NULL;
 	target_ = NULL;
 }

@@ -36,10 +36,12 @@ public:
 
 	void offer(const class DataOffer&);
 	void drop(const class DataOffer&);
+	void leave();
 
 	const char * readDropData();
 
 	const std::string& type() const { return type_; }
+	class DataOffer const* offer() const { return offer_; }
 
 private:
 	const std::string	type_;
