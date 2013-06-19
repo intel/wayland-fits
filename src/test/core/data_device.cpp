@@ -81,6 +81,7 @@ void DataDevice::leave()
 
 void DataDevice::motion(int32_t x, int32_t y, uint32_t time)
 {
+	offer_->setPosition(x, y);
 	target_->offer(*offer_);
 }
 
