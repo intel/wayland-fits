@@ -20,6 +20,8 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+//---- Use EO API ----//
+#define EFL_EO_API_SUPPORT
 //---- The following set of defines/includes make this work for 1.7.x ----//
 #define ELM_INTERNAL_API_ARGESFSDFEFC
 #include <Evas.h>
