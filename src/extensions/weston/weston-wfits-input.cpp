@@ -87,7 +87,14 @@ void InputInterface::unbind(struct wl_resource *resource)
 	}
 
 	delete keys;
-	delete resource;
+
+	/* FIXME: Don't delete wl_resource in Wayland 1.2. They are now
+	 * managed by the wayland server.
+	 * However, for Wayland < 1.2 we should delete them... but for now
+	 * just let it leak until we have time to fix this (i.e. do a
+	 * compile time version check) :-/.
+	 */
+// 	delete resource;
 }
 
 /*static*/
