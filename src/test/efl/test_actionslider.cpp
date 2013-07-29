@@ -21,7 +21,9 @@
  */
 
 //---- Use EO API ----//
-#define EFL_EO_API_SUPPORT
+#define EFL_EO_API_SUPPORT // #undef is at end-of-file
+#define EFL_BETA_API_SUPPORT // #undef is at end-of-file
+
 //---- The following set of defines/includes make this work for 1.7.x ----//
 #define ELM_INTERNAL_API_ARGESFSDFEFC
 #include <Evas.h>
@@ -252,3 +254,6 @@ WFITS_EFL_HARNESS_TEST_CASE(ActionSliderUserTest)
 } // namespace efl
 } // namespace test
 } // namespace wfits
+
+#undef EFL_EO_API_SUPPORT
+#undef EFL_BETA_API_SUPPORT
