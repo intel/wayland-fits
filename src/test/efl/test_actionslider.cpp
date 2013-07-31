@@ -55,9 +55,8 @@ public:
 
 	Geometry getButtonGeometry() const
 	{
-#pragma GCC diagnostic ignored "-fpermissive"
-		ELM_ACTIONSLIDER_DATA_GET(*this, sd);
-#pragma GCC diagnostic error "-fpermissive"
+		Elm_Actionslider_Smart_Data *sd = static_cast<Elm_Actionslider_Smart_Data *>(
+			eo_data_scope_get(*this, ELM_OBJ_ACTIONSLIDER_CLASS));
 
 		EvasObject o(sd->drag_button_base, false);
 		return o.getGeometry();
