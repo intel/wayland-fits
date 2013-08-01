@@ -121,6 +121,17 @@ if test "x$want_efl_tests" != "xno"; then
 		[
 			AC_DEFINE(HAVE_EFL, 1, [Support for EFL Tests])
 			have_efl="yes"
+			PKG_CHECK_MODULES([ELM_1_7],
+				[
+					elementary >= 1.7.0
+					elementary < 1.7.99
+				],
+				[
+					AC_DEFINE(HAVE_ELM_1_7, 1, [Support for ELM 1.7.x])
+					have_elm_1_7="yes"
+				],
+				[have_elm_1_7="no"]
+			)
 		],
 		[have_efl="no"]
 	)

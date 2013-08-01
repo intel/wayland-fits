@@ -55,10 +55,13 @@ public:
 
 	Geometry getButtonGeometry() const
 	{
-#pragma GCC diagnostic ignored "-fpermissive"
-		ELM_ACTIONSLIDER_DATA_GET(*this, sd);
-#pragma GCC diagnostic error "-fpermissive"
-
+		#if defined(HAVE_ELM_1_7)
+		Elm_Actionslider_Smart_Data *sd = static_cast<Elm_Actionslider_Smart_Data*>(
+			evas_object_smart_data_get(o));
+		#else
+		Elm_Actionslider_Smart_Data *sd = static_cast<Elm_Actionslider_Smart_Data*>(
+			eo_data_scope_get(*this, ELM_OBJ_ACTIONSLIDER_CLASS));
+		#endif
 		EvasObject o(sd->drag_button_base, false);
 		return o.getGeometry();
 	}
