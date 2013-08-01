@@ -37,6 +37,7 @@
 #include <linux/input.h>
 
 #include "templates.h"
+#include "config.h"
 
 namespace wfits {
 namespace test {
