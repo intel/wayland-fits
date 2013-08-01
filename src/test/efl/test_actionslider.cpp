@@ -58,7 +58,7 @@ public:
 	{
 		#if defined(HAVE_ELM_1_7)
 		Elm_Actionslider_Smart_Data *sd = static_cast<Elm_Actionslider_Smart_Data*>(
-			evas_object_smart_data_get(o));
+			evas_object_smart_data_get(*this));
 		#else
 		Elm_Actionslider_Smart_Data *sd = static_cast<Elm_Actionslider_Smart_Data*>(
 			eo_data_scope_get(*this, ELM_OBJ_ACTIONSLIDER_CLASS));
