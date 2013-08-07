@@ -23,6 +23,8 @@
 #ifndef __WESTON_WFITS_H__
 #define __WESTON_WFITS_H__
 
+#include <wayland-server.h>
+
 /**
  * Weston SDK 1.0.x workaround for
  * https://bugs.freedesktop.org/show_bug.cgi?id=63485
@@ -32,7 +34,6 @@ extern "C" {
 #include <weston/compositor.h>
 #undef private
 }
-#include <wayland-server.h>
 
 #include "extensions/protocol/wayland-fits-server-protocol.h"
 
