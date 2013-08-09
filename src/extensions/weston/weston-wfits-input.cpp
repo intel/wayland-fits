@@ -41,9 +41,9 @@ void InputInterface::init()
 	if (initialized_) return;
 
 	assert(
-		wl_display_add_global(
+		wl_global_create(
 			Globals::display(),
-			&wfits_input_interface,
+			&wfits_input_interface, 1,
 			NULL,
 			InputInterface::bind
 		)
@@ -65,36 +65,36 @@ void InputInterface::destroy()
 }
 
 /*static*/
-void InputInterface::bind(struct wl_client *wl_client, void *data, uint32_t version, uint32_t id)
+void InputInterface::bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 {
 	ActiveKeys *keys(new ActiveKeys);
 
-	struct wl_resource *resource = wl_client_add_object(
-		wl_client, &wfits_input_interface,
-		&InputInterface::implementation, id, keys
+	struct wl_resource *resource = wl_resource_create(
+		client, &wfits_input_interface, 1, id
 	);
 
-	resource->destroy = InputInterface::unbind;
+	if (not resource) {
+		wl_client_post_no_memory(client);
+		return;
+	}
+
+	wl_resource_set_implementation(
+		resource, &InputInterface::implementation, keys, &InputInterface::unbind
+	);
 }
 
 /*static*/
 void InputInterface::unbind(struct wl_resource *resource)
 {
-	ActiveKeys *keys(static_cast<ActiveKeys*>(resource->data));
+	ActiveKeys *keys = static_cast<ActiveKeys*>(
+		wl_resource_get_user_data(resource)
+	);
 
 	foreach (uint32_t key, *keys) {
 		InputInterface::keySend(key, 0);
 	}
 
 	delete keys;
-
-	/* FIXME: Don't delete wl_resource in Wayland 1.2. They are now
-	 * managed by the wayland server.
-	 * However, for Wayland < 1.2 we should delete them... but for now
-	 * just let it leak until we have time to fix this (i.e. do a
-	 * compile time version check) :-/.
-	 */
-// 	delete resource;
 }
 
 /*static*/
@@ -145,7 +145,9 @@ void InputInterface::movePointer(struct wl_client *wl_client,
 void InputInterface::keySend(struct wl_client *wl_client,
 	struct wl_resource *resource, uint32_t key, uint32_t state)
 {
-	ActiveKeys *keys(static_cast<ActiveKeys*>(resource->data));
+	ActiveKeys *keys = static_cast<ActiveKeys*>(
+		wl_resource_get_user_data(resource)
+	);
 
 	InputInterface::keySend(key, state);
 

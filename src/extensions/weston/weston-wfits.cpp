@@ -94,13 +94,9 @@ struct weston_seat * Globals::seat()
 void Globals::pointerXY(wl_fixed_t *x, wl_fixed_t *y)
 {
 	struct weston_seat *seat(Globals::seat());
-#if defined(HAVE_WESTON_SDK3)
+
 	*x = seat->pointer->x;
 	*y = seat->pointer->y;
-#else
-	*x = seat->pointer.x;
-	*y = seat->pointer.y;
-#endif
 }
 
 bool Globals::isHeadless()

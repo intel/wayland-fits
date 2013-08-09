@@ -36,18 +36,9 @@ compositor_destroy(struct wl_listener *listener, void *data)
 
 extern "C" {
 
-#if defined(HAVE_WESTON_SDK1)
-WL_EXPORT int
-module_init(struct weston_compositor *compositor)
-#elif defined(HAVE_WESTON_SDK2)
-WL_EXPORT int
-module_init(struct weston_compositor *compositor,
-	    int *argc, char *argv[], const char *config_file)
-#else // defined(HAVE_WESTON_SDK3)
 WL_EXPORT int
 module_init(struct weston_compositor *compositor,
 	    int *argc, char *argv[])
-#endif
 {
 	struct wl_listener *listener(new struct wl_listener);
 

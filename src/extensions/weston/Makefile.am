@@ -35,7 +35,6 @@ AM_CXXFLAGS =				\
 	-Wno-unused-variable		\
 	-Wno-unknown-pragmas		\
 	-Wno-parentheses		\
-	-Wno-deprecated-declarations	\
 	-std=gnu++0x
 
 endif

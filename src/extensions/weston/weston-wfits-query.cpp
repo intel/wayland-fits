@@ -41,9 +41,9 @@ void QueryInterface::init()
 	if (initialized_) return;
 
 	assert(
-		wl_display_add_global(
+		wl_global_create(
 			Globals::display(),
-			&wfits_query_interface,
+			&wfits_query_interface, 1,
 			NULL, QueryInterface::bind
 		)
 	);
@@ -60,57 +60,54 @@ void QueryInterface::destroy()
 /*static*/
 void QueryInterface::bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 {
-	wl_client_add_object(
-		client, &wfits_query_interface,
-		&QueryInterface::implementation, id, data
+	struct wl_resource *resource = wl_resource_create(
+		client, &wfits_query_interface, 1, id
+	);
+
+	if (not resource) {
+		wl_client_post_no_memory(client);
+		return;
+	}
+
+	wl_resource_set_implementation(
+		resource, &QueryInterface::implementation, data, NULL
 	);
 }
 
 /*static*/
 void QueryInterface::surfaceGeometry(struct wl_client *client, struct wl_resource *resource,
-		       struct wl_resource *surface_resource, uint32_t result_id)
+		       struct wl_resource *surface_resource, uint32_t id)
 {
-	struct wl_resource result;
-	struct weston_surface *surface =
-		static_cast<struct weston_surface*>(surface_resource->data);
+	struct wl_resource *result = wl_resource_create(
+		client, &wfits_query_result_interface, 1, id
+	);
 
-	result.object.interface = &wfits_query_result_interface;
-	result.object.id = result_id;
-	result.destroy = NULL;
-	result.client = client;
-	result.data = NULL;
-
-	wl_client_add_resource(client, &result);
+	struct weston_surface *surface = static_cast<struct weston_surface*>(
+		wl_resource_get_user_data(surface_resource)
+	);
 
 	wfits_query_result_send_surface_geometry(
-		&result,
+		result,
 		wl_fixed_from_double(surface->geometry.x),
 		wl_fixed_from_double(surface->geometry.y),
 		surface->geometry.width,
 		surface->geometry.height
 	);
-	wl_resource_destroy(&result);
 }
 
 /*static*/
 void QueryInterface::globalPointerPosition(struct wl_client *client,
 			      struct wl_resource *resource,
-			      uint32_t result_id)
+			      uint32_t id)
 {
-	struct wl_resource result;
-	struct weston_seat *seat(Globals::seat());
+	struct wl_resource *result = wl_resource_create(
+		client, &wfits_query_result_interface, 1, id
+	);
+
 	wl_fixed_t cx, cy;
 	Globals::pointerXY(&cx, &cy);
 
-	result.object.interface = &wfits_query_result_interface;
-	result.object.id = result_id;
-	result.destroy = NULL;
-	result.client = client;
-	result.data = NULL;
-
-	wl_client_add_resource(client, &result);
-	wfits_query_result_send_global_pointer_position(&result, cx, cy);
-	wl_resource_destroy(&result);
+	wfits_query_result_send_global_pointer_position(result, cx, cy);
 }
 
 } // namespace weston

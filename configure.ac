@@ -1,7 +1,7 @@
 AC_PREREQ([2.64])
 
 AC_INIT([wayland-fits],
-        [0.1.0],
+        [0.2.0],
         [https://github.com/01org/wayland-fits/issues],
         [wayland-fits],
         [https://github.com/01org/wayland-fits])
@@ -23,9 +23,8 @@ LDFLAGS="-Wl,--no-as-needed"
 
 # Required minimum versions for dependencies
 m4_define([check_req_version],		[0.9.8])
-# m4_define([pixman1_req_version],	[0.29.3])
-m4_define([wayland_req_version],	[1.0.6])
-m4_define([weston_req_version],		[1.0.6])
+m4_define([wayland_req_version],	[1.2.0])
+m4_define([weston_req_version],		[1.2.0])
 m4_define([efl_req_version],		[1.7.6])
 m4_define([gtk_req_version],		[3.8.0])
 m4_define([boost_req_version],		[1.49.0])
@@ -77,38 +76,6 @@ if test "x$want_weston_extensions" != "xno"; then
 		[
 			AC_DEFINE(HAVE_WESTON, 1, [Support for Weston extensions])
 			have_weston="yes"
-			PKG_CHECK_MODULES([WESTON_SDK1],
-				[
-					weston >= 1.0.6
-					weston < 1.0.90
-				],
-				[
-					AC_DEFINE(HAVE_WESTON_SDK1, 1, [Support for Weston 1.0 extensions])
-					have_weston_sdk1="yes"
-				],
-				[have_weston_sdk1="no"]
-			)
-			PKG_CHECK_MODULES([WESTON_SDK2],
-				[
-					weston >= 1.0.90
-					weston < 1.1.90
-				],
-				[
-					AC_DEFINE(HAVE_WESTON_SDK2, 1, [Support for Weston 1.1 extensions])
-					have_weston_sdk2="yes"
-				],
-				[have_weston_sdk2="no"]
-			)
-			PKG_CHECK_MODULES([WESTON_SDK3],
-				[
-					weston >= 1.1.90
-				],
-				[
-					AC_DEFINE(HAVE_WESTON_SDK3, 1, [Support for Weston 1.2 extensions])
-					have_weston_sdk3="yes"
-				],
-				[have_weston_sdk3="no"]
-			)
 		],
 		[have_weston="no"]
 	)
