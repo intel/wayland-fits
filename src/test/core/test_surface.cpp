@@ -62,8 +62,8 @@ public:
 
 	void test()
 	{
-		for (unsigned x(0); x < buffer_.width(); x+=10) {
-			for (unsigned y(0); y < buffer_.height(); y+=10) {
+		for (int x(0); x < buffer_.width(); x+=10) {
+			for (int y(0); y < buffer_.height(); y+=10) {
 				movePointer(x, y);
 				checkFocus(true);
 				checkPointer(x, y);
@@ -106,7 +106,7 @@ public:
 		YIELD_UNTIL(pointer_.hasFocus(surface_) == focus);
 	}
 
-	void checkPointer(const uint32_t x, const uint32_t y)
+	void checkPointer(const int32_t x, const int32_t y)
 	{
 		YIELD_UNTIL(pointer_.x() == x and pointer_.y() == y);
 	}

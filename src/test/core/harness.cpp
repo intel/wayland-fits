@@ -106,8 +106,8 @@ public:
 		FAIL_IF_EQUAL(p.x, -1);
 		FAIL_IF_EQUAL(p.y, -1);
 
-		for (unsigned y(0); y < 480; y += 80) {
-			for (unsigned x(0); x < 640; x += 80) {
+		for (int y(0); y < 480; y += 80) {
+			for (int x(0); x < 640; x += 80) {
 				setGlobalPointerPosition(x, y);
 				p = getGlobalPointerPosition();
 				FAIL_UNLESS_EQUAL(p.x, x);

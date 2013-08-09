@@ -2,8 +2,6 @@ if BUILD_EFL_TESTS
 
 MEDIA = \"$(abs_top_srcdir)/media\"
 
-INCLUDES = -I$(top_srcdir)/src
-
 noinst_LTLIBRARIES = libwfits-efl.la
 
 libwfits_efl_la_SOURCES = \
@@ -47,10 +45,25 @@ libwfits_efl_la_SOURCES = \
 	test_window_maximize.cpp	\
 	test_window_fullscreen.cpp
 
-AM_CXXFLAGS =				\
+libwfits_efl_la_LIBADD =		\
+	$(WAYLAND_LIBS)			\
+	$(EFL_LIBS)			\
+	$(CHECK_LIBS)
+
+libwfits_efl_la_CPPFLAGS =		\
+	-I$(top_srcdir)/src		\
 	-DMEDIA_PATH=$(MEDIA)		\
 	$(WAYLAND_CFLAGS)		\
 	$(EFL_CFLAGS)			\
 	$(CHECK_CFLAGS)
+
+AM_CXXFLAGS =				\
+	-Wno-strict-aliasing		\
+	-Werror -Wall			\
+	-Wno-unused-variable		\
+	-Wno-unknown-pragmas		\
+	-Wno-parentheses		\
+	-Wno-deprecated-declarations	\
+	-std=gnu++0x
 
 endif

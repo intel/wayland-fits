@@ -28,6 +28,29 @@ m4_define([wayland_req_version],	[1.0.6])
 m4_define([weston_req_version],		[1.0.6])
 m4_define([efl_req_version],		[1.7.6])
 m4_define([gtk_req_version],		[3.8.0])
+m4_define([boost_req_version],		[1.49.0])
+
+AX_BOOST_BASE([boost_req_version],
+	[
+		AX_BOOST_FILESYSTEM
+		AX_BOOST_REGEX
+		AX_BOOST_SYSTEM
+		AX_BOOST_PROGRAM_OPTIONS
+		BOOST_LIBS="$BOOST_LDFLAGS $BOOST_FILESYSTEM_LIB $BOOST_REGEX_LIB $BOOST_SYSTEM_LIB $BOOST_PROGRAM_OPTIONS_LIB"
+		AC_SUBST(BOOST_LIBS)
+	],
+	[
+		AC_MSG_ERROR([
+
+			Boost libraries are required:
+
+			boost_filesystem >= boost_req_version
+			boost_regex >= boost_req_version
+			boost_system >= boost_req_version
+			boost_program_options >= boost_req_version
+		])
+	]
+)
 
 PKG_CHECK_MODULES([CHECK], [check >= check_req_version])
 PKG_CHECK_MODULES([WAYLAND],

@@ -143,7 +143,7 @@ public:
 
 	void test()
 	{
-		for (unsigned x(0), y(0); x < 300; x += 51, y += 37) {
+		for (int x(0), y(0); x < 300; x += 51, y += 37) {
 			setGlobalPointerPosition(x, y);
 			Position p(getGlobalPointerPosition());
 			ASSERT(p.x == x and p.y == y);

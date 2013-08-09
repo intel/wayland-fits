@@ -1,5 +1,3 @@
-INCLUDES = -I$(top_srcdir)/src
-
 noinst_LTLIBRARIES = libwfits-core.la
 
 libwfits_core_la_SOURCES =		\
@@ -23,6 +21,20 @@ libwfits_core_la_SOURCES =		\
 	test_surface.cpp		\
 	test_dnd.cpp
 
-AM_CXXFLAGS = \
+libwfits_core_la_LIBADD =		\
+	$(WAYLAND_LIBS)			\
+	$(CHECK_LIBS)
+
+libwfits_core_la_CPPFLAGS =		\
+	-I$(top_srcdir)/src		\
 	$(WAYLAND_CFLAGS)		\
 	$(CHECK_CFLAGS)
+
+AM_CXXFLAGS =				\
+	-Wno-strict-aliasing		\
+	-Werror -Wall			\
+	-Wno-unused-variable		\
+	-Wno-unknown-pragmas		\
+	-Wno-parentheses		\
+	-Wno-deprecated-declarations	\
+	-std=gnu++0x

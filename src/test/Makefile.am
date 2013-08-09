@@ -2,8 +2,6 @@ SUBDIRS = core efl gtk+
 
 TESTS = wfits
 
-INCLUDES = -I$(top_srcdir)/src
-
 bin_PROGRAMS = ${TESTS}
 
 wfits_SOURCES =				\
@@ -15,15 +13,18 @@ wfits_SOURCES =				\
 
 wfits_LDADD =				\
 	core/libwfits-core.la		\
-	-lboost_regex			\
-	-lboost_filesystem		\
-	-lboost_program_options		\
-	-lboost_system			\
 	$(CHECK_LIBS)			\
-	$(WAYLAND_LIBS)
+	$(WAYLAND_LIBS)			\
+	$(BOOST_LIBS)
 
 wfits_LDFLAGS =				\
 	-Wl,--whole-archive,core/.libs/libwfits-core.a -Wl,--no-whole-archive
+
+wfits_CPPFLAGS =			\
+	-I$(top_srcdir)/src		\
+	$(CHECK_CFLAGS)			\
+	$(WAYLAND_CFLAGS)		\
+	$(BOOST_CPPFLAGS)
 
 if BUILD_EFL_TESTS
 wfits_LDFLAGS +=			\
@@ -47,5 +48,5 @@ AM_CXXFLAGS =				\
 	-Wno-unused-variable		\
 	-Wno-unknown-pragmas		\
 	-Wno-parentheses		\
-	-std=gnu++0x			\
-	$(CHECK_CFLAGS)
+	-Wno-deprecated-declarations	\
+	-std=gnu++0x
