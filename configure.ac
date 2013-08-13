@@ -19,7 +19,7 @@ AC_PROG_CC
 LT_PREREQ([2.2])
 LT_INIT
 
-LDFLAGS="-Wl,--no-as-needed"
+LDFLAGS="-Wl,--no-as-needed $LDFLAGS"
 
 # Required minimum versions for dependencies
 m4_define([check_req_version],		[0.9.8])
