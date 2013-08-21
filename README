@@ -38,8 +38,8 @@ REQUIREMENTS
 
  * check - A unit testing framework for C >= 0.9.8
  * boost - Boost C++ libraries >= 1.48.0
- * Wayland >= 1.0.6
- * Weston >= 1.0.6
+ * Wayland >= 1.2.0
+ * Weston >= 1.2.0
 
  Optional:
  * EFL/Elementary Wayland >= 1.7.6
@@ -73,6 +73,11 @@ RUNNING
   NOTE: the weston-wfits.so module supports x11-backend, drm-backend, and the
   headless-backend.  However, not all tests can be run on the headless-backend;
   particularly the egl-based ones.
+
+ If you define the environment variable WESTON_WFITS_INPUT_EMULATOR=<method>, the
+ weston-wfits.so module will use that method when it loads at startup.  The
+ available methods are 'notify' and 'uinput'.  The 'notify' method does not require
+ a suid/root weston whereas the 'uinput' method does.
 
  Next, run the test suite:
 
