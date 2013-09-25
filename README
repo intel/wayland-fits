@@ -91,6 +91,11 @@ RUNNING
   $ wfits --filter .*pointer.*
 
  Run 'wfits --help' for more options.
+ 
+ NOTE: You can set the environment variable "CK_FORK=no" to have wfits run in non-forked
+ test mode.  This is especially useful for debugging with gdb
+ (e.g. CK_FORK=no gdb --args wfits --filter <testname>).
+ 
 
 BUGS
 --------------------------------------------------------------------------------
