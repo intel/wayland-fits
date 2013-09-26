@@ -29,6 +29,7 @@ namespace core {
 Pointer::Pointer(const Seat& seat)
 	: seat_(seat)
 	, focus_(NULL)
+	, focusSerial_(0)
 	, x_(-1)
 	, y_(-1)
 	, button_(0)
@@ -73,6 +74,7 @@ bool Pointer::hasFocus(wl_surface* surface)
 // 		<< wl_fixed_to_int(y) << std::endl;
 	
 	pointer->focus_ = wl_surface;
+	pointer->focusSerial_ = serial;
 	pointer->x_ = wl_fixed_to_int(x);
 	pointer->y_ = wl_fixed_to_int(y);
 }

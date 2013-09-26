@@ -57,6 +57,7 @@ public:
 	const uint32_t button() const { return button_; }
 	const uint32_t buttonState() const { return buttonState_; }
 	wl_surface* focus() const { return focus_; }
+	const uint32_t focusSerial() const { return focusSerial_; }
 
 	bool hasFocus(wl_surface*);
 
@@ -76,6 +77,7 @@ private:
 
 	const Seat&	seat_;
 	wl_surface*	focus_;
+	uint32_t	focusSerial_;
 	int32_t		x_;
 	int32_t		y_;
 	uint32_t	button_;
