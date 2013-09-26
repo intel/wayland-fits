@@ -19,6 +19,7 @@ libwfits_core_la_SOURCES =		\
 	test_bind_interface.cpp		\
 	test_cursor.cpp			\
 	test_data.cpp			\
+	test_multi_resource.cpp		\
 	test_surface.cpp		\
 	test_dnd.cpp
 
