@@ -46,6 +46,7 @@ libwfits_efl_la_SOURCES = \
 	test_window_fullscreen.cpp
 
 libwfits_efl_la_LIBADD =		\
+	$(XKBCOMMON_LIBS)		\
 	$(WAYLAND_LIBS)			\
 	$(EFL_LIBS)			\
 	$(CHECK_LIBS)
@@ -53,6 +54,7 @@ libwfits_efl_la_LIBADD =		\
 libwfits_efl_la_CPPFLAGS =		\
 	-I$(top_srcdir)/src		\
 	-DMEDIA_PATH=$(MEDIA)		\
+	$(XKBCOMMON_CFLAGS)		\
 	$(WAYLAND_CFLAGS)		\
 	$(EFL_CFLAGS)			\
 	$(CHECK_CFLAGS)

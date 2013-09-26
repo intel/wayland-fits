@@ -3,6 +3,7 @@ noinst_LTLIBRARIES = libwfits-core.la
 libwfits_core_la_SOURCES =		\
 	display.cpp			\
 	compositor.cpp			\
+	keyboard.cpp			\
 	shell.cpp			\
 	seat.cpp			\
 	pointer.cpp			\
@@ -23,11 +24,13 @@ libwfits_core_la_SOURCES =		\
 
 libwfits_core_la_LIBADD =		\
 	$(WAYLAND_LIBS)			\
+	$(XKBCOMMON_LIBS)		\
 	$(CHECK_LIBS)
 
 libwfits_core_la_CPPFLAGS =		\
 	-I$(top_srcdir)/src		\
 	$(WAYLAND_CFLAGS)		\
+	$(XKBCOMMON_CFLAGS)		\
 	$(CHECK_CFLAGS)
 
 AM_CXXFLAGS =				\

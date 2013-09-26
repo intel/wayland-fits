@@ -14,6 +14,7 @@ wfits_SOURCES =				\
 wfits_LDADD =				\
 	core/libwfits-core.la		\
 	$(CHECK_LIBS)			\
+	$(XKBCOMMON_LIBS)		\
 	$(WAYLAND_LIBS)			\
 	$(BOOST_LIBS)
 
@@ -23,6 +24,7 @@ wfits_LDFLAGS =				\
 wfits_CPPFLAGS =			\
 	-I$(top_srcdir)/src		\
 	$(CHECK_CFLAGS)			\
+	$(XKBCOMMON_CFLAGS)		\
 	$(WAYLAND_CFLAGS)		\
 	$(BOOST_CPPFLAGS)
 

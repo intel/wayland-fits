@@ -30,6 +30,7 @@ Display::Display()
 	: wl_display_(wl_display_connect(0))
 	, wl_registry_(NULL)
 	, globals_()
+	, xkbContext_(NULL)
 {
 	ASSERT(wl_display_ != NULL);
 
@@ -49,6 +50,10 @@ Display::Display()
 
 /*virtual*/ Display::~Display()
 {
+	if (xkbContext_)
+	{
+		xkb_context_unref(xkbContext_);
+	}
 	wl_registry_destroy(wl_registry_);
 	wl_display_disconnect(*this);
 }
@@ -67,6 +72,17 @@ void Display::yield(const unsigned time) const
 {
 	roundtrip();
 	usleep(time);
+}
+
+struct xkb_context *Display::xkbContext() const
+{
+	if (xkbContext_ == NULL)
+	{
+		xkbContext_ = xkb_context_new((enum xkb_context_flags) 0);
+		ASSERT(xkbContext_ != NULL);
+	}
+
+	return xkbContext_;
 }
 
 /*static*/ void Display::global(

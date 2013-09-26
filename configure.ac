@@ -61,6 +61,8 @@ PKG_CHECK_MODULES([WAYLAND],
 )
 PKG_CHECK_MODULES(WAYLAND_SERVER, [wayland-server >= wayland_req_version])
 
+PKG_CHECK_MODULES([XKBCOMMON], xkbcommon)
+
 have_weston="no"
 want_weston_extensions="auto"
 AC_ARG_ENABLE([weston-extensions],

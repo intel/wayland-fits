@@ -25,6 +25,7 @@
 
 #include <map>
 #include <wayland-client.h>
+#include <xkbcommon/xkbcommon.h>
 #include "test/tools.h"
 
 namespace wfits {
@@ -63,6 +64,7 @@ public:
 	void roundtrip() const;
 	void dispatch() const;
 	void yield(const unsigned = 0.001 * 1e6) const;
+	struct xkb_context *xkbContext() const;
 
 	operator wl_display*() const { return wl_display_; }
 	operator wl_registry*() const { return wl_registry_; }
@@ -74,6 +76,7 @@ private:
 	wl_display	*wl_display_;
 	wl_registry	*wl_registry_;
 	Globals		globals_;
+	mutable struct xkb_context *xkbContext_;
 };
 
 } // namespace core

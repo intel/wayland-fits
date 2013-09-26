@@ -10,12 +10,14 @@ libwfits_gtk_la_SOURCES =		\
 
 libwfits_gtk_la_LIBADD =		\
 	$(WAYLAND_LIBS)			\
+	$(XKBCOMMON_LIBS)		\
 	$(GTK_LIBS)			\
 	$(CHECK_LIBS)
 
 libwfits_gtk_la_CPPFLAGS =		\
 	-I$(top_srcdir)/src		\
 	$(WAYLAND_CFLAGS)		\
+	$(XKBCOMMON_CFLAGS)		\
 	$(GTK_CFLAGS)			\
 	$(CHECK_CFLAGS)
 
