@@ -60,8 +60,9 @@ PKG_CHECK_MODULES([WAYLAND],
 	]
 )
 PKG_CHECK_MODULES(WAYLAND_SERVER, [wayland-server >= wayland_req_version])
-
 PKG_CHECK_MODULES([XKBCOMMON], xkbcommon)
+
+AC_PATH_PROG([wayland_scanner], [wayland-scanner], [AC_MSG_ERROR("wayland-scanner is needed to compile extensions")])
 
 have_weston="no"
 want_weston_extensions="auto"
@@ -176,9 +177,6 @@ if test "x$want_gtk_tests" = "xyes" -a "x$have_gtk" = "xno"; then
 	])
 fi
 AM_CONDITIONAL([BUILD_GTK_TESTS], [test x$have_gtk = xyes])
-
-
-WAYLAND_SCANNER_RULES(['$(top_srcdir)/src/extensions/protocol'])
 
 AC_CONFIG_FILES([Makefile
 		 src/Makefile
