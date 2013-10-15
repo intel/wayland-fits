@@ -59,9 +59,61 @@ namespace weston {
 /*static*/ bool InputEmulatorUInput::registered_ = InputEmulatorFactory::registerEmulator("uinput", Create<InputEmulatorUInput>());
 
 /**
- * Get the width and height (size) of the current display output.  If Weston is
- * using the x11 backend then the result is the size of the X screen.
- * Otherwise, the size of the Weston compositor output is the result.
+ * Transform Weston output coordinates to device coordinates.
+ */
+static void toDevice(int32_t *x, int32_t *y)
+{
+	struct weston_output *output(Globals::output());
+	int width(output->width - 1);
+	int height(output->height - 1);
+	int tx, ty;
+
+	switch(output->transform)
+	{
+		case WL_OUTPUT_TRANSFORM_NORMAL:
+		default:
+			tx = *x;
+			ty = *y;
+			break;
+		case WL_OUTPUT_TRANSFORM_90:
+			tx = height - *y;
+			ty = *x;
+			break;
+		case WL_OUTPUT_TRANSFORM_180:
+			tx = width - *x;
+			ty = height - *y;
+			break;
+		case WL_OUTPUT_TRANSFORM_270:
+			tx = *y;
+			ty = width - *x;
+			break;
+		case WL_OUTPUT_TRANSFORM_FLIPPED:
+			tx = width - *x;
+			ty = *y;
+			break;
+		case WL_OUTPUT_TRANSFORM_FLIPPED_90:
+			tx = height - *y;
+			ty = width - *x;
+			break;
+		case WL_OUTPUT_TRANSFORM_FLIPPED_180:
+			tx = *x;
+			ty = height - *y;
+			break;
+		case WL_OUTPUT_TRANSFORM_FLIPPED_270:
+			tx = *y;
+			ty = *x;
+			break;
+	}
+
+	*x = tx;
+	*y = ty;
+}
+
+/**
+ * Get the width and height (size) of the current screen.  If Weston is
+ * using the x11 backend then the result is derived from the size of the
+ * X screen.  Otherwise, the result is derived from the size of the Weston
+ * output.
  **/
 static void screenSize(int32_t *width, int32_t *height)
 {
@@ -73,14 +125,30 @@ static void screenSize(int32_t *width, int32_t *height)
 		*width = x11_compositor->screen->width_in_pixels;
 		*height = x11_compositor->screen->height_in_pixels;
 	} else {
-		*width = output->width;
-		*height = output->height;
+		switch (output->transform)
+		{
+			case WL_OUTPUT_TRANSFORM_NORMAL:
+			case WL_OUTPUT_TRANSFORM_180:
+			case WL_OUTPUT_TRANSFORM_FLIPPED:
+			case WL_OUTPUT_TRANSFORM_FLIPPED_180:
+			default:
+				*width = output->width;
+				*height = output->height;
+				break;
+			case WL_OUTPUT_TRANSFORM_90:
+			case WL_OUTPUT_TRANSFORM_270:
+			case WL_OUTPUT_TRANSFORM_FLIPPED_90:
+			case WL_OUTPUT_TRANSFORM_FLIPPED_270:
+				*width = output->height;
+				*height = output->width;
+				break;
+		}
 	}
 }
 
 /**
- * Converts a Weston compositor x,y coordinate into a global coordinate.  When
- * Weston is using the x11 backend, the x,y coordinate is mapped to the X
+ * Converts a Weston compositor x,y coordinate into a global screen coordinate.
+ * When Weston is using the x11 backend, the x,y coordinate is mapped to the X
  * display output (needed to correctly map a uinput pointer to weston).
  **/
 static void toScreen(int32_t *x, int32_t *y)
@@ -90,6 +158,8 @@ static void toScreen(int32_t *x, int32_t *y)
 	struct x11_output *x11_output = NULL;
 	xcb_get_geometry_reply_t *geom;
 	xcb_translate_coordinates_reply_t *trans;
+
+	toDevice(x, y);
 
 	if (std::string(output->make) == "xwayland") {
 		x11_compositor = (struct x11_compositor*)Globals::compositor();
