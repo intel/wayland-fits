@@ -82,6 +82,15 @@ if test "x$want_weston_extensions" != "xno"; then
 		],
 		[have_weston="no"]
 	)
+	PKG_CHECK_MODULES([X11],
+		[xcb x11],
+		[
+			WESTON_LIBS="$WESTON_LIBS $X11_LIBS"
+			WESTON_CFLAGS="$WESTON_CFLAGS $X11_CFLAGS"
+			AC_DEFINE(HAVE_X11_SUPPORT, 1, [Support for Weston x11-backend])
+		],
+		[]
+	)
 else
 	have_weston="no"
 fi

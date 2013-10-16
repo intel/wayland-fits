@@ -23,13 +23,16 @@
 #include <linux/input.h>
 #include <linux/uinput.h>
 #include <fcntl.h>
-#include <xcb/xcb.h>
-#include <X11/Xlib.h>
-#include <X11/Xlib-xcb.h>
 
+#include "config.h"
 #include "input-emulator-uinput.h"
 #include "common/util.h"
 #include "weston-wfits.h"
+
+#if defined(HAVE_X11_SUPPORT)
+
+#include <xcb/xcb.h>
+#include <X11/Xlib.h>
 
 /**
  * This struct is a copy from Weston's x11-compositor.c.
@@ -52,6 +55,8 @@ struct x11_output {
 	struct weston_output base;
 	xcb_window_t window;
 };
+
+#endif
 
 namespace wfits {
 namespace weston {
@@ -118,12 +123,15 @@ static void toDevice(int32_t *x, int32_t *y)
 static void screenSize(int32_t *width, int32_t *height)
 {
 	struct weston_output *output(Globals::output());
-	struct x11_compositor *x11_compositor = NULL;
 
 	if (std::string(output->make) == "xwayland") {
-		x11_compositor = (struct x11_compositor*) Globals::compositor();
+#if defined(HAVE_X11_SUPPORT)
+		struct x11_compositor *x11_compositor = (struct x11_compositor*) Globals::compositor();
 		*width = x11_compositor->screen->width_in_pixels;
 		*height = x11_compositor->screen->height_in_pixels;
+#else
+		exit(EXIT_FAILURE);
+#endif
 	} else {
 		switch (output->transform)
 		{
@@ -154,18 +162,15 @@ static void screenSize(int32_t *width, int32_t *height)
 static void toScreen(int32_t *x, int32_t *y)
 {
 	struct weston_output *output(Globals::output());
-	struct x11_compositor *x11_compositor = NULL;
-	struct x11_output *x11_output = NULL;
-	xcb_get_geometry_reply_t *geom;
-	xcb_translate_coordinates_reply_t *trans;
 
 	toDevice(x, y);
 
 	if (std::string(output->make) == "xwayland") {
-		x11_compositor = (struct x11_compositor*)Globals::compositor();
-		x11_output = (struct x11_output*) output;
+#if defined(HAVE_X11_SUPPORT)
+		struct x11_compositor *x11_compositor = (struct x11_compositor*)Globals::compositor();
+		struct x11_output *x11_output = (struct x11_output*) output;
 
-		geom = xcb_get_geometry_reply(
+		xcb_get_geometry_reply_t *geom = xcb_get_geometry_reply(
 			x11_compositor->conn,
 			xcb_get_geometry(
 				x11_compositor->conn,
@@ -174,7 +179,7 @@ static void toScreen(int32_t *x, int32_t *y)
 			NULL
 		);
 
-		trans = xcb_translate_coordinates_reply(
+		xcb_translate_coordinates_reply_t *trans = xcb_translate_coordinates_reply(
 			x11_compositor->conn,
 			xcb_translate_coordinates(
 				x11_compositor->conn,
@@ -191,6 +196,9 @@ static void toScreen(int32_t *x, int32_t *y)
 
 		delete trans;
 		delete geom;
+#else
+		exit(EXIT_FAILURE);
+#endif
 	}
 }
 
@@ -202,6 +210,9 @@ InputEmulatorUInput::InputEmulatorUInput()
 
 	weston_log("weston-wfits: %s\n", BOOST_CURRENT_FUNCTION);
 
+#ifndef HAVE_X11_SUPPORT
+	assert(std::string(Globals::output()->make) != "xwayland");
+#endif
 	assert(not Globals::isHeadless());
 
 	fd_ = open("/dev/uinput", O_WRONLY | O_NDELAY);
