@@ -25,3 +25,4 @@ autom4te.cache
 src/wfits
 src/wayland-test
 src/efl/wayland-efl-test
+test-driver
