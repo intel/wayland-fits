@@ -40,7 +40,11 @@ Window::Window(const std::string& name, const std::string& title, const unsigned
 
 wl_surface* Window::get_wl_surface()
 {
+#if ECORE_VERSION_MAJOR == 1 && ECORE_VERSION_MINOR == 7
 	return elm_win_wl_window_get(*this)->surface;
+#else // ECORE 1.8
+	return ecore_wl_window_surface_get(elm_win_wl_window_get(*this));
+#endif
 }
 
 void Window::iconify(const Eina_Bool iconify)

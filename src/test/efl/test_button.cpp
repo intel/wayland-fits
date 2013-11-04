@@ -134,28 +134,28 @@ public:
 		test->clicked_ = true;
 		std::cout << "...received click event" << std::endl;
 	}
-	
+
 	static void onRepeated(void* data, Evas_Object*, void*)
 	{
 		ButtonUserMouseClickTest *test = static_cast<ButtonUserMouseClickTest*>(data);
 		test->repeated_ = true;
 		std::cout << "...received repeated event" << std::endl;
 	}
-	
+
 	static void onPressed(void* data, Evas_Object*, void*)
 	{
 		ButtonUserMouseClickTest *test = static_cast<ButtonUserMouseClickTest*>(data);
 		test->pressed_ = true;
 		std::cout << "...received pressed event" << std::endl;
 	}
-	
+
 	static void onUnpressed(void* data, Evas_Object*, void*)
 	{
 		ButtonUserMouseClickTest *test = static_cast<ButtonUserMouseClickTest*>(data);
 		test->unpressed_ = true;
 		std::cout << "...received unpressed event" << std::endl;
 	}
-	
+
 private:
 	Window		window_;
 	EvasObject	button_;
@@ -170,7 +170,7 @@ private:
 class ButtonUserMouseInOutTest : public ElmTestHarness
 {
 public:
-	
+
 	ButtonUserMouseInOutTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("ButtonUserMouseInOutTest", "Button Mouse In/Out Test")
@@ -210,7 +210,7 @@ public:
 
 		int bw(button_.getWidth());
 		int bh(button_.getHeight());
-		Geometry geo(getSurfaceGeometry(elm_win_wl_window_get(window_)->surface));
+		Geometry geo(getSurfaceGeometry(window_.get_wl_surface()));
 		Geometry fg(window_.getFramespaceGeometry());
 
 		geo.y += fg.y + button_.getY();

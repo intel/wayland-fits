@@ -320,6 +320,7 @@ public:
 
 		Evas *evas;
 		Ecore_Wl_Window *wlwin;
+		wl_surface	*surface;
 		Geometry server, window, viewport, framespace;
 		int width, height;
 		const int cwidth = 67;	// control width
@@ -327,7 +328,12 @@ public:
 
 		evas = evas_object_evas_get(window_);
 		wlwin = elm_win_wl_window_get(window_);
-		server = getSurfaceGeometry(wlwin->surface);
+#if ECORE_VERSION_MAJOR == 1 && ECORE_VERSION_MINOR == 7
+		surface = wlwin->surface;
+#else
+		surface = ecore_wl_window_surface_get(wlwin);
+#endif
+		server = getSurfaceGeometry(surface);
 		evas_output_size_get(evas, &width, &height);
 		evas_output_viewport_get(evas, &viewport.x, &viewport.y, &viewport.width, &viewport.height);
 		evas_output_framespace_get(evas, &framespace.x, &framespace.y, &framespace.width, &framespace.height);

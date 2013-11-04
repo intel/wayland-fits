@@ -83,7 +83,7 @@ public:
 	}
 
 	void checkServerPosition(unsigned tries) {
-		Geometry geometry(getSurfaceGeometry(elm_win_wl_window_get(window_)->surface));
+		Geometry geometry(getSurfaceGeometry(window_.get_wl_surface()));
 		bool positionMatch(
 			window_.getX() == geometry.x
 			and window_.getY() == geometry.y);
