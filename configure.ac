@@ -23,8 +23,8 @@ LDFLAGS="-Wl,--no-as-needed $LDFLAGS"
 
 # Required minimum versions for dependencies
 m4_define([check_req_version],		[0.9.8])
-m4_define([wayland_req_version],	[1.2.0])
-m4_define([weston_req_version],		[1.2.0])
+m4_define([wayland_req_version],	[1.3.0])
+m4_define([weston_req_version],		[1.3.0])
 m4_define([efl_req_version],		[1.7.6])
 m4_define([gtk_req_version],		[3.8.0])
 m4_define([boost_req_version],		[1.49.0])
