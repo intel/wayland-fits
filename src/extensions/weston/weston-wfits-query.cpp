@@ -80,18 +80,27 @@ struct geometry {
 };
 
 static
-struct geometry* getSurfaceGeometry(struct weston_surface *surface)
+struct geometry getSurfaceGeometry(struct weston_surface *surface)
 {
+	struct geometry geometry;
+
 #if WESTON_VERSION_AT_LEAST(1, 3, 90)
 	assert(wl_list_length(&surface->views) == 1);
 
 	struct weston_view *view = container_of(
 		surface->views.next, struct weston_view, surface_link);
 
-	return (struct geometry*) &view->geometry;
+	geometry.x = view->geometry.x;
+	geometry.y = view->geometry.y;
+	geometry.width = surface->width;
+	geometry.height = surface->height;
 #else
-	return (struct geometry*) &surface->geometry;
+	geometry.x = surface->geometry.x;
+	geometry.y = surface->geometry.y;
+	geometry.width = surface->geometry.width;
+	geometry.height = surface->geometry.height;
 #endif
+	return geometry;
 }
 
 /*static*/
@@ -106,14 +115,14 @@ void QueryInterface::surfaceGeometry(struct wl_client *client, struct wl_resourc
 		wl_resource_get_user_data(surface_resource)
 	);
 
-	struct geometry* geometry(getSurfaceGeometry(surface));
+	struct geometry geometry(getSurfaceGeometry(surface));
 
 	wfits_query_result_send_surface_geometry(
 		result,
-		wl_fixed_from_double(geometry->x),
-		wl_fixed_from_double(geometry->y),
-		geometry->width,
-		geometry->height
+		wl_fixed_from_double(geometry.x),
+		wl_fixed_from_double(geometry.y),
+		geometry.width,
+		geometry.height
 	);
 }
 
