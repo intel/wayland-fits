@@ -30,6 +30,7 @@ namespace efl {
 
 Application::Application()
 {
+	ecore_app_no_system_modules();
 	elm_init(
 		TheGlobalSuite::instance().argc,
 		TheGlobalSuite::instance().argv
