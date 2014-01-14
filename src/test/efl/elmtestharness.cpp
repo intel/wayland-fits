@@ -32,6 +32,7 @@ ElmTestHarness::ElmTestHarness()
 	: test::Harness::Harness()
 	, eventType_(ecore_event_type_new())
 	, handler_(NULL)
+	, client_(NULL)
 {
 	return;
 }
@@ -41,10 +42,19 @@ void ElmTestHarness::yield(const unsigned time) const
 	Application::yield(time);
 }
 
+ElmTestHarness::~ElmTestHarness()
+{
+	if (client_ != NULL) {
+		delete client_;
+	}
+}
+
 const test::Client& ElmTestHarness::client() const
 {
-	static const test::Client c(ecore_wl_display_get());
-	return c;
+	if (client_ == NULL) {
+		client_ = new test::Client(ecore_wl_display_get());
+	}
+	return *client_;
 }
 
 void ElmTestHarness::run()

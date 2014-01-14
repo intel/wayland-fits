@@ -45,6 +45,8 @@ public:
 	 **/
 	ElmTestHarness();
 
+	virtual ~ElmTestHarness();
+
 	void run();
 
 	void queueStep(TestStep, const std::string&);
@@ -62,6 +64,7 @@ private:
 
 	int			eventType_; /// custom event type
 	Ecore_Event_Handler*	handler_;
+	mutable test::Client*	client_;
 };
 
 #define WFITS_EFL_HARNESS_EGL_TEST_CASE(Harness)		\
