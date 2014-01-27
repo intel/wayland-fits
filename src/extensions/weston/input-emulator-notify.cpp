@@ -50,7 +50,7 @@ void InputEmulatorNotify::movePointer(const int32_t x, const int32_t y) const
 	struct weston_seat *seat(Globals::seat());
 	wl_fixed_t cx, cy;
 
-#if WESTON_VERSION_AT_LEAST(1, 3, 90)
+#if WESTON_SDK_AT_LEAST(1, 3, 90)
 	// Weston >= 1.4 No longer tracks focus
 #else
 	Globals::compositor()->focus = 1;
@@ -70,7 +70,7 @@ void InputEmulatorNotify::keySend(const uint32_t key, const uint32_t state) cons
 {
 	struct weston_seat *seat(Globals::seat());
 
-#if WESTON_VERSION_AT_LEAST(1, 3, 90)
+#if WESTON_SDK_AT_LEAST(1, 3, 90)
 	// Weston >= 1.4 No longer tracks focus
 #else
 	Globals::compositor()->focus = 1;

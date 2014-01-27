@@ -24,6 +24,7 @@
 #define __WESTON_WFITS_H__
 
 #include <weston/compositor.h>
+#include <weston/version.h>
 
 #include "extensions/protocol/wayland-fits-server-protocol.h"
 
@@ -48,6 +49,13 @@ private:
 	static struct weston_compositor *compositor_;
 	static bool initialized_;
 };
+
+#define WESTON_SDK_AT_LEAST(major, minor, micro)	\
+	((WESTON_VERSION_MAJOR != major) ?		\
+	 (WESTON_VERSION_MAJOR > major) :		\
+	 ((WESTON_VERSION_MINOR != minor) ?		\
+	   (WESTON_VERSION_MINOR > minor) :		\
+	   (WESTON_VERSION_MICRO >= micro)))
 
 } // namespace weston
 } // namespace wfits

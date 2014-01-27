@@ -84,7 +84,7 @@ struct geometry getSurfaceGeometry(struct weston_surface *surface)
 {
 	struct geometry geometry;
 
-#if WESTON_VERSION_AT_LEAST(1, 3, 90)
+#if WESTON_SDK_AT_LEAST(1, 3, 90)
 	assert(wl_list_length(&surface->views) == 1);
 
 	struct weston_view *view = container_of(
