@@ -109,7 +109,7 @@ AM_CONDITIONAL([BUILD_WESTON_EXTENSIONS], [test x${have_weston} = xyes])
 have_efl="no"
 want_efl_tests="auto"
 AC_ARG_ENABLE([efl-tests],
-	[AC_HELP_STRING([--disable-efl-tests], [disable EFL Tests. @<:@default=detect@:>@])],
+	[AC_HELP_STRING([--disable-efl-tests], [disable EFL/ELM Tests. @<:@default=detect@:>@])],
 	[want_efl_tests=$enableval], [])
 
 if test "x$want_efl_tests" != "xno"; then
@@ -121,18 +121,25 @@ if test "x$want_efl_tests" != "xno"; then
 			evas-wayland-shm >= efl_req_version
 		],
 		[
-			AC_DEFINE(HAVE_EFL, 1, [Support for EFL Tests])
+			AC_DEFINE(HAVE_EFL, 1, [Support for EFL/ELM Testing])
 			have_efl="yes"
-			PKG_CHECK_MODULES([ELM_1_7],
+			PKG_CHECK_MODULES([EFL_1_7],
 				[
 					elementary >= 1.7.0
+					ecore-wayland >= 1.7.0
+					evas-wayland-egl >= 1.7.0
+					evas-wayland-shm >= 1.7.0
+
 					elementary < 1.7.99
+					ecore-wayland < 1.7.99
+					evas-wayland-egl < 1.7.99
+					evas-wayland-shm < 1.7.99
 				],
 				[
-					AC_DEFINE(HAVE_ELM_1_7, 1, [Support for ELM 1.7.x])
-					have_elm_1_7="yes"
+					AC_DEFINE(HAVE_EFL_1_7, 1, [Support for EFL/ELM 1.7.x])
+					have_efl_1_7="yes"
 				],
-				[have_elm_1_7="no"]
+				[have_efl_1_7="no"]
 			)
 		],
 		[have_efl="no"]
@@ -144,7 +151,7 @@ fi
 if test "x$want_efl_tests" = "xyes" -a "x$have_efl" = "xno"; then
 	AC_MSG_ERROR([
 
-		EFL tests requested, but one of the following dependency requirements were not met:
+		EFL/ELM tests requested, but one of the following dependency requirements were not met:
 
 		elementary >= efl_req_version
 		ecore-wayland >= efl_req_version

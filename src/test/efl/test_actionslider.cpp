@@ -56,7 +56,7 @@ public:
 
 	Geometry getButtonGeometry() const
 	{
-		#if defined(HAVE_ELM_1_7)
+		#if defined(HAVE_EFL_1_7)
 		Elm_Actionslider_Smart_Data *sd = static_cast<Elm_Actionslider_Smart_Data*>(
 			evas_object_smart_data_get(*this));
 		#else

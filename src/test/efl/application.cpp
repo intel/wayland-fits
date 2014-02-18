@@ -22,6 +22,7 @@
 
 #include <Elementary.h>
 
+#include "config.h"
 #include "application.h"
 
 namespace wfits {
@@ -30,7 +31,10 @@ namespace efl {
 
 Application::Application()
 {
+#if defined(HAVE_EFL_1_7)
+#else // Assuming EFL/ELM >= 1.8
 	ecore_app_no_system_modules();
+#endif
 	elm_init(
 		TheGlobalSuite::instance().argc,
 		TheGlobalSuite::instance().argv
