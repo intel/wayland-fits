@@ -123,6 +123,17 @@ void Harness::inputKeySend(int32_t key, int32_t state) const
 	client().sendKey(key, state);
 }
 
+void Harness::setSurfacePosition(wl_surface *surface, int32_t x, int32_t y) const
+{
+	client().moveSurfaceTo(surface, x, y);
+
+	Geometry actual(getSurfaceGeometry(surface));
+	while (actual.x != x or actual.y != y)
+	{
+		actual = getSurfaceGeometry(surface);
+	}
+}
+
 } // namespace test
 } // namespace wfits
 

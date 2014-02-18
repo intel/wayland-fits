@@ -35,27 +35,28 @@ namespace test {
 namespace core {
 namespace input {
 
-class DummyClient
+class DummyClient : public Harness
 {
 public:
 	DummyClient()
-		: display_()
-		, compositor_(display_)
-		, shell_(display_)
-		, seat_(display_)
+		: Harness::Harness()
+		, compositor_(display())
+		, shell_(display())
+		, seat_(display())
 		, surface_(compositor_)
 		, shellSurface_(shell_, surface_)
-		, shm_(display_)
+		, shm_(display())
 		, buffer_(shm_, 128, 128)
 	{
 		wl_surface_attach(surface_, buffer_, 0, 0);
 		wl_surface_damage(surface_, 0, 0,
 				  buffer_.width(), buffer_.height());
 		surface_.commit();
+
+		setSurfacePosition(surface_, 300, 100);
 	}
 
 private:
-	Display display_;
 	Compositor compositor_;
 	Shell shell_;
 	Seat seat_;
@@ -110,6 +111,8 @@ void MultiResourceTest::setup()
 	wl_surface_attach(surface_, buffer_, 0, 0);
 	wl_surface_damage(surface_, 0, 0, buffer_.width(), buffer_.height());
 	surface_.commit();
+
+	setSurfacePosition(surface_, 100, 100);
 
 	queueStep(boost::bind(&MultiResourceTest::testPointer, boost::ref(*this)));
 	queueStep(boost::bind(&MultiResourceTest::testKeyboard, boost::ref(*this)));

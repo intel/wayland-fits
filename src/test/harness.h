@@ -59,6 +59,7 @@ public:
 	void		expectGlobalPointerPosition(int32_t, int32_t) const;
 	void		expectGlobalPointerPosition(const Position&) const;
 	void		inputKeySend(int32_t, int32_t) const;
+	void		setSurfacePosition(wl_surface*, int32_t, int32_t) const;
 
 protected:
 	TestSteps	steps_;
