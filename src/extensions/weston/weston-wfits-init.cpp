@@ -24,6 +24,7 @@
 #include "weston-wfits.h"
 #include "weston-wfits-input.h"
 #include "weston-wfits-query.h"
+#include "weston-wfits-manip.h"
 
 static void
 compositor_destroy(struct wl_listener *listener, void *data)
@@ -31,6 +32,7 @@ compositor_destroy(struct wl_listener *listener, void *data)
 	delete listener;
 	wfits::weston::QueryInterface::destroy();
 	wfits::weston::InputInterface::destroy();
+	wfits::weston::ManipInterface::destroy();
 	wfits::weston::Globals::destroy();
 }
 
@@ -45,6 +47,7 @@ module_init(struct weston_compositor *compositor,
 	wfits::weston::Globals::init(compositor);
 	wfits::weston::InputInterface::init();
 	wfits::weston::QueryInterface::init();
+	wfits::weston::ManipInterface::init();
 
 	listener->notify = compositor_destroy;
 	wl_signal_add(&compositor->destroy_signal, listener);

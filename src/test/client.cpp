@@ -46,11 +46,19 @@ void Client::bind_wfits(void *data, wl_registry *registry, uint32_t id,
 			)
 		);
 	}
+	else if (std::string(interface) == "wfits_manip") {
+		client->wfits_manip_ = static_cast<wfits_manip*>(
+			wl_registry_bind(
+				registry, id, &wfits_manip_interface, version
+			)
+		);
+	}
 }
 
 Client::Client(wl_display* dpy)
 	: wfits_input_(NULL)
 	, wfits_query_(NULL)
+	, wfits_manip_(NULL)
 {
 	ASSERT(NULL != dpy);
 
@@ -64,6 +72,7 @@ Client::Client(wl_display* dpy)
 
 	ASSERT(NULL != wfits_input_);
 	ASSERT(NULL != wfits_query_);
+	ASSERT(NULL != wfits_manip_);
 }
 
 /*virtual*/ Client::~Client()
@@ -72,6 +81,8 @@ Client::Client(wl_display* dpy)
 		wfits_input_destroy(wfits_input_);
 	if (wfits_query_ != NULL)
 		wfits_query_destroy(wfits_query_);
+	if (wfits_manip_ != NULL)
+		wfits_manip_destroy(wfits_manip_);
 }
 
 Client::QueryRequest::QueryRequest()
@@ -153,6 +164,11 @@ void Client::movePointerTo(const Position& position) const
 void Client::sendKey(uint32_t key, uint32_t state) const
 {
 	wfits_input_key_send(wfits_input_, key, state);
+}
+
+void Client::moveSurfaceTo(wl_surface* surface, int32_t x, int32_t y) const
+{
+	wfits_manip_move_surface(wfits_manip_, surface, x, y);
 }
 
 } // namespace test

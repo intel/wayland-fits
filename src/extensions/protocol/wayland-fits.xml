@@ -57,4 +57,11 @@
       <arg name="y" type="fixed"/>
     </event>
   </interface>
+  <interface name="wfits_manip" version="1">
+    <request name="move_surface">
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="x" type="int"/>
+      <arg name="y" type="int"/>
+    </request>
+  </interface>
 </protocol>

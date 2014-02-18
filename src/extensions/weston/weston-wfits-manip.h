@@ -20,53 +20,32 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef __WFITS_TEST_CLIENT_H__
-#define __WFITS_TEST_CLIENT_H__
+#ifndef __WESTON_WFITS_MANIP_H__
+#define __WESTON_WFITS_MANIP_H__
 
-#include <linux/input.h>
-#include "common/util.h"
-#include "extensions/protocol/wayland-fits-client-protocol.h"
+#include "weston-wfits.h"
 
 namespace wfits {
-namespace test {
+namespace weston {
 
-class Client
+class ManipInterface
 {
 public:
-	Client(wl_display*);
-
-	virtual ~Client();
-
-	class QueryRequest
-	{
-	public:
-		QueryRequest();
-		bool done;
-		void* data;
-	};
-
-	/** QueryRequest::data will be a Geometry object **/
-	QueryRequest* makeGeometryRequest(wl_surface*) const;
-
-	/** QueryRequest::data will be a Position object **/
-	QueryRequest* makePointerPositionRequest() const;
-
-	void movePointerTo(int32_t, int32_t) const;
-	void movePointerTo(const Position&) const;
-
-	void sendKey(uint32_t, uint32_t) const;
-
-	void moveSurfaceTo(wl_surface*, int32_t, int32_t) const;
+	static void init();
+	static void destroy();
 
 private:
-	static void bind_wfits(void *, wl_registry *, uint32_t, const char *, uint32_t);
+	static void bind(struct wl_client *, void *, uint32_t, uint32_t);
+	static void moveSurface(struct wl_client *, struct wl_resource *,
+		struct wl_resource *, int32_t, int32_t);
 
-	wfits_input*	wfits_input_;
-	wfits_query*	wfits_query_;
-	wfits_manip*	wfits_manip_;
+	static const struct wfits_manip_interface implementation_;
+
+	static bool initialized_;
+
 };
 
-} // namespace test
+} // namespace weston
 } // namespace wfits
 
 #endif

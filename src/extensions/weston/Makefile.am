@@ -11,6 +11,7 @@ weston_wfits_la_SOURCES =		\
 	weston-wfits-init.cpp		\
 	weston-wfits-query.cpp		\
 	weston-wfits-input.cpp		\
+	weston-wfits-manip.cpp		\
 	input-emulator.cpp		\
 	input-emulator-uinput.cpp	\
 	input-emulator-notify.cpp	\
