@@ -113,7 +113,9 @@ private:
 	bool		moveDone_;
 };
 
-WFITS_EFL_HARNESS_TEST_CASE(WindowMoveTest)
+// NOTE: This test is DISABLED for now since the wayland protocol
+// does not currently support programatic window placement.
+//WFITS_EFL_HARNESS_TEST_CASE(WindowMoveTest)
 
 } // namespace efl
 } // namespace test

@@ -370,8 +370,12 @@ private:
 	bool		rendered_;
 };
 
-WFITS_EFL_HARNESS_TEST_CASE(WindowIconifyTest)
-WFITS_EFL_HARNESS_TEST_CASE(WindowStickyTest)
+// NOTE: These tests are DISABLED for now since the wayland protocol
+// does not currently support iconify and sticky windows
+// WFITS_EFL_HARNESS_TEST_CASE(WindowIconifyTest)
+// WFITS_EFL_HARNESS_TEST_CASE(WindowStickyTest)
+
+
 WFITS_EFL_HARNESS_TEST_CASE(WindowWithdrawnTest)
 WFITS_EFL_HARNESS_TEST_CASE(WindowRotationTest)
 WFITS_EFL_HARNESS_TEST_CASE(EcoreWlWindowTest)
