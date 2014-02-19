@@ -5,6 +5,7 @@ libwfits_core_la_SOURCES =		\
 	compositor.cpp			\
 	keyboard.cpp			\
 	shell.cpp			\
+	output.cpp			\
 	seat.cpp			\
 	pointer.cpp			\
 	surface.cpp			\
