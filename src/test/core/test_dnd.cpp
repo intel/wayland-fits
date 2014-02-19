@@ -122,6 +122,9 @@ public:
 			)
 		);
 
+		setSurfacePosition(source_, 100, 100);
+		setSurfacePosition(target_, 200, 150);
+
 		queueStep(boost::bind(&SimpleDragAndDropTest::test, boost::ref(*this)));
 	}
 
