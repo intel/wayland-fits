@@ -206,6 +206,7 @@ public:
 	{
 		YIELD_UNTIL(rendered_);
 
+		setSurfacePosition(window_.get_wl_surface(), 100, 100);
 		setGlobalPointerPosition(0, 0);
 
 		int bw(button_.getWidth());

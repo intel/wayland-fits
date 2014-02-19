@@ -57,6 +57,8 @@ public:
 		wl_surface_damage(surface_, 0, 0, buffer_.width(), buffer_.height());
 		surface_.commit();
 
+		setSurfacePosition(surface_, 100, 100);
+
 		queueStep(boost::bind(&SurfacePointerTest::test, boost::ref(*this)));
 	}
 
