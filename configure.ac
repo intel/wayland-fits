@@ -35,7 +35,8 @@ AX_BOOST_BASE([boost_req_version],
 		AX_BOOST_REGEX
 		AX_BOOST_SYSTEM
 		AX_BOOST_PROGRAM_OPTIONS
-		BOOST_LIBS="$BOOST_LDFLAGS $BOOST_FILESYSTEM_LIB $BOOST_REGEX_LIB $BOOST_SYSTEM_LIB $BOOST_PROGRAM_OPTIONS_LIB"
+		AX_BOOST_THREAD
+		BOOST_LIBS="$BOOST_LDFLAGS $BOOST_FILESYSTEM_LIB $BOOST_REGEX_LIB $BOOST_SYSTEM_LIB $BOOST_PROGRAM_OPTIONS_LIB $BOOST_THREAD_LIB"
 		AC_SUBST(BOOST_LIBS)
 	],
 	[
@@ -47,6 +48,7 @@ AX_BOOST_BASE([boost_req_version],
 			boost_regex >= boost_req_version
 			boost_system >= boost_req_version
 			boost_program_options >= boost_req_version
+			boost_thread >= boost_req_version
 		])
 	]
 )
