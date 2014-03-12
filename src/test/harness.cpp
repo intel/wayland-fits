@@ -134,6 +134,16 @@ void Harness::setSurfacePosition(wl_surface *surface, int32_t x, int32_t y) cons
 	}
 }
 
+void Harness::synchronized(std::function<void()> f) const
+{
+	client().synchronized(f);
+}
+
+void Harness::yield(const unsigned time, bool strict) const
+{
+	client().yield(time, strict);
+}
+
 } // namespace test
 } // namespace wfits
 

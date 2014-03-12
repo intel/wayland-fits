@@ -45,6 +45,9 @@ public:
 		void* data;
 	};
 
+	virtual void synchronized(std::function<void()> f) const;
+	void yield(const unsigned time = 0.001 * 1e6, bool strict = false) const;
+
 	/** QueryRequest::data will be a Geometry object **/
 	QueryRequest* makeGeometryRequest(wl_surface*) const;
 
@@ -58,12 +61,16 @@ public:
 
 	void moveSurfaceTo(wl_surface*, int32_t, int32_t) const;
 
+protected:
+	virtual void doYield(const unsigned) const;
+
 private:
 	static void bind_wfits(void *, wl_registry *, uint32_t, const char *, uint32_t);
 
 	wfits_input*	wfits_input_;
 	wfits_query*	wfits_query_;
 	wfits_manip*	wfits_manip_;
+	float		yieldFactor_;
 };
 
 } // namespace test

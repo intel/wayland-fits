@@ -31,6 +31,7 @@
 #include <boost/lambda/bind.hpp>
 #include <boost/foreach.hpp>
 #include <boost/current_function.hpp>
+#include <boost/thread.hpp>
 
 boost::lambda::placeholder1_type _1_;
 boost::lambda::placeholder2_type _2_;

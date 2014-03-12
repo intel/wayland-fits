@@ -50,6 +50,8 @@ public:
 
 	std::vector<std::string> testNames(const std::string& = ".*") const;
 
+	void logMessage(boost::wrap_stringstream& message) const;
+
 private:
 	friend class Singleton<GlobalSuite>;
 	GlobalSuite(); // non-default constructible
@@ -78,11 +80,25 @@ std::string fullname()
 	return fullname(tmp);
 }
 
+#define LOG(message)					\
+{							\
+	TheGlobalSuite::instance().logMessage(		\
+		boost::wrap_stringstream().ref()	\
+		<< message				\
+	);						\
+}
+
+#define TEST_LOG(message)	\
+{				\
+	LOG("..." << message);	\
+}
+
 #define FAIL_UNLESS(expr) fail_unless(expr)
 #define FAIL_UNLESS_EQUAL(lhs, rhs) fail_unless(lhs == rhs)
 #define FAIL_IF(expr) fail_if(expr)
 #define FAIL_IF_EQUAL(lhs, rhs) fail_if(lhs == rhs)
 #define FAIL_UNLESS_GE(lhs, rhs) fail_unless(lhs >= rhs)
+#define FAIL_UNLESS_LE(lhs, rhs) fail_unless(lhs <= rhs)
 #ifndef ASSERT
 	#define ASSERT(expr) fail_unless(expr)
 #endif
@@ -99,7 +115,7 @@ std::string fullname()
 	public:									\
 	START_TEST(ck_ ## name)							\
 	{									\
-		std::cout << fullname_ << std::endl;				\
+		LOG(fullname_);							\
 		run();								\
 	}									\
 	END_TEST								\

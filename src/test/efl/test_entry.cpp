@@ -53,10 +53,6 @@ public:
 		, window_("EntryEmoticonTest", "Entry Emoticon Test")
 		, control_(window_)
 	{
-		control_.setSize(200, 100);
-		control_.setPosition(50, 10);
-		elm_entry_autosave_set(control_, EINA_FALSE);
-
 		emoticons_.push_back("angry");
 		emoticons_.push_back("angry-shout");
 		emoticons_.push_back("crazy-laugh");
@@ -107,16 +103,23 @@ public:
 
 	void setup()
 	{
+		control_.setSize(200, 100);
+		control_.setPosition(50, 10);
+		elm_entry_autosave_set(control_, EINA_FALSE);
+
 		window_.show();
 		control_.show();
+	}
 
+	void test()
+	{
 		boost::format tmarkup("Emoticon: <item size=%1%x%1% vsize=full href=emoticon/%2%></item>");
 		foreach (const string& e, emoticons_) {
 			foreach (int size, sizes_) {
 				std::string markup(boost::str(tmarkup % size % e));
 
-				queueStep(boost::bind(elm_entry_entry_set, boost::ref(control_), markup.c_str()));
-				queueStep(boost::bind(&EntryEmoticonTest::checkEmoticon, boost::ref(*this), markup));
+				synchronized(boost::bind(elm_entry_entry_set, boost::ref(control_), markup.c_str()));
+				synchronized(boost::bind(&EntryEmoticonTest::checkEmoticon, boost::ref(*this), markup));
 			}
 		}
 	}
@@ -146,24 +149,29 @@ public:
 		, control_(window_)
 		, sentinel_("Sentinel Text")
 	{
-		control_.setSize(50, 100);
-		control_.setPosition(50, 10);
-
-		elm_entry_autosave_set(control_, EINA_FALSE);
+		return;
 	}
 
 	void setup()
 	{
+		control_.setSize(50, 100);
+		control_.setPosition(50, 10);
+
+		elm_entry_autosave_set(control_, EINA_FALSE);
+
 		window_.show();
 		control_.show();
 
 		elm_entry_select_all(control_);
+	}
 
-		queueStep(boost::bind(elm_entry_entry_set, boost::ref(control_), sentinel_.c_str()));
-		queueStep(boost::bind(&EntryCutTest::checkEntry, boost::ref(*this), sentinel_));
+	void test()
+	{
+		synchronized(boost::bind(elm_entry_entry_set, boost::ref(control_), sentinel_.c_str()));
+		synchronized(boost::bind(&EntryCutTest::checkEntry, boost::ref(*this), sentinel_));
 
-		queueStep(boost::bind(elm_entry_selection_cut, boost::ref(control_)));
-		queueStep(boost::bind(&EntryCutTest::checkCut, boost::ref(*this), ""));
+		synchronized(boost::bind(elm_entry_selection_cut, boost::ref(control_)));
+		synchronized(boost::bind(&EntryCutTest::checkCut, boost::ref(*this), ""));
 	}
 
 	void checkEntry(const string& expected)
@@ -200,24 +208,29 @@ public:
 		, control_(window_)
 		, sentinel_("Sentinel Text")
 	{
-		control_.setSize(50, 100);
-		control_.setPosition(50, 10);
-
-		elm_entry_autosave_set(control_, EINA_FALSE);
+		return;
 	}
 
 	void setup()
 	{
+		control_.setSize(50, 100);
+		control_.setPosition(50, 10);
+
+		elm_entry_autosave_set(control_, EINA_FALSE);
+
 		window_.show();
 		control_.show();
 
 		elm_entry_select_all(control_);
+	}
 
-		queueStep(boost::bind(elm_entry_entry_set, boost::ref(control_), sentinel_.c_str()));
-		queueStep(boost::bind(&EntryCopyTest::checkEntry, boost::ref(*this), sentinel_));
+	void test()
+	{
+		synchronized(boost::bind(elm_entry_entry_set, boost::ref(control_), sentinel_.c_str()));
+		synchronized(boost::bind(&EntryCopyTest::checkEntry, boost::ref(*this), sentinel_));
 
-		queueStep(boost::bind(elm_entry_selection_copy, boost::ref(control_)));
-		queueStep(boost::bind(&EntryCopyTest::checkEntry, boost::ref(*this), sentinel_));
+		synchronized(boost::bind(elm_entry_selection_copy, boost::ref(control_)));
+		synchronized(boost::bind(&EntryCopyTest::checkEntry, boost::ref(*this), sentinel_));
 	}
 
 	void checkEntry(const string& expected)
@@ -245,28 +258,33 @@ public:
 		, sentinel_("Sentinel Text")
 		, jibberish_("jibberish")
 	{
-		control_.setSize(50, 100);
-		control_.setPosition(50, 10);
-
-		elm_entry_autosave_set(control_, EINA_FALSE);
+		return;
 	}
 
 	void setup()
 	{
+		control_.setSize(50, 100);
+		control_.setPosition(50, 10);
+
+		elm_entry_autosave_set(control_, EINA_FALSE);
+
 		window_.show();
 		control_.show();
+	}
 
-		queueStep(boost::bind(elm_entry_entry_set, boost::ref(control_), sentinel_.c_str()));
-		queueStep(boost::bind(&EntryPasteTest::checkEntry, boost::ref(*this), sentinel_));
+	void test()
+	{
+		synchronized(boost::bind(elm_entry_entry_set, boost::ref(control_), sentinel_.c_str()));
+		synchronized(boost::bind(&EntryPasteTest::checkEntry, boost::ref(*this), sentinel_));
 
-		queueStep(boost::bind(&EntryPasteTest::cut, boost::ref(*this)));
-		queueStep(boost::bind(&EntryPasteTest::checkEntry, boost::ref(*this), ""));
+		synchronized(boost::bind(&EntryPasteTest::cut, boost::ref(*this)));
+		synchronized(boost::bind(&EntryPasteTest::checkEntry, boost::ref(*this), ""));
 
-		queueStep(boost::bind(elm_entry_entry_set, boost::ref(control_), jibberish_.c_str()));
-		queueStep(boost::bind(&EntryPasteTest::checkEntry, boost::ref(*this), jibberish_.c_str()));
+		synchronized(boost::bind(elm_entry_entry_set, boost::ref(control_), jibberish_.c_str()));
+		synchronized(boost::bind(&EntryPasteTest::checkEntry, boost::ref(*this), jibberish_.c_str()));
 
-		queueStep(boost::bind(&EntryPasteTest::paste, boost::ref(*this)));
-		queueStep(boost::bind(&EntryPasteTest::checkEntry, boost::ref(*this), jibberish_.c_str()));
+		synchronized(boost::bind(&EntryPasteTest::paste, boost::ref(*this)));
+		synchronized(boost::bind(&EntryPasteTest::checkEntry, boost::ref(*this), jibberish_.c_str()));
 	}
 
 	void cut()

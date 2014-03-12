@@ -47,28 +47,9 @@ private:
 	void send(const std::string&, const int32_t);
 	void cancelled();
 
-	static void target(void *data, wl_data_source *ds, const char *type)
-	{
-		DataSource *dataSource(static_cast<DataSource*>(data));
-		ASSERT(ds == dataSource->source_);
-		ASSERT(type == dataSource->type_);
-		dataSource->target(std::string(type));
-	}
-
-	static void send(void *data, wl_data_source *ds, const char *type, int32_t fd)
-	{
-		DataSource *dataSource(static_cast<DataSource*>(data));
-		ASSERT(ds == dataSource->source_);
-		ASSERT(type == dataSource->type_);
-		dataSource->send(std::string(type), fd);
-	}
-
-	static void cancelled(void *data, wl_data_source *ds)
-	{
-		DataSource *dataSource(static_cast<DataSource*>(data));
-		ASSERT(ds == dataSource->source_);
-		dataSource->cancelled();
-	}
+	static void target(void *, wl_data_source *, const char *);
+	static void send(void *, wl_data_source *, const char *, int32_t);
+	static void cancelled(void *, wl_data_source *);
 
 	const std::string	type_;
 	const char		*data_;

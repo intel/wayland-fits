@@ -22,13 +22,15 @@ weston_wfits_la_LDFLAGS =		\
 
 weston_wfits_la_LIBADD =		\
 	$(WAYLAND_SERVER_LIBS)		\
-	$(WESTON_LIBS)
+	$(WESTON_LIBS)			\
+	$(BOOST_LIBS)
 
 weston_wfits_la_CPPFLAGS =		\
 	-I$(top_srcdir)/src		\
 	$(GCC_CFLAGS)			\
 	$(WAYLAND_SERVER_CFLAGS)	\
-	$(WESTON_CFLAGS)
+	$(WESTON_CFLAGS)		\
+	$(BOOST_CPPFLAGS)
 
 AM_CXXFLAGS =				\
 	-Wno-strict-aliasing		\

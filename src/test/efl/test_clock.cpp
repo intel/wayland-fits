@@ -50,30 +50,35 @@ public:
 		, window_("ClockTimeTest", "Clock Time Test")
 		, clock_(elm_clock_add(window_))
 	{
-		window_.setSize(600, 400);
-		clock_.setSize(500, 100);
-		clock_.setPosition(50, 50);
+		return;
 	}
 
 	void setup()
 	{
+		window_.setSize(600, 400);
+		clock_.setSize(500, 100);
+		clock_.setPosition(50, 50);
+
 		clock_.show();
 		window_.show();
+	}
 
-		queueStep(boost::bind(elm_clock_show_am_pm_set, boost::ref(clock_), EINA_FALSE));
-		queueStep(boost::bind(&ClockTimeTest::checkAmPm, boost::ref(*this), EINA_FALSE));
+	void test()
+	{
+		synchronized(boost::bind(elm_clock_show_am_pm_set, boost::ref(clock_), EINA_FALSE));
+		synchronized(boost::bind(&ClockTimeTest::checkAmPm, boost::ref(*this), EINA_FALSE));
 
-		queueStep(boost::bind(elm_clock_show_am_pm_set, boost::ref(clock_), EINA_TRUE));
-		queueStep(boost::bind(&ClockTimeTest::checkAmPm, boost::ref(*this), EINA_TRUE));
+		synchronized(boost::bind(elm_clock_show_am_pm_set, boost::ref(clock_), EINA_TRUE));
+		synchronized(boost::bind(&ClockTimeTest::checkAmPm, boost::ref(*this), EINA_TRUE));
 
-		queueStep(boost::bind(elm_clock_show_seconds_set, boost::ref(clock_), EINA_FALSE));
-		queueStep(boost::bind(&ClockTimeTest::checkSecs, boost::ref(*this), EINA_FALSE));
+		synchronized(boost::bind(elm_clock_show_seconds_set, boost::ref(clock_), EINA_FALSE));
+		synchronized(boost::bind(&ClockTimeTest::checkSecs, boost::ref(*this), EINA_FALSE));
 
-		queueStep(boost::bind(elm_clock_show_seconds_set, boost::ref(clock_), EINA_TRUE));
-		queueStep(boost::bind(&ClockTimeTest::checkSecs, boost::ref(*this), EINA_TRUE));
+		synchronized(boost::bind(elm_clock_show_seconds_set, boost::ref(clock_), EINA_TRUE));
+		synchronized(boost::bind(&ClockTimeTest::checkSecs, boost::ref(*this), EINA_TRUE));
 
-		queueStep(boost::bind(elm_clock_time_set, boost::ref(clock_), 6, 42, 12));
-		queueStep(boost::bind(&ClockTimeTest::checkTime, boost::ref(*this), 6, 42, 12));
+		synchronized(boost::bind(elm_clock_time_set, boost::ref(clock_), 6, 42, 12));
+		synchronized(boost::bind(&ClockTimeTest::checkTime, boost::ref(*this), 6, 42, 12));
 	}
 
 	void checkAmPm(Eina_Bool ampm)
@@ -107,22 +112,27 @@ public:
 		, window_("ClockEditionTest", "Clock Edition Test")
 		, clock_(elm_clock_add(window_))
 	{
-		window_.setSize(600, 400);
-		clock_.setSize(500, 100);
-		clock_.setPosition(50, 50);
-		elm_clock_show_seconds_set(clock_, EINA_TRUE);
+		return;
 	}
 
 	void setup()
 	{
+		window_.setSize(600, 400);
+		clock_.setSize(500, 100);
+		clock_.setPosition(50, 50);
+		elm_clock_show_seconds_set(clock_, EINA_TRUE);
+
 		clock_.show();
 		window_.show();
+	}
 
-		queueStep(boost::bind(elm_clock_edit_set, boost::ref(clock_), EINA_TRUE));
-		queueStep(boost::bind(&ClockEditionTest::checkEdit, boost::ref(*this), EINA_TRUE));
+	void test()
+	{
+		synchronized(boost::bind(elm_clock_edit_set, boost::ref(clock_), EINA_TRUE));
+		synchronized(boost::bind(&ClockEditionTest::checkEdit, boost::ref(*this), EINA_TRUE));
 
-		queueStep(boost::bind(elm_clock_edit_set, boost::ref(clock_), EINA_FALSE));
-		queueStep(boost::bind(&ClockEditionTest::checkEdit, boost::ref(*this), EINA_FALSE));
+		synchronized(boost::bind(elm_clock_edit_set, boost::ref(clock_), EINA_FALSE));
+		synchronized(boost::bind(&ClockEditionTest::checkEdit, boost::ref(*this), EINA_FALSE));
 	}
 
 	void checkEdit(Eina_Bool edit)
@@ -144,18 +154,23 @@ public:
 		, window_("ClockDigitEditionTest", "Clock Edition Test")
 		, clock_(elm_clock_add(window_))
 	{
+		return;
+	}
+
+	void setup()
+	{
 		window_.setSize(600, 400);
 		clock_.setSize(500, 100);
 		clock_.setPosition(50, 50);
 		elm_clock_edit_set(clock_, EINA_TRUE);
 		elm_clock_show_seconds_set(clock_, EINA_TRUE);
-	}
 
-	void setup()
-	{
 		clock_.show();
 		window_.show();
+	}
 
+	void test()
+	{
 		Elm_Clock_Edit_Mode edition[] = {
 			ELM_CLOCK_EDIT_HOUR_DECIMAL,
 			ELM_CLOCK_EDIT_HOUR_UNIT,
@@ -167,16 +182,16 @@ public:
 
 		Elm_Clock_Edit_Mode mask = ELM_CLOCK_EDIT_DEFAULT;
 		foreach(Elm_Clock_Edit_Mode e, edition) {
-			queueStep(boost::bind(elm_clock_edit_mode_set, boost::ref(clock_), e));
-			queueStep(boost::bind(&ClockDigitEditionTest::checkEdit, boost::ref(*this), e));
+			synchronized(boost::bind(elm_clock_edit_mode_set, boost::ref(clock_), e));
+			synchronized(boost::bind(&ClockDigitEditionTest::checkEdit, boost::ref(*this), e));
 
 			mask = (Elm_Clock_Edit_Mode) (mask | e);
 			if (mask == e) {
 				continue;
 			}
 
-			queueStep(boost::bind(elm_clock_edit_mode_set, boost::ref(clock_), mask));
-			queueStep(boost::bind(&ClockDigitEditionTest::checkEdit, boost::ref(*this), mask));
+			synchronized(boost::bind(elm_clock_edit_mode_set, boost::ref(clock_), mask));
+			synchronized(boost::bind(&ClockDigitEditionTest::checkEdit, boost::ref(*this), mask));
 		}
 	}
 

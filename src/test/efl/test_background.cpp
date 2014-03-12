@@ -47,20 +47,25 @@ public:
 		, window_("BackgroundColorTest", "Background Color Test")
 		, control_(window_)
 	{
-		evas_object_size_hint_weight_set(control_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-		elm_win_resize_object_add(window_, control_);
+		return;
 	}
 
 	void setup()
 	{
+		evas_object_size_hint_weight_set(control_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+		elm_win_resize_object_add(window_, control_);
+
 		control_.show();
 		window_.show();
+	}
 
+	void test()
+	{
 		for (int r(0); r < 256; r += 64) {
 			for (int g(0); g < 256; g += 64) {
 				for (int b(0); b < 256; b += 64) {
-					queueStep(boost::bind(&Background::setColor, boost::ref(control_), r, g, b));
-					queueStep(boost::bind(&BackgroundColorTest::checkColor, boost::ref(*this), r, g, b));
+					synchronized(boost::bind(&Background::setColor, boost::ref(control_), r, g, b));
+					synchronized(boost::bind(&BackgroundColorTest::checkColor, boost::ref(*this), r, g, b));
 				}
 			}
 		}
@@ -107,8 +112,6 @@ public:
 		window_.show();
 
 		window_.maximize(EINA_TRUE);
-
-		queueStep(boost::bind(&BackgroundImageTest::test, boost::ref(*this)));
 	}
 
 	void test()
@@ -117,13 +120,11 @@ public:
 		path actual;
 
 		control_.setImage(p);
-		Application::yield(0.02*1e6);
 		control_.getImage(actual);
 		FAIL_UNLESS_EQUAL(p, actual);
 
 		foreach (Elm_Bg_Option o, options_) {
 			control_.setImageOpt(o);
-			Application::yield(0.02*1e6);
 			FAIL_UNLESS_EQUAL(control_.getImageOpt(), o);
 		}
 	}

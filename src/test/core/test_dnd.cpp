@@ -133,71 +133,71 @@ public:
 		const Geometry gs(getSurfaceGeometry(source_));
 		const Geometry gt(getSurfaceGeometry(target_));
 
-		std::cout << "...source geometry: " << gs << std::endl;
-		std::cout << "...target geometry: " << gt << std::endl;
+		TEST_LOG("source geometry: " << gs);
+		TEST_LOG("target geometry: " << gt);
 
-		std::cout << "...moving pointer to source" << std::endl;
+		TEST_LOG("moving pointer to source");
 		setGlobalPointerPosition(gs.x + 2, gs.y + 3);
 
-		std::cout << "...checking source has pointer focus" << std::endl;
+		TEST_LOG("checking source has pointer focus");
 		YIELD_UNTIL(pointer_.hasFocus(source_));
 
-		std::cout << "...pressing mouse left button" << std::endl;
+		TEST_LOG("pressing mouse left button");
 		inputKeySend(BTN_LEFT, 1);
 
-		std::cout << "...checking for button press event" << std::endl;
+		TEST_LOG("checking for button press event");
 		YIELD_UNTIL(event_.state == WL_POINTER_BUTTON_STATE_PRESSED);
 
 		// A drag operation removes focus from the pointer surface
 		// until the drop finishes.
-		std::cout << "...checking NULL has pointer focus" << std::endl;
+		TEST_LOG("checking NULL has pointer focus");
 		YIELD_UNTIL(pointer_.hasFocus(NULL));
 
 		// drag will be presented to source initially
-		std::cout << "...checking data offered to source" << std::endl;
+		TEST_LOG("checking data offered to source");
 		YIELD_UNTIL(source_.offer() != NULL);
 
-		std::cout << "...checking offer position" << std::endl;
+		TEST_LOG("checking offer position");
 		Position p(source_.offer()->position());
 		FAIL_UNLESS_EQUAL(p.x, 2);
 		FAIL_UNLESS_EQUAL(p.y, 3);
 
-		std::cout << "...moving pointer to target" << std::endl;
+		TEST_LOG("moving pointer to target");
 		setGlobalPointerPosition(gt.x + 5, gt.y + 4);
 
-		std::cout << "...checking offer leave source" << std::endl;
+		TEST_LOG("checking offer leave source");
 		YIELD_UNTIL(source_.offer() == NULL);
 
-		std::cout << "...checking data offered to target" << std::endl;
+		TEST_LOG("checking data offered to target");
 		YIELD_UNTIL(target_.offer() != NULL);
 
-		std::cout << "...checking offer position" << std::endl;
+		TEST_LOG("checking offer position");
 		p = target_.offer()->position();
 		FAIL_UNLESS_EQUAL(p.x, 5);
 		FAIL_UNLESS_EQUAL(p.y, 4);
 
 		// trigger data device "motion"
-		std::cout << "...moving pointer around target" << std::endl;
+		TEST_LOG("moving pointer around target");
 		setGlobalPointerPosition(gt.x + 6, gt.y + 5);
 
-		std::cout << "...checking offer position" << std::endl;
+		TEST_LOG("checking offer position");
 		YIELD_UNTIL(
 			target_.offer()->position().x == 6
 			and target_.offer()->position().y == 5
 		);
 
-		std::cout << "...releasing mouse left button" << std::endl;
+		TEST_LOG("releasing mouse left button");
 		inputKeySend(BTN_LEFT, 0);
 		YIELD_UNTIL(pointer_.hasFocus(target_));
 
-		std::cout << "...checking for drop sent" << std::endl;
+		TEST_LOG("checking for drop sent");
 		YIELD_UNTIL(source_.sent());
 
-		std::cout << "...checking target received drop" << std::endl;
+		TEST_LOG("checking target received drop");
 		std::string data(target_.readDropData());
 		FAIL_UNLESS_EQUAL(data, "Test Drag-N-Drop!!");
 
-		std::cout << "...checking offer leave target" << std::endl;
+		TEST_LOG("checking offer leave target");
 		YIELD_UNTIL(target_.offer() == NULL);
 	}
 

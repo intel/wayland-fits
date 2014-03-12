@@ -29,9 +29,6 @@ namespace wfits {
 namespace test {
 namespace efl {
 
-using std::vector;
-using std::string;
-
 class Icon : public EvasObject
 {
 public:
@@ -44,83 +41,66 @@ public:
 
 class IconStandardTest : public ElmTestHarness
 {
+	typedef std::vector<std::string> Icons;
 public:
 	IconStandardTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("IconStandardTest", "Icon Standard Test")
 		, control_(window_)
+		, icons_({
+			"home", "close", "apps", "arrow_up", "arrow_down"
+			, "arrow_left", "arrow_right", "chat", "clock", "delete"
+			, "edit", "refresh", "folder", "file", "menu/home"
+			, "menu/close", "menu/apps", "menu/arrow_up", "menu/arrow_down"
+			, "menu/arrow_left", "menu/arrow_right", "menu/chat", "menu/clock"
+			, "menu/delete", "menu/edit", "menu/refresh", "menu/folder"
+			, "menu/file", "media_player/forward", "media_player/info"
+			, "media_player/next", "media_player/pause", "media_player/play"
+			, "media_player/prev", "media_player/rewind", "media_player/stop"
+		  })
 	{
-		icons_.push_back("home");
-		icons_.push_back("close");
-		icons_.push_back("apps");
-		icons_.push_back("arrow_up");
-		icons_.push_back("arrow_down");
-		icons_.push_back("arrow_left");
-		icons_.push_back("arrow_right");
-		icons_.push_back("chat");
-		icons_.push_back("clock");
-		icons_.push_back("delete");
-		icons_.push_back("edit");
-		icons_.push_back("refresh");
-		icons_.push_back("folder");
-		icons_.push_back("file");
-		icons_.push_back("menu/home");
-		icons_.push_back("menu/close");
-		icons_.push_back("menu/apps");
-		icons_.push_back("menu/arrow_up");
-		icons_.push_back("menu/arrow_down");
-		icons_.push_back("menu/arrow_left");
-		icons_.push_back("menu/arrow_right");
-		icons_.push_back("menu/chat");
-		icons_.push_back("menu/clock");
-		icons_.push_back("menu/delete");
-		icons_.push_back("menu/edit");
-		icons_.push_back("menu/refresh");
-		icons_.push_back("menu/folder");
-		icons_.push_back("menu/file");
-		icons_.push_back("media_player/forward");
-		icons_.push_back("media_player/info");
-		icons_.push_back("media_player/next");
-		icons_.push_back("media_player/pause");
-		icons_.push_back("media_player/play");
-		icons_.push_back("media_player/prev");
-		icons_.push_back("media_player/rewind");
-		icons_.push_back("media_player/stop");
-
-		control_.setSize(300, 300);
-		control_.setPosition(50, 10);
-
-		elm_icon_standard_set(control_, "home");
+		return;
 	}
 
 	void setup()
 	{
+		control_.setSize(300, 300);
+		control_.setPosition(50, 10);
+
+		elm_icon_standard_set(control_, "home");
+
 		window_.show();
 		control_.show();
+	}
 
+	void test()
+	{
 		foreach (const std::string& name, icons_) {
-			queueStep(boost::bind(&IconStandardTest::setStandard, boost::ref(*this), boost::cref(name)));
-			queueStep(boost::bind(&IconStandardTest::checkStandard, boost::ref(*this), boost::cref(name)));
+			TEST_LOG("setting icon = " << name);
+			Eina_Bool result(EINA_FALSE);
+			synchronized(
+				[this, &result, &name]() {
+					result = elm_icon_standard_set(control_, name.c_str());
+				}
+			);
+			FAIL_UNLESS_EQUAL(result, EINA_TRUE);
+
+			TEST_LOG("checking icon attribute == " << name);
+			const char *actual_raw(NULL);
+			synchronized(
+				[this, &actual_raw]() {
+					actual_raw = elm_icon_standard_get(control_);
+				}
+			);
+			const std::string actual(actual_raw == NULL ? "" : actual_raw);
+			FAIL_UNLESS_EQUAL(actual, name);
 		}
 	}
 
-	void setStandard(const string& icon_name)
-	{
-		FAIL_UNLESS_EQUAL(elm_icon_standard_set(control_, icon_name.c_str()), EINA_TRUE);
-	}
-
-	void checkStandard(const string& expected)
-	{
-		const char* actual_raw = elm_icon_standard_get(control_);
-		string actual(actual_raw == NULL ? "" : actual_raw);
-
-		FAIL_UNLESS_EQUAL(actual, expected);
-	}
-
 private:
-	Window		window_;
-	Icon		control_;
-	vector<string>	icons_;
+	Window	window_;
+	Icon	control_;
+	Icons	icons_;
 };
 
 typedef ResizeObjectTest<Icon> IconResizeTest;

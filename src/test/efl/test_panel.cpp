@@ -38,6 +38,23 @@ public:
 	}
 };
 
+static std::string toString(Elm_Panel_Orient orient)
+{
+	switch(orient)
+	{
+		case ELM_PANEL_ORIENT_TOP:
+			return "TOP";
+		case ELM_PANEL_ORIENT_BOTTOM:
+			return "BOTTOM";
+		case ELM_PANEL_ORIENT_LEFT:
+			return "LEFT";
+		case ELM_PANEL_ORIENT_RIGHT:
+			return "RIGHT";
+		default:
+			return "UNKNOWN";
+	}
+}
+
 class PanelOrientTest : public ElmTestHarness
 {
 public:
@@ -47,12 +64,6 @@ public:
 		, control_(window_)
 		, content_(elm_label_add(window_))
 	{
-		elm_object_text_set(content_, "Panel");
-		elm_object_content_set(control_, content_);
-
-		control_.setSize(200, 100);
-		control_.setPosition(50, 10);
-
 		orients_.push_back(ELM_PANEL_ORIENT_TOP);
 		orients_.push_back(ELM_PANEL_ORIENT_BOTTOM);
 		orients_.push_back(ELM_PANEL_ORIENT_TOP);
@@ -64,21 +75,35 @@ public:
 
 	void setup()
 	{
+		elm_object_text_set(content_, "Panel");
+		elm_object_content_set(control_, content_);
+
+		control_.setSize(200, 100);
+		control_.setPosition(50, 10);
+
 		window_.show();
 		content_.show();
 		control_.show();
-
-		foreach (const Elm_Panel_Orient orient, orients_) {
-			queueStep(boost::bind(elm_panel_orient_set, boost::ref(control_), orient));
-			queueStep(boost::bind(&PanelOrientTest::checkOrient, boost::ref(*this), orient));
-		}
 	}
 
-	void checkOrient(const Elm_Panel_Orient expected)
+	void test()
 	{
-		control_.show();
-		FAIL_UNLESS_EQUAL(elm_panel_orient_get(control_), expected);
-		Application::yield();
+		foreach (const Elm_Panel_Orient orient, orients_)
+		{
+			TEST_LOG("setting orient = " << toString(orient));
+			synchronized(
+				boost::bind(&elm_panel_orient_set, boost::ref(control_), orient)
+			);
+
+			TEST_LOG("checking orient attribute == " << toString(orient));
+			FAIL_UNLESS_EQUAL(
+				Application::synchronizedResult(
+					[this]()->Elm_Panel_Orient {
+						return elm_panel_orient_get(control_);
+					}
+				), orient
+			);
+		}
 	}
 
 private:
@@ -98,38 +123,57 @@ public:
 		, control_(window_)
 		, content_(elm_label_add(window_))
 	{
-		elm_object_text_set(content_, "Panel");
-		elm_object_content_set(control_, content_);
-
-		control_.setSize(200, 100);
-		control_.setPosition(50, 10);
+		return;
 	}
 
 	void setup()
 	{
+		elm_object_text_set(content_, "Panel");
+		elm_object_content_set(control_, content_);
+
+		window_.setSize(250, 125);
+		control_.setSize(200, 100);
+		control_.setPosition(25, 10);
 		window_.show();
 		content_.show();
 		control_.show();
-
-		queueStep(boost::bind(elm_panel_toggle, boost::ref(control_)));
-		queueStep(boost::bind(&EvasObject::checkVisible, boost::ref(control_), EINA_FALSE));
-
-		queueStep(boost::bind(&PanelToggleTest::yield, boost::ref(*this)));
-		queueStep(boost::bind(&PanelToggleTest::yield, boost::ref(*this)));
-
-		queueStep(boost::bind(elm_panel_toggle, boost::ref(control_)));
-		queueStep(boost::bind(&EvasObject::checkVisible, boost::ref(control_), EINA_TRUE));
 	}
 
-	void yield(void)
+	void test()
 	{
-		Application::yield();
+		checkHidden(EINA_FALSE);
+
+		TEST_LOG("toggling panel");
+		synchronized(
+			boost::bind(&elm_panel_toggle, boost::ref(control_))
+		);
+
+		checkHidden(EINA_TRUE);
+
+		TEST_LOG("toggling panel");
+		synchronized(
+			boost::bind(&elm_panel_toggle, boost::ref(control_))
+		);
+
+		checkHidden(EINA_FALSE);
+	}
+
+	void checkHidden(Eina_Bool hidden)
+	{
+		TEST_LOG("checking panel hidden == " << bool(hidden));
+		FAIL_UNLESS_EQUAL(
+			Application::synchronizedResult(
+				[this]()->Eina_Bool {
+					return elm_panel_hidden_get(control_);
+				}
+			), hidden
+		);
 	}
 
 private:
-	Window				window_;
-	Panel				control_;
-	EvasObject			content_;
+	Window		window_;
+	Panel		control_;
+	EvasObject	content_;
 };
 
 typedef ResizeObjectTest<Panel> PanelResizeTest;
@@ -140,7 +184,7 @@ WFITS_EFL_HARNESS_TEST_CASE(PanelResizeTest)
 WFITS_EFL_HARNESS_TEST_CASE(PanelPositionTest)
 WFITS_EFL_HARNESS_TEST_CASE(PanelVisibilityTest)
 WFITS_EFL_HARNESS_TEST_CASE(PanelOrientTest)
-//WFITS_EFL_HARNESS_TEST_CASE(PanelToggleTest, "Panel")
+WFITS_EFL_HARNESS_TEST_CASE(PanelToggleTest)
 
 } // namespace efl
 } // namespace test

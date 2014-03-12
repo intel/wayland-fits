@@ -79,6 +79,11 @@ public:
 		, window_("LabelWrapTest", "Label Wrap Test")
 		, control_(window_)
 	{
+		return;
+	}
+
+	void setup()
+	{
 		control_.setSize(350, 250);
 		control_.setPosition(25, 25);
 
@@ -89,24 +94,29 @@ public:
 		wraps_.push_back(ELM_WRAP_CHAR);
 		wraps_.push_back(ELM_WRAP_MIXED);
 		wraps_.push_back(ELM_WRAP_CHAR);
-	}
 
-	void setup()
-	{
 		window_.show();
 		control_.show();
+	}
 
+	void test()
+	{
 		foreach (Elm_Wrap_Type wrap, wraps_) {
-			queueStep(boost::bind(elm_label_line_wrap_set, boost::ref(control_), wrap));
-			queueStep(boost::bind(&LabelWrapTest::checkWrap, boost::ref(*this), wrap));
+			synchronized(
+				[this, &wrap]() {
+					elm_label_line_wrap_set(control_, wrap);
+				}
+			);
+
+			FAIL_UNLESS_EQUAL(
+				Application::synchronizedResult(
+					[this]()->Elm_Wrap_Type {
+						return elm_label_line_wrap_get(control_);
+					}
+				), wrap
+			);
 		}
 	}
-
-	void checkWrap(const Elm_Wrap_Type wrap)
-	{
-		FAIL_UNLESS_EQUAL(elm_label_line_wrap_get(control_), wrap);
-	}
-
 
 private:
 	Window				window_;
@@ -122,6 +132,11 @@ public:
 		, window_("LabelWrapWidthTest", "Label Wrap Width Test")
 		, control_(window_)
 	{
+		return;
+	}
+
+	void setup()
+	{
 		control_.setSize(350, 250);
 		control_.setPosition(25, 25);
 
@@ -133,23 +148,28 @@ public:
 		widths_.push_back(31);
 		widths_.push_back(63);
 		widths_.push_back(79);
-	}
 
-	void setup()
-	{
 		window_.show();
 		control_.show();
-
-		foreach (Evas_Coord width, widths_) {
-			queueStep(boost::bind(elm_label_wrap_width_set, boost::ref(control_), width));
-			queueStep(boost::bind(&LabelWrapWidthTest::checkWrapWidth, boost::ref(*this), width));
-		}
-
 	}
 
-	void checkWrapWidth(const Evas_Coord width)
+	void test()
 	{
-		FAIL_UNLESS_EQUAL(elm_label_wrap_width_get(control_), width);
+		foreach (Evas_Coord width, widths_) {
+			synchronized(
+				[this, &width]() {
+					elm_label_wrap_width_set(control_, width);
+				}
+			);
+
+			FAIL_UNLESS_EQUAL(
+				Application::synchronizedResult(
+					[this]()->Evas_Coord {
+						return elm_label_wrap_width_get(control_);
+					}
+				), width
+			);
+		}
 	}
 
 private:

@@ -20,82 +20,62 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <Elementary.h>
 #include "elmtestharness.h"
-#include "test/client.h"
 
 namespace wfits {
 namespace test {
 namespace efl {
 
+/*virtual*/ void ElmTestHarness::queueStep(TestStep)
+{
+	ASSERT_MSG(0, "Deprecated: " << BOOST_CURRENT_FUNCTION);
+}
+
 ElmTestHarness::ElmTestHarness()
 	: test::Harness::Harness()
-	, eventType_(ecore_event_type_new())
-	, handler_(NULL)
-	, client_(NULL)
 {
 	return;
 }
 
-void ElmTestHarness::yield(const unsigned time) const
-{
-	Application::yield(time);
-}
-
 ElmTestHarness::~ElmTestHarness()
 {
-	if (client_ != NULL) {
-		delete client_;
-	}
+	return;
 }
 
 const test::Client& ElmTestHarness::client() const
 {
-	if (client_ == NULL) {
-		client_ = new test::Client(ecore_wl_display_get());
-	}
-	return *client_;
+	return Application::client();
+}
+
+void ElmTestHarness::testThreadRunner()
+{
+	// FIXME: we need a better way to detect when the windows/widgets
+	// have stabilized their initial rendering, including animations.
+	// For now, allow the main loop to run momentarily to *hopefully*
+	// flush out all the widget and window animations
+	yield(0.5*1e6, true);
+
+	test();
+
+	Application::exit();
 }
 
 void ElmTestHarness::run()
 {
 	setup();
 
-	ASSERT(NULL != ecore_wl_display_get());
+	client(); // initialize the client
 
-	ecore_idler_add(idleStep, this);
+	// launch the test thread
+	boost::thread testThread(
+		boost::bind(&ElmTestHarness::testThreadRunner, boost::ref(*this))
+	);
 
-	elm_run();
+	Application::run();
+
+	testThread.join();
 
 	teardown();
-
-	ASSERT(not haveStep());
-}
-
-static void runStepWithMessage(ElmTestHarness::TestStep step, std::string message)
-{
-	std::cout << "..." << message << std::endl;
-	step();
-}
-
-void ElmTestHarness::queueStep(TestStep step, const std::string& message)
-{
-	queueStep(
-		boost::bind(&runStepWithMessage, step, message)
-	);
-}
-
-void ElmTestHarness::stepUntilCondition(Condition condition)
-{
-	if (not condition()) {
-		steps_.push_front(
-			boost::bind(
-				&ElmTestHarness::stepUntilCondition,
-				boost::ref(*this),
-				condition
-			)
-		);
-	}
 }
 
 void ElmTestHarness::assertCondition(Condition condition)
@@ -106,39 +86,6 @@ void ElmTestHarness::assertCondition(Condition condition)
 void ElmTestHarness::assertCondition(Condition condition, const std::string& message)
 {
 	ASSERT_MSG(condition(), message);
-}
-
-/*static*/
-Eina_Bool ElmTestHarness::idleStep(void* data)
-{
-	ElmTestHarness* harness = static_cast<ElmTestHarness*>(data);
-
-	harness->handler_ = ecore_event_handler_add(
-		harness->eventType_,
-		doStep,
-		data
-	);
-	ecore_event_add(harness->eventType_, NULL, NULL, NULL);
-
-	return ECORE_CALLBACK_CANCEL;
-}
-
-/*static*/
-Eina_Bool ElmTestHarness::doStep(void* data, int, void*)
-{
-	ElmTestHarness* harness = static_cast<ElmTestHarness*>(data);
-
-	ecore_event_handler_del(harness->handler_);
-
-	if (harness->haveStep()) {
-		harness->runNextStep();
-		harness->yield();
-		ecore_idler_add(idleStep, data);
-	} else {
-		elm_exit();
-	}
-
-	return ECORE_CALLBACK_DONE;
 }
 
 class SimpleHarnessTest : public ElmTestHarness
@@ -164,14 +111,14 @@ public:
 	{
 		ecore_wl_init(NULL);
 		++nsetup_;
-		for (unsigned i(0); i < 50; ++i) {
-			queueStep(boost::bind(&SimpleHarnessTest::step, boost::ref(*this)));
-		}
+
 	}
 
-	void step()
+	void test()
 	{
-		++nsteps_;
+		for (unsigned i(0); i < 50; ++i) {
+			++nsteps_;
+		}
 	}
 
 	void teardown()
@@ -197,7 +144,6 @@ public:
 	void setup()
 	{
 		ecore_wl_init(NULL);
-		queueStep(boost::bind(&PointerInterfaceTest::test, boost::ref(*this)));
 	}
 
 	void test()

@@ -55,7 +55,9 @@ DataDevice::~DataDevice()
 
 void DataDevice::offer(wl_data_offer *o)
 {
-	ASSERT(offer_ == NULL);
+	if (offer_ != NULL) {
+		delete offer_;
+	}
 
 	offer_ = new DataOffer(o);
 }

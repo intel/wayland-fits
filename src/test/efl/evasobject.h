@@ -53,9 +53,6 @@ public:
 
 	Eina_Bool isVisible() const;
 
-
-// 	operator Evas*();
-	
 	operator Evas_Object*();
 	operator const Evas_Object*() const;
 

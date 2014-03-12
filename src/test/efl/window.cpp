@@ -40,71 +40,123 @@ Window::Window(const std::string& name, const std::string& title, const unsigned
 
 wl_surface* Window::get_wl_surface()
 {
-#if ECORE_VERSION_MAJOR == 1 && ECORE_VERSION_MINOR == 7
-	return elm_win_wl_window_get(*this)->surface;
-#else // ECORE 1.8
-	return ecore_wl_window_surface_get(elm_win_wl_window_get(*this));
-#endif
+	return Application::synchronizedResult(
+		[this]()->wl_surface* {
+			#if ECORE_VERSION_MAJOR == 1 && ECORE_VERSION_MINOR == 7
+			return elm_win_wl_window_get(*this)->surface;
+			#else // ECORE 1.8
+			return ecore_wl_window_surface_get(elm_win_wl_window_get(*this));
+			#endif
+		}
+	);
 }
 
 void Window::iconify(const Eina_Bool iconify)
 {
-	elm_win_iconified_set(*this, iconify);
+	Application::synchronized(
+		[this, &iconify]() {
+			elm_win_iconified_set(*this, iconify);
+		}
+	);
 }
 
 Eina_Bool Window::isIconified() const
 {
-	return elm_win_iconified_get(*this);
+	return Application::synchronizedResult(
+		[this]()->Eina_Bool {
+			return elm_win_iconified_get(*this);
+		}
+	);
 }
 
 void Window::maximize(const Eina_Bool maximize)
 {
-	elm_win_maximized_set(*this, maximize);
+	Application::synchronized(
+		[this, &maximize]() {
+			elm_win_maximized_set(*this, maximize);
+		}
+	);
 }
 
 Eina_Bool Window::isMaximized() const
 {
-	return elm_win_maximized_get(*this);
+	return Application::synchronizedResult(
+		[this]()->Eina_Bool {
+			return elm_win_maximized_get(*this);
+		}
+	);
 }
 
 void Window::fullscreen(const Eina_Bool fullscreen)
 {
-	elm_win_fullscreen_set(*this, fullscreen);
+	Application::synchronized(
+		[this, &fullscreen]() {
+			elm_win_fullscreen_set(*this, fullscreen);
+		}
+	);
 }
 
 Eina_Bool Window::isFullscreen() const
 {
-	return elm_win_fullscreen_get(*this);
+	return Application::synchronizedResult(
+		[this]()->Eina_Bool {
+			return elm_win_fullscreen_get(*this);
+		}
+	);
 }
 
 void Window::sticky(const Eina_Bool sticky)
 {
-	elm_win_sticky_set(*this, sticky);
+	Application::synchronized(
+		[this, &sticky]() {
+			elm_win_sticky_set(*this, sticky);
+		}
+	);
 }
 
 Eina_Bool Window::isSticky() const
 {
-	return elm_win_sticky_get(*this);
+	return Application::synchronizedResult(
+		[this]()->Eina_Bool {
+			return elm_win_sticky_get(*this);
+		}
+	);
 }
 
 void Window::withdrawn(const Eina_Bool withdraw)
 {
-	elm_win_withdrawn_set(*this, withdraw);
+	Application::synchronized(
+		[this, &withdraw]() {
+			elm_win_withdrawn_set(*this, withdraw);
+		}
+	);
 }
 
 Eina_Bool Window::isWithdrawn() const
 {
-	return elm_win_withdrawn_get(*this);
+	return Application::synchronizedResult(
+		[this]()->Eina_Bool {
+			return elm_win_withdrawn_get(*this);
+		}
+	);
 }
 
 void Window::rotate(const int degrees)
 {
-	elm_win_rotation_set(*this, degrees);
+	Application::synchronized(
+		[this, &degrees]() {
+			elm_win_rotation_set(*this, degrees);
+		}
+	);
 }
 
 int Window::getRotation() const
 {
-	return elm_win_rotation_get(*this);
+	return Application::synchronizedResult(
+		[this]()->int {
+			return elm_win_rotation_get(*this);
+		}
+	);
 }
 
 void Window::checkIconified(const Eina_Bool isIconified) const

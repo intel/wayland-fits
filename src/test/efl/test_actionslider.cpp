@@ -56,15 +56,22 @@ public:
 
 	Geometry getButtonGeometry() const
 	{
-		#if defined(HAVE_EFL_1_7)
-		Elm_Actionslider_Smart_Data *sd = static_cast<Elm_Actionslider_Smart_Data*>(
-			evas_object_smart_data_get(*this));
-		#else
-		Elm_Actionslider_Smart_Data *sd = static_cast<Elm_Actionslider_Smart_Data*>(
-			eo_data_scope_get(*this, ELM_OBJ_ACTIONSLIDER_CLASS));
-		#endif
-		EvasObject o(sd->drag_button_base, false);
-		return o.getGeometry();
+		Elm_Actionslider_Smart_Data *sd(NULL);
+		Evas_Object *o;
+
+		Application::synchronized(
+			[this, &sd, &o]() {
+				#if defined(HAVE_EFL_1_7)
+				sd = static_cast<Elm_Actionslider_Smart_Data*>(
+					evas_object_smart_data_get(*this));
+				#else
+				sd = static_cast<Elm_Actionslider_Smart_Data*>(
+					eo_data_scope_get(*this, ELM_OBJ_ACTIONSLIDER_CLASS));
+				#endif
+				o = sd->drag_button_base;
+			}
+		);
+		return EvasObject(o, false).getGeometry();
 	}
 };
 
@@ -94,10 +101,13 @@ public:
 
 		control_.setSize(200, 100);
 		control_.setPosition(50, 10);
+	}
 
+	void test()
+	{
 		foreach (Elm_Actionslider_Pos p, positions_) {
-			queueStep(boost::bind(elm_actionslider_indicator_pos_set, boost::ref(control_), p));
-			queueStep(boost::bind(&ActionsliderIndicatorTest::checkPos, boost::ref(*this), p));
+			synchronized(boost::bind(elm_actionslider_indicator_pos_set, boost::ref(control_), p));
+			synchronized(boost::bind(&ActionsliderIndicatorTest::checkPos, boost::ref(*this), p));
 		}
 	}
 
@@ -147,31 +157,21 @@ public:
 		evas_object_smart_callback_add(slider_, "pos_changed", onChange, this);
 
 		slider_.show();
-
-		boost::function<void (Elm_Actionslider_Pos)> fn =
-			boost::bind(&ActionSliderUserTest::moveSliderTo, boost::ref(*this), _1);
-
-		queueStep(boost::bind(fn, ELM_ACTIONSLIDER_CENTER));
-		queueStep(boost::bind(fn, ELM_ACTIONSLIDER_RIGHT));
-		queueStep(boost::bind(fn, ELM_ACTIONSLIDER_LEFT));
-		queueStep(boost::bind(fn, ELM_ACTIONSLIDER_RIGHT));
-		queueStep(boost::bind(fn, ELM_ACTIONSLIDER_CENTER));
-		queueStep(boost::bind(fn, ELM_ACTIONSLIDER_LEFT));
 	}
 
-	static void onPostRender(void *data, Evas *e, void *info)
+	void test()
 	{
-		evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, onPostRender);
-
-		ActionSliderUserTest *test = static_cast<ActionSliderUserTest*>(data);
-		test->rendered_ = true;
-		std::cout << "...got post render event" << std::endl;
+		YIELD_UNTIL(rendered_);
+		moveSliderTo(ELM_ACTIONSLIDER_CENTER);
+		moveSliderTo(ELM_ACTIONSLIDER_RIGHT);
+		moveSliderTo(ELM_ACTIONSLIDER_LEFT);
+		moveSliderTo(ELM_ACTIONSLIDER_RIGHT);
+		moveSliderTo(ELM_ACTIONSLIDER_CENTER);
+		moveSliderTo(ELM_ACTIONSLIDER_LEFT);
 	}
 
 	void moveSliderTo(const Elm_Actionslider_Pos pos)
 	{
-		YIELD_UNTIL(rendered_);
-
 		Geometry gw(getSurfaceGeometry(window_.get_wl_surface()));
 		Geometry gf(window_.getFramespaceGeometry());
 		Geometry gb(slider_.getButtonGeometry());
@@ -206,35 +206,36 @@ public:
 
 		setGlobalPointerPosition(x, gw.y + gf.y + gb.y + gb.height / 2);
 
-		std::cout << "...checking for position changed event on '"
-			<< position << "'" << std::endl;
-		while (position_ != position) {
-			Application::yield();
-		}
+		TEST_LOG("checking for position changed event on '" << position << "'");
+		YIELD_UNTIL(position_ == position);
 
 		inputKeySend(BTN_LEFT, 0);
 
-		std::cout << "...checking for selected event on '"
-			<< selection << "'" << std::endl;
-		while (selection_ != selection) {
-			Application::yield();
-		}
+		TEST_LOG("checking for selected event on '" << selection << "'");
+		YIELD_UNTIL(selection_ == selection);
+	}
+
+	static void onPostRender(void *data, Evas *e, void *info)
+	{
+		evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, onPostRender);
+
+		ActionSliderUserTest *test = static_cast<ActionSliderUserTest*>(data);
+		test->rendered_ = true;
+		TEST_LOG("got post render event");
 	}
 
 	static void onSelect(void* data, Evas_Object*, void* info)
 	{
 		ActionSliderUserTest *test = static_cast<ActionSliderUserTest*>(data);
 		test->selection_ = std::string(static_cast<char*>(info));
-		std::cout << "...received selected event on '"
-			<< test->selection_ << "'" << std::endl;
+		TEST_LOG("received selected event on '" << test->selection_ << "'");
 	}
 
 	static void onChange(void* data, Evas_Object*, void* info)
 	{
 		ActionSliderUserTest *test = static_cast<ActionSliderUserTest*>(data);
 		test->position_ = std::string(static_cast<char*>(info));;
-		std::cout << "...received position changed event on '"
-			<< test->position_ << "'" << std::endl;
+		TEST_LOG("received position changed event on '" << test->position_ << "'");
 	}
 
 private:

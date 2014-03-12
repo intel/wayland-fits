@@ -46,8 +46,10 @@ public:
 	virtual void setup() { };
 	virtual void teardown() { };
 
-	virtual void yield(const unsigned time = 0.01 * 1e6) const = 0;
 	virtual const Client& client() const = 0;
+
+	void		yield(const unsigned time = 0.001 * 1e6, bool strict = false) const;
+	void		synchronized(std::function<void()>) const;
 
 	void		runNextStep();
 	bool		haveStep() const;

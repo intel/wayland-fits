@@ -59,22 +59,22 @@ public:
 
 	void setup()
 	{
+		evas_object_event_callback_add(object_, EVAS_CALLBACK_RESIZE, onResize, this);
+
 		object_.show();
 		window_.show();
-		queueStep(boost::bind(&ResizeObjectTest<T>::test, boost::ref(*this)));
 	}
 
 	void test()
 	{
-		evas_object_event_callback_add(object_, EVAS_CALLBACK_RESIZE, onResize, this);
 		foreach (const int w, widths_) {
 			foreach (const int h, heights_) {
 				resized_ = false;
-				std::cout << "...resizing object to " << w << "x" << h << std::endl;
+				TEST_LOG("resizing object to " << w << "x" << h);
 				object_.setSize(w, h);
-				std::cout << "...checking for resize event" << std::endl;
+				TEST_LOG("checking for resize event");
 				YIELD_UNTIL(resized_);
-				std::cout << "...checking object size prop" << std::endl;
+				TEST_LOG("checking object size prop");
 				object_.checkSize(w, h);
 			}
 		}
@@ -84,7 +84,7 @@ public:
 	{
 		ResizeObjectTest<T> *o = static_cast<ResizeObjectTest<T>*>(data);
 		o->resized_ = true;
-		std::cout << "...got resize event" << std::endl;
+		TEST_LOG("got resize event");
 	}
 
 private:
@@ -114,28 +114,28 @@ public:
 		ys_.push_back(10);
 		ys_.push_back(50);
 		ys_.push_back(101);
-
-		object_.setSize(50, 50);
 	}
 
 	void setup()
 	{
+		object_.setSize(50, 50);
+
+		evas_object_event_callback_add(object_, EVAS_CALLBACK_MOVE, onMove, this);
+
 		object_.show();
 		window_.show();
-		queueStep(boost::bind(&PositionObjectTest<T>::test, boost::ref(*this)));
 	}
 
 	void test()
 	{
-		evas_object_event_callback_add(object_, EVAS_CALLBACK_MOVE, onMove, this);
 		foreach (const int x, xs_) {
 			foreach (const int y, ys_) {
 				moved_ = false;
-				std::cout << "...moving object to " << x << "," << y << std::endl;
+				TEST_LOG("moving object to " << x << "," << y);
 				object_.setPosition(x, y);
-				std::cout << "...checking for move event" << std::endl;
+				TEST_LOG("checking for move event");
 				YIELD_UNTIL(moved_);
-				std::cout << "...checking object position prop" << std::endl;
+				TEST_LOG("checking object position prop");
 				object_.checkPosition(x, y);
 			}
 		}
@@ -145,7 +145,7 @@ public:
 	{
 		PositionObjectTest<T> *o = static_cast<PositionObjectTest<T>*>(data);
 		o->moved_ = true;
-		std::cout << "...got move event" << std::endl;
+		TEST_LOG("got move event");
 	}
 
 private:
@@ -169,46 +169,46 @@ public:
 		, object_(window_)
 		, visible_(false)
 	{
-		object_.setSize(50, 50);
-		object_.setPosition(100, 100);
+		return;
 	}
 
 	void setup()
 	{
-		window_.show();
+		object_.setSize(50, 50);
+		object_.setPosition(100, 100);
 
-		queueStep(boost::bind(&VisibleObjectTest<T>::test, boost::ref(*this)));
+		evas_object_event_callback_add(object_, EVAS_CALLBACK_SHOW, onShow, this);
+		evas_object_event_callback_add(object_, EVAS_CALLBACK_HIDE, onHide, this);
+
+		window_.show();
 	}
 
 	void test()
 	{
-		evas_object_event_callback_add(object_, EVAS_CALLBACK_SHOW, onShow, this);
-		evas_object_event_callback_add(object_, EVAS_CALLBACK_HIDE, onHide, this);
-
 		ASSERT(object_.isVisible() == EINA_FALSE);
 
 		visible_ = false;
-		std::cout << "...showing object" << std::endl;
+		TEST_LOG("showing object");
 		object_.show();
-		std::cout << "...checking for show event" << std::endl;
+		TEST_LOG("checking for show event");
 		YIELD_UNTIL(visible_);
-		std::cout << "...checking object visibility prop" << std::endl;
+		TEST_LOG("checking object visibility prop");
 		object_.checkVisible(EINA_TRUE);
 
 		ASSERT(visible_);
-		std::cout << "...hiding object" << std::endl;
+		TEST_LOG("hiding object");
 		object_.hide();
-		std::cout << "...checking for hide event" << std::endl;
+		TEST_LOG("checking for hide event");
 		YIELD_UNTIL(not visible_);
-		std::cout << "...checking object visibility prop" << std::endl;
+		TEST_LOG("checking object visibility prop");
 		object_.checkVisible(EINA_FALSE);
 
 		ASSERT(not visible_);
-		std::cout << "...showing object" << std::endl;
+		TEST_LOG("showing object");
 		object_.show();
-		std::cout << "...checking for show event" << std::endl;
+		TEST_LOG("checking for show event");
 		YIELD_UNTIL(visible_);
-		std::cout << "...checking object visibility prop" << std::endl;
+		TEST_LOG("checking object visibility prop");
 		object_.checkVisible(EINA_TRUE);
 	}
 
@@ -216,14 +216,14 @@ public:
 	{
 		VisibleObjectTest<T> *o = static_cast<VisibleObjectTest<T>*>(data);
 		o->visible_ = true;
-		std::cout << "...got show event" << std::endl;
+		TEST_LOG("got show event");
 	}
 
 	static void onHide(void *data, Evas *, Evas_Object *, void *)
 	{
 		VisibleObjectTest<T> *o = static_cast<VisibleObjectTest<T>*>(data);
 		o->visible_ = false;
-		std::cout << "...got hide event" << std::endl;
+		TEST_LOG("got hide event");
 	}
 
 private:

@@ -83,6 +83,33 @@ void DataSource::cancelled()
 	return;
 }
 
+/*static*/
+void DataSource::target(void *data, wl_data_source *ds, const char *type)
+{
+	DataSource *dataSource(static_cast<DataSource*>(data));
+	ASSERT(ds == dataSource->source_);
+	ASSERT(type == dataSource->type_);
+	dataSource->target(std::string(type));
+}
+
+/*static*/
+void DataSource::send(void *data, wl_data_source *ds, const char *type, int32_t fd)
+{
+	DataSource *dataSource(static_cast<DataSource*>(data));
+	ASSERT(ds == dataSource->source_);
+	ASSERT(type == dataSource->type_);
+	dataSource->send(std::string(type), fd);
+}
+
+/*static*/
+void DataSource::cancelled(void *data, wl_data_source *ds)
+{
+	DataSource *dataSource(static_cast<DataSource*>(data));
+	ASSERT(ds == dataSource->source_);
+	dataSource->cancelled();
+}
+
+
 namespace wrapper {
 	TEST(DataSourceConstruct)
 	{

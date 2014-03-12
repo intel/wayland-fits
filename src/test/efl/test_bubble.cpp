@@ -69,10 +69,13 @@ public:
 		bubble_.show();
 
 		bubble_.setSize(200, 100);
+	}
 
+	void test()
+	{
 		foreach (Elm_Bubble_Pos p, positions_) {
-			queueStep(boost::bind(&elm_bubble_pos_set, boost::ref(bubble_), p));
-			queueStep(boost::bind(&BubbleCornerTest::checkPos, boost::ref(*this), p));
+			synchronized(boost::bind(&elm_bubble_pos_set, boost::ref(bubble_), p));
+			synchronized(boost::bind(&BubbleCornerTest::checkPos, boost::ref(*this), p));
 		}
 	}
 
@@ -106,9 +109,12 @@ public:
 		window_.show();
 
 		bubble_.setSize(200, 100);
+	}
 
-		queueStep(boost::bind(elm_object_part_text_set, boost::ref(bubble_), sentinels_[0].c_str(), sentinels_[1].c_str()));
-		queueStep(boost::bind(&BubbleTextTest::checkText, boost::ref(*this), sentinels_[0], sentinels_[1]));
+	void test()
+	{
+		synchronized(boost::bind(elm_object_part_text_set, boost::ref(bubble_), sentinels_[0].c_str(), sentinels_[1].c_str()));
+		synchronized(boost::bind(&BubbleTextTest::checkText, boost::ref(*this), sentinels_[0], sentinels_[1]));
 	}
 
 	void checkText(const string& part, const std::string& expected)
@@ -136,39 +142,33 @@ public:
 		, clicked_(false)
 		, rendered_(false)
 	{
-		evas_object_smart_callback_add(bubble_, "clicked", onClick, this);
+		return;
 	}
 
 	void setup()
 	{
+		evas_object_smart_callback_add(bubble_, "clicked", onClick, this);
 		evas_event_callback_add(evas_object_evas_get(window_), EVAS_CALLBACK_RENDER_POST, onPostRender, this);
 
 		bubble_.setSize(200, 100);
 		window_.show();
 		bubble_.show();
+	}
 
-		queueStep(
-			boost::bind(
-				&ElmTestHarness::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&BubbleUserClickTest::rendered_, boost::ref(*this))
-			)
-		);
-		queueStep(boost::bind(&BubbleUserClickTest::clickBubble, boost::ref(*this)));
-		queueStep(
-			boost::bind(
-				&ElmTestHarness::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&BubbleUserClickTest::clicked_, boost::ref(*this))
-			),
-			"checking clicked_ event"
-		);
+	void test()
+	{
+		YIELD_UNTIL(rendered_);
+
+		TEST_LOG("clicking the bubble");
+		clicked_ = false;
+		clickBubble();
+
+		TEST_LOG("checking for clicked event");
+		YIELD_UNTIL(clicked_);
 	}
 
 	void clickBubble()
 	{
-		Application::yield(0.01*1e6);
-
 		Geometry gw(getSurfaceGeometry(window_.get_wl_surface()));
 		Geometry gf(window_.getFramespaceGeometry());
 		Geometry gb(bubble_.getGeometry());
@@ -188,7 +188,7 @@ public:
 	{
 		BubbleUserClickTest *test = static_cast<BubbleUserClickTest*>(data);
 		test->clicked_ = true;
-		std::cout << "...received click event" << std::endl;
+		TEST_LOG("received click event");
 	}
 
 	static void onPostRender(void *data, Evas *e, void *info)
@@ -197,7 +197,7 @@ public:
 
 		BubbleUserClickTest *test = static_cast<BubbleUserClickTest*>(data);
 		test->rendered_ = true;
-		std::cout << "...got post render event" << std::endl;
+		TEST_LOG("got post render event");
 	}
 
 private:

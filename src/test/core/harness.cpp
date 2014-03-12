@@ -26,6 +26,19 @@ namespace wfits {
 namespace test {
 namespace core {
 
+Client::Client(const Display& display)
+	: test::Client(display)
+	, display_(display)
+{
+	return;
+}
+
+/*virtual*/
+void Client::doYield(const unsigned time) const
+{
+	display_.yield(time);
+}
+
 Harness::Harness()
 	: test::Harness::Harness()
 	, display_()
@@ -49,11 +62,6 @@ void Harness::queueStep(TestStep step)
 {
 	test::Harness::queueStep(
 		boost::bind(&Harness::runStep, boost::ref(*this), step));
-}
-
-void Harness::yield(const unsigned time) const
-{
-	display().yield(time);
 }
 
 const test::Client& Harness::client() const

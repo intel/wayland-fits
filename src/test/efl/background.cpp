@@ -20,6 +20,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include "application.h"
 #include "background.h"
 
 namespace wfits {
@@ -36,36 +37,60 @@ Background::Background(EvasObject& parent)
 
 void Background::setColor(int red, int green, int blue)
 {
-	elm_bg_color_set(*this, red, green, blue);
+	Application::synchronized(
+		[this, &red, &green, &blue]() {
+			elm_bg_color_set(*this, red, green, blue);
+		}
+	);
 }
 
 void Background::setImage(const path& p)
 {
-	(void) elm_bg_file_set(*this, p.c_str(), NULL);
+	Application::synchronized(
+		[this, &p]() {
+			elm_bg_file_set(*this, p.c_str(), NULL);
+		}
+	);
 }
 
 void Background::setImageOpt(Elm_Bg_Option option)
 {
-	elm_bg_option_set(*this, option);
+	Application::synchronized(
+		[this, &option]() {
+			elm_bg_option_set(*this, option);
+		}
+	);
 }
 
 void Background::getColor(int* red, int* green, int* blue)
 {
-	elm_bg_color_get(*this, red, green, blue);
+	Application::synchronized(
+		[this, &red, &green, &blue]() {
+			elm_bg_color_get(*this, red, green, blue);
+		}
+	);
 }
 
 void Background::getImage(path& p)
 {
 	char* ret = NULL;
 
-	elm_bg_file_get(*this, const_cast<const char**>(&ret), NULL);
+	Application::synchronized(
+		[this, &ret]() {
+			elm_bg_file_get(*this, const_cast<const char**>(&ret), NULL);
+		}
+	);
 
 	p = ret;
 }
 
 Elm_Bg_Option Background::getImageOpt()
 {
-	return elm_bg_option_get(*this);
+	return Application::synchronizedResult(
+		[this]()->Elm_Bg_Option {
+			return elm_bg_option_get(*this);
+		}
+	);
 }
 
 } // namespace efl

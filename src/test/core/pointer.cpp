@@ -20,6 +20,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <boost/format.hpp>
 #include "pointer.h"
 
 namespace wfits {
@@ -70,8 +71,11 @@ bool Pointer::hasFocus(wl_surface* surface)
 	Pointer* pointer = static_cast<Pointer*>(data);
 	ASSERT(wl_pointer == *pointer);
 
-// 	std::cout << "Pointer::enter(): " << wl_fixed_to_int(x) << " "
-// 		<< wl_fixed_to_int(y) << std::endl;
+	TEST_LOG(
+		boost::format("%016p::Pointer::enter() : %016p @ %d,%d")
+			% pointer % wl_surface
+			% wl_fixed_to_int(x) % wl_fixed_to_int(y)
+	);
 	
 	pointer->focus_ = wl_surface;
 	pointer->focusSerial_ = serial;
@@ -86,7 +90,10 @@ bool Pointer::hasFocus(wl_surface* surface)
 	Pointer* pointer = static_cast<Pointer*>(data);
 	ASSERT(wl_pointer == *pointer);
 
-// 	std::cout << "Pointer::leave(): " << std::endl;
+	TEST_LOG(
+		boost::format("%016p::Pointer::leave() : %016p")
+			% pointer % wl_surface
+	);
 	
 	pointer->focus_ = NULL;
 	pointer->x_ = -1;
@@ -100,8 +107,11 @@ bool Pointer::hasFocus(wl_surface* surface)
 	Pointer* pointer = static_cast<Pointer*>(data);
 	ASSERT(wl_pointer == *pointer);
 
-// 	std::cout << "Pointer::motion(): " << wl_fixed_to_int(x) << " "
-// 		<< wl_fixed_to_int(y) << std::endl;
+	TEST_LOG(
+		boost::format("%016p::Pointer::motion(): %d,%d")
+			% pointer % wl_fixed_to_int(x)
+			% wl_fixed_to_int(y)
+	);
 
 	pointer->x_ = wl_fixed_to_int(x);
 	pointer->y_ = wl_fixed_to_int(y);
@@ -114,8 +124,10 @@ bool Pointer::hasFocus(wl_surface* surface)
 	Pointer* pointer = static_cast<Pointer*>(data);
 	ASSERT(wl_pointer == *pointer);
 
-	std::cout << "Pointer::button(): " << button << " "
-		<< state << std::endl;
+	TEST_LOG(
+		boost::format("%016p::Pointer::button(): button=%d; state=%d")
+			% pointer % button % state
+	);
 
 	pointer->button_ = button;
 	pointer->buttonState_ = state;
@@ -135,8 +147,11 @@ bool Pointer::hasFocus(wl_surface* surface)
 	Pointer* pointer = static_cast<Pointer*>(data);
 	ASSERT(wl_pointer == *pointer);
 
-	std::cout << "Pointer::axis(): " << axis << " "
-		<< wl_fixed_to_double(value) << std::endl;
+	TEST_LOG(
+		boost::format("%016p::Pointer::axis()  : axis=%d; value=%f")
+			% pointer % axis
+			% wl_fixed_to_double(value)
+	);
 
 	pointer->axis_ = axis;
 	pointer->axisValue_ = wl_fixed_to_double(value);

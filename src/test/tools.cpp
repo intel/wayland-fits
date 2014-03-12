@@ -21,6 +21,8 @@
  */
 
 #include <boost/regex.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/format.hpp>
 
 #include "common/util.h"
 #include "tools.h"
@@ -76,6 +78,19 @@ std::vector<std::string> GlobalSuite::testNames(const std::string& testPattern) 
 	return result;
 }
 
+void GlobalSuite::logMessage(boost::wrap_stringstream& message) const
+{
+	boost::wrap_stringstream wss;
+
+	wss.ref() << boost::format("[%014d %s] ")
+		% boost::this_thread::get_id()
+		% boost::posix_time::microsec_clock::local_time().time_of_day()
+	;
+
+	wss.ref() << message << "\n";
+	std::cout << wss.str() << std::flush;
+}
+
 namespace tools {
 namespace sanity {
 
@@ -89,6 +104,8 @@ TEST(MacroTest)
 	FAIL_IF_EQUAL(0, 1);
 	FAIL_UNLESS_GE(1, 1);
 	FAIL_UNLESS_GE(1, 0);
+	FAIL_UNLESS_LE(1, 1);
+	FAIL_UNLESS_LE(0, 1);
 	ASSERT(1);
 	ASSERT_MSG(1, "sanity failed");
 }

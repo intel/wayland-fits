@@ -52,38 +52,68 @@ public:
 		, window_("ImageFileTest", "Image File Test")
 		, control_(window_)
 	{
-		control_.setSize(300, 300);
-		control_.setPosition(50, 10);
+		return;
 	}
 
 	void setup()
 	{
+		control_.setSize(300, 300);
+		control_.setPosition(50, 10);
+
+		TEST_LOG("setting image = " << img);
+		FAIL_UNLESS_EQUAL(
+			elm_image_file_set(control_, img.c_str(), NULL),
+			EINA_TRUE
+		);
+
 		window_.show();
 		control_.show();
-
-		queueStep(boost::bind(&ImageFileTest::checkImageSet, boost::ref(*this), img));
-		queueStep(boost::bind(&ImageFileTest::checkImage, boost::ref(*this), img));
 	}
 
-	void checkImageSet(boost::filesystem::path& desired)
+	void test()
 	{
-		FAIL_UNLESS_EQUAL(elm_image_file_set(control_, desired.c_str(), NULL), EINA_TRUE);
-	}
-
-	void checkImage(boost::filesystem::path& expected)
-	{
+		TEST_LOG("checking image == " << img);
 		const char* actual_path;
-		elm_image_file_get(control_, &actual_path, NULL);
-
+		synchronized(
+			[this, &actual_path]() {
+				elm_image_file_get(control_, &actual_path, NULL);
+			}
+		);
 		boost::filesystem::path actual(actual_path);
 
-		FAIL_UNLESS_EQUAL(actual, expected);
+		TEST_LOG("got image == " << actual);
+		FAIL_UNLESS_EQUAL(actual, img);
 	}
 
 private:
 	Window	window_;
 	Image	control_;
 };
+
+static std::string toString(Elm_Image_Orient orient)
+{
+	switch(orient)
+	{
+		case ELM_IMAGE_ORIENT_0:
+			return "orient 0";
+		case ELM_IMAGE_ROTATE_90:
+			return "rotate 90";
+		case ELM_IMAGE_ROTATE_180:
+			return "rotate 180";
+		case ELM_IMAGE_ROTATE_270:
+			return "rotate 270";
+		case ELM_IMAGE_FLIP_HORIZONTAL:
+			return "flip horizontal";
+		case ELM_IMAGE_FLIP_VERTICAL:
+			return "flip vertical";
+		case ELM_IMAGE_FLIP_TRANSPOSE:
+			return "flip transpose";
+		case ELM_IMAGE_FLIP_TRANSVERSE:
+			return "flip transverse";
+		default:
+			return "UNKNOWN";
+	}
+}
 
 class ImageOrientTest : public ElmTestHarness
 {
@@ -93,10 +123,19 @@ public:
 		, window_("ImageOrientTest", "Image Orientation Test")
 		, control_(window_)
 	{
-		FAIL_UNLESS_EQUAL(elm_image_file_set(control_, img.c_str(), NULL), EINA_TRUE);
+		return;
+	}
 
+	void setup()
+	{
 		control_.setSize(300, 300);
 		control_.setPosition(50, 10);
+
+		TEST_LOG("setting image = " << img);
+		FAIL_UNLESS_EQUAL(
+			elm_image_file_set(control_, img.c_str(), NULL),
+			EINA_TRUE
+		);
 
 		orientations_.push_back(ELM_IMAGE_ORIENT_0);
 		orientations_.push_back(ELM_IMAGE_ROTATE_90);
@@ -106,26 +145,26 @@ public:
 		orientations_.push_back(ELM_IMAGE_FLIP_VERTICAL);
 		orientations_.push_back(ELM_IMAGE_FLIP_TRANSPOSE);
 		orientations_.push_back(ELM_IMAGE_FLIP_TRANSVERSE);
-	}
 
-	void setup()
-	{
 		window_.show();
 		control_.show();
-
-		foreach (const Elm_Image_Orient orientation, orientations_) {
-			queueStep(boost::bind(elm_image_orient_set, boost::ref(control_), orientation));
-			queueStep(boost::bind(&ImageOrientTest::checkOrient, boost::ref(*this), orientation));
-
-			queueStep(boost::bind(elm_image_orient_set, boost::ref(control_), ELM_IMAGE_ORIENT_0));
-			queueStep(boost::bind(&ImageOrientTest::checkOrient, boost::ref(*this), ELM_IMAGE_ORIENT_0));
-		}
-
 	}
 
-	void checkOrient(const Elm_Image_Orient expected)
+	void test()
 	{
-		FAIL_UNLESS_EQUAL(elm_image_orient_get(control_), expected);
+		foreach (const Elm_Image_Orient orientation, orientations_) {
+			TEST_LOG("setting image orientation = " << toString(orientation));
+			synchronized(boost::bind(elm_image_orient_set, boost::ref(control_), orientation));
+
+			TEST_LOG("checking image orientation attribute == " << toString(orientation));
+			FAIL_UNLESS_EQUAL(
+				Application::synchronizedResult(
+					[this]()->Elm_Image_Orient {
+						return elm_image_orient_get(control_);
+					}
+				), orientation
+			);
+		}
 	}
 
 private:
@@ -142,51 +181,65 @@ public:
 		, window_("ImageAnimateTest", "Image Animate Gif Test")
 		, control_(window_)
 	{
-		control_.setSize(181, 313);
-		control_.setPosition(50, 10);
-
-		FAIL_UNLESS_EQUAL(elm_image_file_set(control_, gif.c_str(), NULL), EINA_TRUE);
+		return;
 	}
 
 	void setup()
 	{
+		control_.setSize(181, 313);
+		control_.setPosition(50, 10);
+
+		FAIL_UNLESS_EQUAL(
+			elm_image_file_set(control_, gif.c_str(), NULL),
+			EINA_TRUE
+		);
+
 		window_.show();
 		control_.show();
 
-		FAIL_UNLESS(elm_image_animated_available_get(control_) == EINA_TRUE);
-
-		queueStep(boost::bind(elm_image_animated_set, boost::ref(control_), EINA_TRUE));
-		queueStep(boost::bind(&ImageAnimateTest::checkAnimated, boost::ref(*this), EINA_TRUE));
-
-		queueStep(boost::bind(elm_image_animated_play_set, boost::ref(control_), EINA_TRUE));
-		queueStep(boost::bind(&ImageAnimateTest::checkPlay, boost::ref(*this), EINA_TRUE));
-
-		queueStep(boost::bind(&ImageAnimateTest::runLoop, boost::ref(*this)));
-		queueStep(boost::bind(&ImageAnimateTest::runLoop, boost::ref(*this)));
-
-		queueStep(boost::bind(elm_image_animated_play_set, boost::ref(control_), EINA_FALSE));
-		queueStep(boost::bind(&ImageAnimateTest::checkPlay, boost::ref(*this), EINA_FALSE));
-
-		queueStep(boost::bind(elm_image_animated_set, boost::ref(control_), EINA_FALSE));
-		queueStep(boost::bind(&ImageAnimateTest::checkAnimated, boost::ref(*this), EINA_FALSE));
+		FAIL_UNLESS_EQUAL(
+			elm_image_animated_available_get(control_),
+			EINA_TRUE
+		);
 	}
 
-	void runLoop(void)
+	void test()
 	{
-		// total is a half-second delay, but keep the main loop moving
-		for (unsigned loop(0); loop < 5000; ++loop) {
-			Application::yield(100);
-		}
+		synchronized(boost::bind(elm_image_animated_set, boost::ref(control_), EINA_TRUE));
+		checkAnimated(EINA_TRUE);
+
+		synchronized(boost::bind(elm_image_animated_play_set, boost::ref(control_), EINA_TRUE));
+		checkPlay(EINA_TRUE);
+
+		yield(0.25*1e6); // allow the animation to play for a while
+
+		synchronized(boost::bind(elm_image_animated_play_set, boost::ref(control_), EINA_FALSE));
+		checkPlay(EINA_FALSE);
+
+		synchronized(boost::bind(elm_image_animated_set, boost::ref(control_), EINA_FALSE));
+		checkAnimated(EINA_FALSE);
 	}
 
 	void checkAnimated(const Eina_Bool expected)
 	{
-		FAIL_UNLESS_EQUAL(elm_image_animated_get(control_), expected);
+		FAIL_UNLESS_EQUAL(
+			Application::synchronizedResult(
+				[this, &expected]()->Eina_Bool {
+					return elm_image_animated_get(control_);
+				}
+			), expected
+		);
 	}
 
 	void checkPlay(const Eina_Bool expected)
 	{
-		FAIL_UNLESS_EQUAL(elm_image_animated_play_get(control_), expected);
+		FAIL_UNLESS_EQUAL(
+			Application::synchronizedResult(
+				[this, &expected]()->Eina_Bool {
+					return elm_image_animated_play_get(control_);
+				}
+			), expected
+		);
 	}
 
 private:

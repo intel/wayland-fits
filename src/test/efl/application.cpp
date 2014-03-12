@@ -20,8 +20,6 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <Elementary.h>
-
 #include "config.h"
 #include "application.h"
 
@@ -29,8 +27,29 @@ namespace wfits {
 namespace test {
 namespace efl {
 
+/*static*/ boost::thread::id Application::mainThreadId_;
+/*static*/ efl::Client *Application::client_(NULL);
+
+Client::Client(wl_display* dpy)
+	: test::Client::Client(dpy)
+{
+	return;
+}
+
+void Client::synchronized(std::function<void()> f) const
+{
+	Application::synchronized(f);
+}
+
+void Client::doYield(const unsigned time) const
+{
+	usleep(time);
+}
+
 Application::Application()
 {
+	mainThreadId_ = boost::this_thread::get_id();
+
 #if defined(HAVE_EFL_1_7)
 #else // Assuming EFL/ELM >= 1.8
 	ecore_app_no_system_modules();
@@ -48,9 +67,23 @@ Application::Application()
 	setEngine(ENGINE_SHM);
 }
 
+/*static*/
+const Client& Application::client()
+{
+	if (client_ == NULL) {
+		ASSERT(boost::this_thread::get_id() == mainThreadId_);
+		ASSERT(NULL != ecore_wl_display_get());
+		client_ = new Client(ecore_wl_display_get());
+	}
+	return *client_;
+}
+
 /* virtual */
 Application::~Application()
 {
+	if (client_ != NULL) {
+		delete client_;
+	}
 	elm_shutdown();
 }
 
@@ -75,10 +108,22 @@ void Application::setEngine(const Engine& engine)
 }
 
 /*static*/
-void Application::yield(const unsigned time)
+void Application::run()
 {
-	ecore_main_loop_iterate();
-	usleep(time);
+	ASSERT(boost::this_thread::get_id() == mainThreadId_);
+	elm_run();
+}
+
+/*static*/
+void Application::exit()
+{
+	synchronized(&elm_exit);
+}
+
+/*static*/
+void Application::yield(const unsigned time, const bool strict)
+{
+	client().yield(time, strict);
 }
 
 } // namespace efl

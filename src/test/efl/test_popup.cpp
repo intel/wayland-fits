@@ -47,7 +47,13 @@ public:
 		, window_("PopupTimeoutTest", "Popup Timeout Test")
 		, control_(window_)
 		, timedout_(false)
-		, clock_(time(NULL))
+		, start_(time(NULL))
+		, end_(time(NULL))
+	{
+		return;
+	}
+
+	void setup()
 	{
 		elm_object_part_text_set(control_, "title,text", "Popup Title");
 		elm_object_text_set(control_, "Popup Default Text");
@@ -55,67 +61,82 @@ public:
 		control_.setSize(300, 300);
 		control_.setPosition(50, 10);
 
-		evas_object_smart_callback_add(control_, "timeout", timeoutReached, this);
-	}
-	
-	void setup()
-	{
+		evas_object_smart_callback_add(control_, "timeout", onTimeout, this);
+
 		window_.show();
 		control_.show();
-
-		// TODO: Using time(), so smallest units of measure are 'seconds'
-		// TODO: Use a monotonic mechanism instead of time() for better resolution
-		queueStep(boost::bind(elm_popup_timeout_set, boost::ref(control_), 1.0f));
-		queueStep(boost::bind(&PopupTimeoutTest::checkTimeout, boost::ref(*this), 1.0f));
-
-		// If it takes more than 5 seconds for this event to fire, we have a bug
-		checkTimedOut(time(NULL) + 5);
 	}
 
-	void checkTimedOut(const time_t max)
+	void test()
 	{
-		// if taking too long, fail the test
-		FAIL_UNLESS(time(NULL) < max);
+		TEST_LOG("setting timeout = " << 1.0f << "s");
+		synchronized(
+			[this]() {
+				timedout_ = false;
+				start_ = time(NULL);
+				end_ = time(NULL);
+				elm_popup_timeout_set(control_, 1.0f);
+			}
+		);
+		TEST_LOG("checking timeout attribute == " << 1.0f << "s");
+		FAIL_UNLESS_EQUAL(
+			Application::synchronizedResult(
+				[this]()->double {
+					return elm_popup_timeout_get(control_);
+				}
+			), 1.0f
+		);
 
-		if (not timedout_) {
-			// prevent a hot loop, sleep for 100ms
-			Application::yield(100);
+		TEST_LOG("checking for timeout event");
+		YIELD_UNTIL(timedout_);
 
-			// awaiting the "timedout" signal
-			queueStep(boost::bind(&PopupTimeoutTest::checkTimedOut, boost::ref(*this), max));
-
-			return;
-		}
-
-		// Supposedly captured the timeout signal-- check expected control state
-		FAIL_UNLESS_EQUAL(timedout_, true);
-		FAIL_UNLESS_EQUAL(control_.isVisible(), EINA_FALSE);
-
-		// And, check that at least a second has passed passed
-		FAIL_UNLESS_GE(time(NULL), clock_ + 1);
-	}	
-	
-	void checkTimeout(const double expected)
-	{
-		FAIL_UNLESS_EQUAL(elm_popup_timeout_get(control_), expected);
+		TEST_LOG("checking timeout occurred around " << 1.0f << "s and no longer than " << 5.0f << "s");
+		FAIL_UNLESS_GE(end_, start_ + 1);
+		FAIL_UNLESS_LE(end_, start_ + 5);
 	}
 
-	static void timeoutReached(void* data, Evas_Object *obj, void* event_info)
+	static void onTimeout(void* data, Evas_Object *obj, void* event_info)
 	{
 		PopupTimeoutTest *t = static_cast<PopupTimeoutTest*>(data);
-
+		t->end_ = time(NULL);
 		t->timedout_ = true;
-		t->control_.hide();
-
-		Application::yield(10000);
+		TEST_LOG("got timeout event; it took " << (t->end_ - t->start_) << "s");
 	}
 
 private:
 	Window	window_;
 	Popup	control_;
 	bool	timedout_;
-	time_t	clock_;
+	time_t	start_;
+	time_t	end_;
 };
+
+static std::string orientToString(Elm_Popup_Orient orient)
+{
+	switch(orient)
+	{
+		case ELM_POPUP_ORIENT_TOP:
+			return "TOP";
+		case ELM_POPUP_ORIENT_CENTER:
+			return "CENTER";
+		case ELM_POPUP_ORIENT_BOTTOM:
+			return "BOTTOM";
+		case ELM_POPUP_ORIENT_LEFT:
+			return "LEFT";
+		case ELM_POPUP_ORIENT_RIGHT:
+			return "RIGHT";
+		case ELM_POPUP_ORIENT_TOP_LEFT:
+			return "TOP_LEFT";
+		case ELM_POPUP_ORIENT_TOP_RIGHT:
+			return "TOP_RIGHT";
+		case ELM_POPUP_ORIENT_BOTTOM_LEFT:
+			return "BOTTOM_LEFT";
+		case ELM_POPUP_ORIENT_BOTTOM_RIGHT:
+			return "BOTTOM_RIGHT";
+		default:
+			return "UNKNOWN";
+	}
+}
 
 // TODO: add smart callbacks for "timeout" events for each orientation
 class PopupOrientTest : public ElmTestHarness
@@ -126,12 +147,6 @@ public:
 		, window_("PopupOrientTest", "Popup Orientation Test")
 		, control_(window_)
 	{
-		elm_object_part_text_set(control_, "title,text", "Popup Title");
-		elm_object_text_set(control_, "Popup Default Text");
-
-		control_.setSize(200, 100);
-		control_.setPosition(50, 10);
-
 		orients_.push_back(ELM_POPUP_ORIENT_TOP);
 		orients_.push_back(ELM_POPUP_ORIENT_CENTER);
 		orients_.push_back(ELM_POPUP_ORIENT_BOTTOM);
@@ -146,20 +161,34 @@ public:
 
 	void setup()
 	{
+		elm_object_part_text_set(control_, "title,text", "Popup Title");
+		elm_object_text_set(control_, "Popup Default Text");
+
+		control_.setSize(200, 100);
+		control_.setPosition(50, 10);
+
 		window_.show();
 		control_.show();
-
-		foreach (const Elm_Popup_Orient orient, orients_) {
-			queueStep(boost::bind(elm_popup_orient_set, boost::ref(control_), orient));
-			queueStep(boost::bind(&PopupOrientTest::checkOrient, boost::ref(*this), orient));
-		}
 	}
 
-	void checkOrient(const Elm_Popup_Orient expected)
+	void test()
 	{
-		control_.show();
-		FAIL_UNLESS_EQUAL(elm_popup_orient_get(control_), expected);
-		Application::yield();
+		foreach (const Elm_Popup_Orient orient, orients_)
+		{
+			TEST_LOG("setting orient = " << orientToString(orient));
+			synchronized(
+				boost::bind(&elm_popup_orient_set, boost::ref(control_), orient)
+			);
+
+			TEST_LOG("checking orient attribute == " << orientToString(orient));
+			FAIL_UNLESS_EQUAL(
+				Application::synchronizedResult(
+					[this]()->Elm_Popup_Orient {
+						return elm_popup_orient_get(control_);
+					}
+				), orient
+			);
+		}
 	}
 
 private:
@@ -172,10 +201,11 @@ typedef ResizeObjectTest<Popup> PopupResizeTest;
 typedef PositionObjectTest<Popup> PopupPositionTest;
 typedef VisibleObjectTest<Popup> PopupVisibilityTest;
 
-//WFITS_EFL_HARNESS_TEST_CASE(PopupResizeTest, "Popup")
-WFITS_EFL_HARNESS_TEST_CASE(PopupPositionTest)
+//WFITS_EFL_HARNESS_TEST_CASE(PopupResizeTest)
+// WFITS_EFL_HARNESS_TEST_CASE(PopupPositionTest)
 WFITS_EFL_HARNESS_TEST_CASE(PopupVisibilityTest)
 WFITS_EFL_HARNESS_TEST_CASE(PopupTimeoutTest)
+WFITS_EFL_HARNESS_TEST_CASE(PopupOrientTest)
 
 } // namespace efl
 } // namespace test

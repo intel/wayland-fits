@@ -51,6 +51,9 @@ public:
 		: ElmTestHarness::ElmTestHarness()
 		, window_("FlipselectorItemTest", "Flipselector Item Test")
 		, control_(window_)
+		, strings_()
+		, items_()
+		, pivot_(NULL)
 	{
 		strings_.push_back("Nil");
 		strings_.push_back("First");
@@ -67,21 +70,17 @@ public:
 
 	void setup()
 	{
-		Elm_Object_Item* pivot(
-			elm_flipselector_item_append(
-				control_, "PIVOT", NULL, NULL
-			)
+		pivot_ = elm_flipselector_item_append(
+			control_, "PIVOT", NULL, NULL
 		);
 		
-		FAIL_IF_EQUAL(pivot, static_cast<Elm_Object_Item*>(NULL));
-		
-		vector<Elm_Object_Item*> items;
+		FAIL_IF_EQUAL(pivot_, static_cast<Elm_Object_Item*>(NULL));
 
 		foreach (const std::string& label, strings_) {
 			Elm_Object_Item* item = elm_flipselector_item_append(control_, label.c_str(), NULL, NULL);
 			FAIL_IF_EQUAL(item, static_cast<Elm_Object_Item*>(NULL));
 			if (item != NULL) {
-				items.push_back(item);
+				items_.push_back(item);
 			}
 		}
 
@@ -90,30 +89,34 @@ public:
 
 		control_.setSize(200, 200);
 		control_.setPosition(50, 10);
-
-		foreach_reverse (Elm_Object_Item* item, items) {
-			queueStep(boost::bind(elm_flipselector_item_selected_set, item, EINA_TRUE));
-			queueStep(boost::bind(&FlipSelectorItemTest::checkItem, boost::ref(*this), item, pivot, EINA_TRUE));
-
-			queueStep(boost::bind(elm_flipselector_item_selected_set, pivot, EINA_TRUE));
-			queueStep(boost::bind(&FlipSelectorItemTest::checkItem, boost::ref(*this), item, pivot, EINA_FALSE));
-
-			queueStep(boost::bind(elm_flipselector_item_selected_set, item, EINA_TRUE));
-			queueStep(boost::bind(&FlipSelectorItemTest::checkItem, boost::ref(*this), item, pivot, EINA_TRUE));
-		}
-
 	}
 
-	void checkItem(const Elm_Object_Item* item, const Elm_Object_Item* pivot, Eina_Bool expected)
+	void test()
+	{
+		foreach_reverse (Elm_Object_Item* item, items_) {
+			synchronized(boost::bind(elm_flipselector_item_selected_set, item, EINA_TRUE));
+			synchronized(boost::bind(&FlipSelectorItemTest::checkItem, boost::ref(*this), item, EINA_TRUE));
+
+			synchronized(boost::bind(elm_flipselector_item_selected_set, pivot_, EINA_TRUE));
+			synchronized(boost::bind(&FlipSelectorItemTest::checkItem, boost::ref(*this), item, EINA_FALSE));
+
+			synchronized(boost::bind(elm_flipselector_item_selected_set, item, EINA_TRUE));
+			synchronized(boost::bind(&FlipSelectorItemTest::checkItem, boost::ref(*this), item, EINA_TRUE));
+		}
+	}
+
+	void checkItem(const Elm_Object_Item* item, Eina_Bool expected)
 	{
 		FAIL_UNLESS_EQUAL(elm_flipselector_item_selected_get(item), expected);
-		FAIL_UNLESS_EQUAL(elm_flipselector_item_selected_get(pivot), not expected);
+		FAIL_UNLESS_EQUAL(elm_flipselector_item_selected_get(pivot_), not expected);
 	}
 
 private:
 	Window		window_;
 	Flipselector	control_;
 	vector<string>	strings_;
+	vector<Elm_Object_Item*> items_;
+	Elm_Object_Item* pivot_;
 };
 
 typedef ResizeObjectTest<Flipselector> FlipSelectorResizeTest;

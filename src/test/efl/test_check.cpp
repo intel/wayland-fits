@@ -50,19 +50,24 @@ public:
 		, window_("CheckStateTest", "Check State Test")
 		, check_(elm_check_add(window_))
 	{
-		evas_object_resize(check_, 200, 100);
+		return;
 	}
 
 	void setup()
 	{
+		evas_object_resize(check_, 200, 100);
+
 		check_.show();
 		window_.show();
+	}
 
-		queueStep(boost::bind(elm_check_state_set, boost::ref(check_), EINA_FALSE));
-		queueStep(boost::bind(&CheckStateTest::checkPos, boost::ref(*this), EINA_FALSE));
+	void test()
+	{
+		synchronized(boost::bind(elm_check_state_set, boost::ref(check_), EINA_FALSE));
+		synchronized(boost::bind(&CheckStateTest::checkPos, boost::ref(*this), EINA_FALSE));
 
-		queueStep(boost::bind(elm_check_state_set, boost::ref(check_), EINA_TRUE));
-		queueStep(boost::bind(&CheckStateTest::checkPos, boost::ref(*this), EINA_TRUE));
+		synchronized(boost::bind(elm_check_state_set, boost::ref(check_), EINA_TRUE));
+		synchronized(boost::bind(&CheckStateTest::checkPos, boost::ref(*this), EINA_TRUE));
 	}
 
 	void checkPos(Eina_Bool checked)
@@ -84,16 +89,21 @@ public:
 		, window_("CheckTextTest", "Check Text Test")
 		, check_(elm_check_add(window_))
 	{
-		evas_object_resize(check_, 200, 100);
+		return;
 	}
 
 	void setup()
 	{
+		evas_object_resize(check_, 200, 100);
+
 		check_.show();
 		window_.show();
+	}
 
-		queueStep(boost::bind(elm_object_part_text_set, boost::ref(check_), part.c_str(), text.c_str()));
-		queueStep(boost::bind(&CheckPartTextTest::checkPartText, boost::ref(*this)));
+	void test()
+	{
+		synchronized(boost::bind(elm_object_part_text_set, boost::ref(check_), part.c_str(), text.c_str()));
+		synchronized(boost::bind(&CheckPartTextTest::checkPartText, boost::ref(*this)));
 	}
 
 	void checkPartText()
@@ -120,69 +130,57 @@ public:
 		, changed_(false)
 		, rendered_(false)
 	{
-		evas_object_resize(check_, 200, 100);
-		elm_object_text_set(check_, "Test Check");
-		evas_object_move(check_, 0, 0);
-		evas_object_smart_callback_add(check_, "changed", onChanged, this);
+		return;
 	}
 
 	void setup()
 	{
+		evas_object_resize(check_, 200, 100);
+		elm_object_text_set(check_, "Test Check");
+		evas_object_move(check_, 0, 0);
+		evas_object_smart_callback_add(check_, "changed", onChanged, this);
+
 		evas_event_callback_add(evas_object_evas_get(window_), EVAS_CALLBACK_RENDER_POST, onPostRender, this);
 
 		check_.show();
 		window_.show();
+	}
 
-		queueStep(
-			boost::bind(
-				&ElmTestHarness::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&CheckUserStateTest::rendered_, boost::ref(*this))
-			)
-		);
+	void test()
+	{
+		YIELD_UNTIL(rendered_);
 
-		queueStep(boost::bind(&CheckUserStateTest::clickCheck, boost::ref(*this)));
-		queueStep(
-			boost::bind(
-				&ElmTestHarness::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&CheckUserStateTest::changed_, boost::ref(*this))
-			),
-			"Testing changed_ event"
-		);
-		queueStep(
+		TEST_LOG("Testing changed event");
+		changed_ = false;
+		clickCheck();
+		YIELD_UNTIL(changed_);
+
+		TEST_LOG("Testing state == EINA_TRUE");
+		synchronized(
 			boost::bind(
 				&CheckUserStateTest::testCheckState,
 				boost::ref(*this),
 				EINA_TRUE
-			),
-			"Testing state == EINA_TRUE"
+			)
 		);
 
-		queueStep(boost::bind(&CheckUserStateTest::setChangedFalse, boost::ref(*this)));
-		queueStep(boost::bind(&CheckUserStateTest::clickCheck, boost::ref(*this)));
-		queueStep(
-			boost::bind(
-				&ElmTestHarness::stepUntilCondition,
-				boost::ref(*this),
-				boost::lambda::bind(&CheckUserStateTest::changed_, boost::ref(*this))
-			),
-			"Testing changed_ event"
-		);
-		queueStep(
+		TEST_LOG("Testing changed event");
+		changed_ = false;
+		clickCheck();
+		YIELD_UNTIL(changed_);
+
+		TEST_LOG("Testing state == EINA_FALSE");
+		synchronized(
 			boost::bind(
 				&CheckUserStateTest::testCheckState,
 				boost::ref(*this),
 				EINA_FALSE
-			),
-			"Testing state == EINA_FALSE"
+			)
 		);
 	}
 
 	void clickCheck()
 	{
-		Application::yield(0.01*1e6);
-
 		Geometry gw(getSurfaceGeometry(window_.get_wl_surface()));
 		Geometry gf(window_.getFramespaceGeometry());
 		Geometry gc(check_.getGeometry());
@@ -202,7 +200,7 @@ public:
 	{
 		CheckUserStateTest *test = static_cast<CheckUserStateTest*>(data);
 		test->changed_ = true;
-		std::cout << "...received changed event" << std::endl;
+		TEST_LOG("received changed event");
 	}
 
 	static void onPostRender(void *data, Evas *e, void *info)
@@ -211,7 +209,7 @@ public:
 
 		CheckUserStateTest *test = static_cast<CheckUserStateTest*>(data);
 		test->rendered_ = true;
-		std::cout << "...got post render event" << std::endl;
+		TEST_LOG("got post render event");
 	}
 
 	void testCheckState(Eina_Bool checked)

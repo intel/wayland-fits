@@ -33,7 +33,6 @@ public:
 	WindowMoveTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("WindowMoveTest", "Window Move Test")
-		, positions_()
 		, moveDone_(false)
 	{
 		return;
@@ -41,75 +40,46 @@ public:
 
 	void setup()
 	{
-		window_.show();
-
-		positions_.push_back(Position(10, 20));
-		positions_.push_back(Position(15, 25));
-
 		evas_object_event_callback_add(window_, EVAS_CALLBACK_MOVE, &onMove, this);
 
-		nextPosition();
+		window_.show();
+	}
+
+	void test()
+	{
+		for (int x(10), y(20); x < 20 and y < 30; x += 5, y += 5)
+		{
+			TEST_LOG("moving window to " << x << "," << y);
+			moveDone_ = false;
+			window_.setPosition(x, y);
+
+			TEST_LOG("waiting for move event");
+			YIELD_UNTIL(moveDone_);
+
+			TEST_LOG("checking window position == " << x << "," << y);
+			window_.checkPosition(x, y);
+
+			TEST_LOG("checking server position == client position");
+			YIELD_UNTIL(serverPositionIsEqual());
+		}
 	}
 
 	static void onMove(void *data, Evas*, Evas_Object*, void*)
 	{
 		WindowMoveTest *test = static_cast<WindowMoveTest*>(data);
 		test->moveDone_ = true;
+		TEST_LOG("got move event");
 	}
 
-	void nextPosition() {
-		moveDone_ = false;
-		if (not positions_.empty()) {
-			Position position(positions_.front());
-			positions_.pop_front();
-			queueStep(boost::bind(&Window::setPosition, boost::ref(window_), position.first, position.second));
-			queueStep(boost::bind(&WindowMoveTest::checkPosition, boost::ref(*this), position.first, position.second, 20));
-		}
-	}
-
-	void checkPosition(int x, int y, unsigned tries)
+	bool serverPositionIsEqual()
 	{
-		if (not moveDone_) {
-			ASSERT_MSG(tries != 0,
-				"failed to get EVAS_CALLBACK_MOVE event ("
-				<< x << ","
-				<< y << ")"
-			);
-			queueStep(boost::bind(&WindowMoveTest::checkPosition, boost::ref(*this), x, y, --tries));
-		} else {
-			window_.checkPosition(x, y);
-			checkServerPosition(2);
-		}
-	}
-
-	void checkServerPosition(unsigned tries) {
 		Geometry geometry(getSurfaceGeometry(window_.get_wl_surface()));
-		bool positionMatch(
-			window_.getX() == geometry.x
-			and window_.getY() == geometry.y);
-
-		if (not positionMatch) {
-			ASSERT_MSG(tries != 0, ""
-				<< "client position ("
-				<< window_.getX() << ","
-				<< window_.getY() << ") != "
-				<< "server position ("
-				<< geometry.x << ","
-				<< geometry.y << ")"
-			);
-			queueStep(boost::bind(&WindowMoveTest::checkServerPosition, boost::ref(*this), --tries));
-		} else {
-			FAIL_UNLESS(positionMatch);
-			nextPosition();
-		}
+		return window_.getX() == geometry.x
+			and window_.getY() == geometry.y;
 	}
 
 private:
-	typedef std::pair<int, int> Position;
-	typedef std::deque<Position> Positions;
-
 	Window		window_;
-	Positions	positions_;
 	bool		moveDone_;
 };
 

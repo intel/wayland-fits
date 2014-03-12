@@ -30,6 +30,18 @@ namespace wfits {
 namespace test {
 namespace core {
 
+class Client : public test::Client
+{
+public:
+	Client(const Display&);
+
+protected:
+	/*virtual*/ void doYield(const unsigned time = 0.01 * 1e6) const;
+
+private:
+	const Display& display_;
+};
+
 class Harness : public test::Harness
 {
 public:
@@ -41,14 +53,13 @@ public:
 
 	const Display& display() const { return display_; }
 
-	/*virtual*/ void yield(const unsigned = 0.001 * 1e6) const;
 	/*virtual*/ const test::Client& client() const;
 
 private:
 	void runStep(TestStep step) const;
 
 	Display display_;
-	Client client_;
+	core::Client client_;
 };
 
 #define WFITS_CORE_HARNESS_TEST_CASE(HarnessClass) \

@@ -33,18 +33,16 @@ public:
 	WindowMaximizeTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("WindowMaximizeTest", "Window Maximize Test")
-		, geometry_()
+		, initialGeometry_()
 		, isMaximized_(false)
 		, configureDone_(false)
 		, resizeDone_(false)
-		, rendered_(false)
 	{
- 		return;
+		return;
 	}
 
 	void setup()
 	{
-		evas_event_callback_add(evas_object_evas_get(window_), EVAS_CALLBACK_RENDER_POST, onPostRender, this);
 		evas_object_event_callback_add(window_, EVAS_CALLBACK_RESIZE, onResize, this);
 		ecore_event_handler_add(ECORE_WL_EVENT_WINDOW_CONFIGURE, onConfigure, this);
 
@@ -52,75 +50,68 @@ public:
 		evas_object_smart_callback_add(window_, "unmaximized", onUnMaximize, this);
 
 		window_.show();
-
-		for(unsigned i(0); i < 5; ++i) {
-			queueStep(boost::bind(&WindowMaximizeTest::test, boost::ref(*this)));
-		}
 	}
 
 	void test()
 	{
-		static bool initial(true);
+		initialGeometry_ = getSurfaceGeometry(window_.get_wl_surface());
+		TEST_LOG(
+			"initial server geometry is: "
+			<< initialGeometry_.x << ","
+			<< initialGeometry_.y << " "
+			<< initialGeometry_.width << "x"
+			<< initialGeometry_.height
+		);
 
-		YIELD_UNTIL(rendered_);
+		for (unsigned i(0); i < 5; ++i)
+		{
+			isMaximized_ = false;
+			configureDone_ = false;
+			resizeDone_ = false;
 
-		isMaximized_ = false;
-		configureDone_ = false;
-		resizeDone_ = false;
+			TEST_LOG("asserting client geometry == server geometry == initial server geometry");
+			ASSERT(isInitialGeometry());
 
-		if (initial) {
-			geometry_ = getSurfaceGeometry(window_.get_wl_surface());
+			TEST_LOG("maximizing window");
+			window_.maximize(EINA_TRUE);
 
-			std::cout << "...initial server geometry is: "
-				<< geometry_.x << ","
-				<< geometry_.y << " "
-				<< geometry_.width << "x"
-				<< geometry_.height << std::endl;
-			initial = false;
+			TEST_LOG("checking for events");
+			YIELD_UNTIL(isMaximized_ and configureDone_ and resizeDone_);
+
+			// FIXME: How do we test if the window is actually maximized (i.e. what should the size be)?
+			TEST_LOG("checking server geometry != initial server geometry");
+			YIELD_UNTIL(not serverGeometryIsInitial());
+
+			TEST_LOG("checking client size == server size");
+			YIELD_UNTIL(serverSizeIsEqual());
+
+			configureDone_ = false;
+			resizeDone_ = false;
+
+			ASSERT(isMaximized_);
+
+			TEST_LOG("unmaximizing window");
+			window_.maximize(EINA_FALSE);
+
+			TEST_LOG("checking for events");
+			YIELD_UNTIL(not isMaximized_ and configureDone_ and resizeDone_);
+
+			TEST_LOG("checking client geometry == server geometry == initial server geometry");
+			YIELD_UNTIL(isInitialGeometry());
 		}
-
-		std::cout << "...asserting client geometry == server geometry == initial server geometry" << std::endl;
-		ASSERT(isInitialGeometry());
-
-		std::cout << "...maximizing window" << std::endl;
-		window_.maximize(EINA_TRUE);
-
-		std::cout << "...checking for events" << std::endl;
-		YIELD_UNTIL(isMaximized_ and configureDone_ and resizeDone_);
-
-		// FIXME: How do we test if the window is actually maximized (i.e. what should the size be)?
-		std::cout << "...checking server geometry != initial server geometry" << std::endl;
-		YIELD_UNTIL(not serverGeometryIsInitial());
-
-		std::cout << "...checking client size == server size" << std::endl;
-		YIELD_UNTIL(serverSizeIsEqual());
-
-		configureDone_ = false;
-		resizeDone_ = false;
-
-		ASSERT(isMaximized_);
-
-		std::cout << "...unmaximizing window" << std::endl;
-		window_.maximize(EINA_FALSE);
-
-		std::cout << "...checking for events" << std::endl;
-		YIELD_UNTIL(not isMaximized_ and configureDone_ and resizeDone_);
-
-		std::cout << "...checking client geometry == server geometry == initial server geometry" << std::endl;
-		YIELD_UNTIL(isInitialGeometry());
 	}
 
 	bool isInitialGeometry()
 	{
 		const Geometry sg(getSurfaceGeometry(window_.get_wl_surface()));
-		const Geometry fg(window_.getFramespaceGeometry());
+		const Geometry fg = window_.getFramespaceGeometry();
 
-		return sg.x == geometry_.x
-			and sg.y == geometry_.y
-			and sg.width == geometry_.width
-			and sg.height == geometry_.height
-			and window_.getWidth() + fg.width == geometry_.width
-			and window_.getHeight() + fg.height == geometry_.height
+		return sg.x == initialGeometry_.x
+			and sg.y == initialGeometry_.y
+			and sg.width == initialGeometry_.width
+			and sg.height == initialGeometry_.height
+			and window_.getWidth() + fg.width == initialGeometry_.width
+			and window_.getHeight() + fg.height == initialGeometry_.height
 		;
 		// NOTE: server does not support client side positioning
 	}
@@ -128,7 +119,7 @@ public:
 	bool serverSizeIsEqual()
 	{
 		const Geometry g(getSurfaceGeometry(window_.get_wl_surface()));
-		const Geometry fg(window_.getFramespaceGeometry());
+		const Geometry fg = window_.getFramespaceGeometry();
 
 		return window_.getWidth() + fg.width == g.width
 			and window_.getHeight() + fg.height == g.height;
@@ -138,19 +129,10 @@ public:
 	{
 		const Geometry g(getSurfaceGeometry(window_.get_wl_surface()));
 
-		return geometry_.x == g.x
-			and geometry_.y == g.y
-			and geometry_.width == g.width
-			and geometry_.height == g.height;
-	}
-
-	static void onPostRender(void *data, Evas *e, void *info)
-	{
-		evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, onPostRender);
-
-		WindowMaximizeTest *test = static_cast<WindowMaximizeTest*>(data);
-		test->rendered_ = true;
-		std::cout << "...got post render event" << std::endl;
+		return initialGeometry_.x == g.x
+			and initialGeometry_.y == g.y
+			and initialGeometry_.width == g.width
+			and initialGeometry_.height == g.height;
 	}
 
 	static Eina_Bool onConfigure(void *data, int type, void *event)
@@ -159,11 +141,12 @@ public:
 		Ecore_Wl_Event_Window_Configure *ev = static_cast<Ecore_Wl_Event_Window_Configure *>(event);
 		test->configureDone_ = true;
 
-		std::cout << "...got configure event: "
+		TEST_LOG("got configure event: "
 			<< ev->x << " "
 			<< ev->y << " "
 			<< ev->w << " "
-			<< ev->h << std::endl;
+			<< ev->h
+		);
 		return ECORE_CALLBACK_PASS_ON;
 	}
 
@@ -171,30 +154,29 @@ public:
 	{
 		WindowMaximizeTest *test = static_cast<WindowMaximizeTest*>(data);
 		test->resizeDone_ = true;
-		std::cout << "...got resize event" << std::endl;
+		TEST_LOG("got resize event");
 	}
 
 	static void onMaximize(void* data, Evas_Object *obj, void* event_info)
 	{
 		WindowMaximizeTest *test = static_cast<WindowMaximizeTest*>(data);
 		test->isMaximized_ = true;
-		std::cout << "...got maximize event" << std::endl;
+		TEST_LOG("got maximize event");
 	}
 
 	static void onUnMaximize(void *data, Evas_Object*, void*)
 	{
 		WindowMaximizeTest *test = static_cast<WindowMaximizeTest*>(data);
 		test->isMaximized_ = false;
-		std::cout << "...got unmaximize event" << std::endl;
+		TEST_LOG("got unmaximize event");
 	}
 
 private:
 	Window		window_;
-	Geometry	geometry_;
+	Geometry	initialGeometry_;
 	bool		isMaximized_;
 	bool		configureDone_;
 	bool		resizeDone_;
-	bool		rendered_;
 };
 
 WFITS_EFL_HARNESS_TEST_CASE(WindowMaximizeTest)

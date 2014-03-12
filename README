@@ -70,9 +70,12 @@ RUNNING
 
   $ weston --modules=weston-wfits.so &
 
-  NOTE: the weston-wfits.so module supports x11-backend, drm-backend, and the
+  NOTE: The weston-wfits.so module supports x11-backend, drm-backend, and the
   headless-backend.  However, not all tests can be run on the headless-backend;
   particularly the egl-based ones.
+
+  NOTE: Ensure that all shell animations are turned off (i.e. in weston.ini).
+  These animations have a tendency to break the input-based test cases.
 
  If you define the environment variable WESTON_WFITS_INPUT_EMULATOR=<method>, the
  weston-wfits.so module will use that method when it loads at startup.  The

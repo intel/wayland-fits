@@ -20,6 +20,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <boost/lexical_cast.hpp>
 #include "tools.h"
 #include "client.h"
 
@@ -59,6 +60,7 @@ Client::Client(wl_display* dpy)
 	: wfits_input_(NULL)
 	, wfits_query_(NULL)
 	, wfits_manip_(NULL)
+	, yieldFactor_(1.f)
 {
 	ASSERT(NULL != dpy);
 
@@ -73,6 +75,12 @@ Client::Client(wl_display* dpy)
 	ASSERT(NULL != wfits_input_);
 	ASSERT(NULL != wfits_query_);
 	ASSERT(NULL != wfits_manip_);
+
+	const char* emu(getenv("WFITS_YIELD_FACTOR"));
+	if (emu != NULL)
+	{
+		yieldFactor_ = boost::lexical_cast<float>(emu);
+	}
 }
 
 /*virtual*/ Client::~Client()
@@ -116,8 +124,12 @@ Client::QueryRequest* Client::makeGeometryRequest(wl_surface* surface) const
 		query_result_surface_geometry,
 	};
 
-	wfits_query_result* result = wfits_query_surface_geometry(wfits_query_, surface);
-	wfits_query_result_add_listener(result, &listener, request);
+	synchronized(
+		[this, &request, &surface]() {
+			wfits_query_result* result = wfits_query_surface_geometry(wfits_query_, surface);
+			wfits_query_result_add_listener(result, &listener, request);
+		}
+	);
 
 	return request;
 }
@@ -145,15 +157,23 @@ Client::QueryRequest* Client::makePointerPositionRequest() const
 		query_result_global_pointer_position,
 	};
 
-	wfits_query_result* result = wfits_query_global_pointer_position(wfits_query_);
-	wfits_query_result_add_listener(result, &listener, request);
+	synchronized(
+		[this, &request]() {
+			wfits_query_result* result = wfits_query_global_pointer_position(wfits_query_);
+			wfits_query_result_add_listener(result, &listener, request);
+		}
+	);
 
 	return request;
 }
 
 void Client::movePointerTo(int32_t x, int32_t y) const
 {
-	wfits_input_move_pointer(wfits_input_, x, y);
+	synchronized(
+		[this, &x, &y]() {
+			wfits_input_move_pointer(wfits_input_, x, y);
+		}
+	);
 }
 
 void Client::movePointerTo(const Position& position) const
@@ -163,12 +183,40 @@ void Client::movePointerTo(const Position& position) const
 
 void Client::sendKey(uint32_t key, uint32_t state) const
 {
-	wfits_input_key_send(wfits_input_, key, state);
+	synchronized(
+		[this, &key, &state]() {
+			wfits_input_key_send(wfits_input_, key, state);
+		}
+	);
 }
 
 void Client::moveSurfaceTo(wl_surface* surface, int32_t x, int32_t y) const
 {
-	wfits_manip_move_surface(wfits_manip_, surface, x, y);
+	synchronized(
+		[this, &surface, &x, &y]() {
+			wfits_manip_move_surface(wfits_manip_, surface, x, y);
+		}
+	);
+}
+
+/*virtual*/
+void Client::synchronized(std::function<void()> f) const
+{
+	f();
+}
+
+void Client::yield(const unsigned time, const bool strict) const
+{
+	if (strict)
+		doYield(time);
+	else
+		doYield(yieldFactor_ * time);
+}
+
+/*virtual*/
+void Client::doYield(const unsigned time) const
+{
+	usleep(time);
 }
 
 } // namespace test

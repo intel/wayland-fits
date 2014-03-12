@@ -20,16 +20,12 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <vector>
-
 #include "window.h"
 #include "elmtestharness.h"
 
 namespace wfits {
 namespace test {
 namespace efl {
-
-using std::vector;
 
 class WindowIconifyTest : public ElmTestHarness
 {
@@ -44,11 +40,21 @@ public:
 	void setup()
 	{
 		window_.show();
+	}
 
-		queueStep(boost::bind(&Window::iconify, boost::ref(window_), EINA_TRUE));
-		queueStep(boost::bind(&Window::checkIconified, boost::ref(window_), EINA_TRUE));
-		queueStep(boost::bind(&Window::iconify, boost::ref(window_), EINA_FALSE));
-		queueStep(boost::bind(&Window::checkIconified, boost::ref(window_), EINA_FALSE));
+	void test()
+	{
+		TEST_LOG("iconifying window");
+		window_.iconify(EINA_TRUE);
+
+		TEST_LOG("checking window iconify attributes");
+		window_.checkIconified(EINA_TRUE);
+
+		TEST_LOG("un-iconifying window");
+		window_.iconify(EINA_FALSE);
+
+		TEST_LOG("checking window un-iconify attributes");
+		window_.checkIconified(EINA_FALSE);
 	}
 
 private:
@@ -68,11 +74,21 @@ public:
 	void setup()
 	{
 		window_.show();
+	}
 
-		queueStep(boost::bind(&Window::sticky, boost::ref(window_), EINA_TRUE));
-		queueStep(boost::bind(&Window::checkSticky, boost::ref(window_), EINA_TRUE));
-		queueStep(boost::bind(&Window::sticky, boost::ref(window_), EINA_FALSE));
-		queueStep(boost::bind(&Window::checkSticky, boost::ref(window_), EINA_FALSE));
+	void test()
+	{
+		TEST_LOG("setting window sticky");
+		window_.sticky(EINA_TRUE);
+
+		TEST_LOG("checking window sticky attributes");
+		window_.checkSticky(EINA_TRUE);
+
+		TEST_LOG("setting window un-sticky");
+		window_.sticky(EINA_FALSE);
+
+		TEST_LOG("checking window un-sticky attributes");
+		window_.checkSticky(EINA_FALSE);
 	}
 
 private:
@@ -92,11 +108,23 @@ public:
 	void setup()
 	{
 		window_.show();
+	}
 
-		queueStep(boost::bind(&Window::withdrawn, boost::ref(window_), EINA_TRUE));
-		queueStep(boost::bind(&Window::checkWithdrawn, boost::ref(window_), EINA_TRUE));
-		queueStep(boost::bind(&Window::withdrawn, boost::ref(window_), EINA_FALSE));
-		queueStep(boost::bind(&Window::checkWithdrawn, boost::ref(window_), EINA_FALSE));
+	void test()
+	{
+		//FIXME: doing this too quickly can crash
+		// we need to ensure we've rendered once
+		TEST_LOG("setting window withdrawn");
+		window_.withdrawn(EINA_TRUE);
+
+		TEST_LOG("checking window withdrawn attributes");
+		window_.checkWithdrawn(EINA_TRUE);
+
+		TEST_LOG("setting window un-withdrawn");
+		window_.withdrawn(EINA_FALSE);
+
+		TEST_LOG("checking window un-withdrawn attributes");
+		window_.checkWithdrawn(EINA_FALSE);
 	}
 
 private:
@@ -110,33 +138,44 @@ public:
 		: ElmTestHarness::ElmTestHarness()
 		, window_("WindowRotationTest", "Window Rotation Test")
 	{
-		degrees_.push_back(90);
-		degrees_.push_back(180);
-		degrees_.push_back(270);
-		degrees_.push_back(360);
-		degrees_.push_back(0);
-		degrees_.push_back(90);
-		degrees_.push_back(0);
-		degrees_.push_back(180);
-		degrees_.push_back(0);
-		degrees_.push_back(270);
-		degrees_.push_back(0);
-		degrees_.push_back(360);
+		return;
 	}
 
 	void setup()
 	{
+		window_.setSize(450, 150);
 		window_.show();
+	}
 
-		foreach (const int degree, degrees_) {
-			queueStep(boost::bind(&Window::rotate, boost::ref(window_), degree));
-			queueStep(boost::bind(&Window::checkRotation, boost::ref(window_), degree));
-		}
+	void test()
+	{
+		testRotate(90);
+		testRotate(180);
+		testRotate(270);
+		testRotate(360);
+		testRotate(0);
+		testRotate(90);
+		testRotate(0);
+		testRotate(180);
+		testRotate(0);
+		testRotate(270);
+		testRotate(0);
+		testRotate(360);
+	}
+
+	void testRotate(int degrees)
+	{
+		TEST_LOG("rotating window to " << degrees << " degrees");
+		window_.rotate(degrees);
+
+		TEST_LOG("checking window rotation attributes == " << degrees << " degrees");
+		window_.checkRotation(degrees);
+
+		//TODO: validate window orientation with the server side
 	}
 
 private:
 	Window		window_;
-	vector<int>	degrees_;
 };
 
 class WindowAlphaTest : public ElmTestHarness
@@ -145,7 +184,6 @@ public:
 	WindowAlphaTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_(elm_win_add(NULL, elm_config_engine_get(), ELM_WIN_BASIC))
-		, rendered_(false)
 	{
 		return;
 	}
@@ -153,61 +191,71 @@ public:
 	void setup()
 	{
 		elm_win_title_set(window_, "Alpha Test");
-		window_.setSize(800, 600);
+		window_.setSize(400, 300);
 		window_.show();
-
-		queueStep(boost::bind(&WindowAlphaTest::test, boost::ref(*this)));
 	}
 
 	void test()
 	{
-		#define YIELD_UNTIL_RENDERED \
-		do { \
-			rendered_ = false; \
-			evas_event_callback_add( \
-				evas_object_evas_get(window_), \
-				EVAS_CALLBACK_RENDER_POST, \
-				onPostRender, this \
-			); \
-			std::cout << "...checking for post render" << std::endl; \
-			YIELD_UNTIL(rendered_); \
-		} while (0)
+		for (unsigned i(0); i < 5; ++i)
+		{
+			TEST_LOG("setting alpha true");
+			synchronized(
+				[this]() {
+					elm_win_alpha_set(window_, EINA_TRUE);
+				}
+			);
 
-		YIELD_UNTIL_RENDERED;
+			TEST_LOG("checking alpha attribute == true");
+			YIELD_UNTIL(
+				Application::synchronizedResult(
+					[this]()->Eina_Bool {
+						return elm_win_alpha_get(window_);
+					}
+				)  == EINA_TRUE
+			);
 
-		for (unsigned i(0); i < 5; ++i) {
-			std::cout << "...setting alpha true" << std::endl;
-			elm_win_alpha_set(window_, EINA_TRUE);
-			YIELD_UNTIL_RENDERED;
-			std::cout << "...checking alpha prop" << std::endl;
-			YIELD_UNTIL(elm_win_alpha_get(window_) == EINA_TRUE);
-			std::cout << "...setting alpha false" << std::endl;
-			elm_win_alpha_set(window_, EINA_FALSE);
-			YIELD_UNTIL_RENDERED;
-			std::cout << "...checking alpha prop" << std::endl;
-			YIELD_UNTIL(elm_win_alpha_get(window_) == EINA_FALSE);
+			TEST_LOG("setting alpha false");
+			synchronized(
+				[this]() {
+					elm_win_alpha_set(window_, EINA_FALSE);
+				}
+			);
+
+			TEST_LOG("checking alpha attribute == false");
+			YIELD_UNTIL(
+				Application::synchronizedResult(
+					[this]()->Eina_Bool {
+						return elm_win_alpha_get(window_);
+					}
+				)  == EINA_FALSE
+			);
 		}
-		#undef YIELD_UNTIL_RENDERED
 	}
 
-	static void onPostRender(void *data, Evas *e, void *info)
-	{
-		evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, onPostRender);
-
-		WindowAlphaTest *test = static_cast<WindowAlphaTest*>(data);
-		test->rendered_ = true;
-	}
 private:
 	EvasObject window_;
-	bool rendered_;
 };
 
-class WindowIndicatorTest : public ElmTestHarness
+static std::string toString(Elm_Win_Indicator_Mode mode)
+{
+	switch(mode)
+	{
+		case ELM_WIN_INDICATOR_SHOW:
+			return "SHOW";
+		case ELM_WIN_INDICATOR_HIDE:
+			return "HIDE";
+		default:
+			return "UNKNOWN";
+	}
+}
+
+class WindowIndicatorModeTest : public ElmTestHarness
 {
 public:
-	WindowIndicatorTest()
+	WindowIndicatorModeTest()
 		: ElmTestHarness::ElmTestHarness()
-		, window_("WindowIndicatorTest", "Window Indicator Test")
+		, window_("WindowIndicatorModeTest", "Window Indicator Mode Test")
 	{
 		return;
 	}
@@ -215,23 +263,50 @@ public:
 	void setup()
 	{
 		window_.show();
-
-		queueStep(boost::bind(elm_win_indicator_mode_set, boost::ref(window_), ELM_WIN_INDICATOR_SHOW));
-		queueStep(boost::bind(&WindowIndicatorTest::checkIndicator, boost::ref(*this), ELM_WIN_INDICATOR_SHOW));
-		queueStep(boost::bind(elm_win_indicator_mode_set, boost::ref(window_), ELM_WIN_INDICATOR_HIDE));
-		queueStep(boost::bind(&WindowIndicatorTest::checkIndicator, boost::ref(*this), ELM_WIN_INDICATOR_HIDE));
-		queueStep(boost::bind(elm_win_indicator_mode_set, boost::ref(window_), ELM_WIN_INDICATOR_SHOW));
-		queueStep(boost::bind(&WindowIndicatorTest::checkIndicator, boost::ref(*this), ELM_WIN_INDICATOR_SHOW));
 	}
 
-	void checkIndicator(const Elm_Win_Indicator_Mode expected)
+	void test()
 	{
-		FAIL_UNLESS_EQUAL(elm_win_indicator_mode_get(window_), expected);
+		testIndicatorMode(ELM_WIN_INDICATOR_SHOW);
+		testIndicatorMode(ELM_WIN_INDICATOR_HIDE);
+		testIndicatorMode(ELM_WIN_INDICATOR_SHOW);
+	}
+
+	void testIndicatorMode(Elm_Win_Indicator_Mode mode)
+	{
+		TEST_LOG("setting window indicator mode = " << toString(mode));
+		synchronized(
+			[this, &mode]() {
+				elm_win_indicator_mode_set(window_, mode);
+			}
+		);
+
+		TEST_LOG("checking window indicator mode attribute == " << toString(mode));
+		FAIL_UNLESS_EQUAL(
+			Application::synchronizedResult(
+				[this]()->Elm_Win_Indicator_Mode {
+					return elm_win_indicator_mode_get(window_);
+				}
+			), mode
+		);
 	}
 
 private:
-	Window	window_;
+	Window window_;
 };
+
+static std::string toString(Elm_Win_Indicator_Opacity_Mode opacity)
+{
+	switch(opacity)
+	{
+		case ELM_WIN_INDICATOR_OPAQUE:
+			return "OPAQUE";
+		case ELM_WIN_INDICATOR_TRANSLUCENT:
+			return "TRANSLUCENT";
+		default:
+			return "UNKNOWN";
+	}
+}
 
 class WindowIndicatorOpacityTest : public ElmTestHarness
 {
@@ -240,33 +315,42 @@ public:
 		: ElmTestHarness::ElmTestHarness()
 		, window_("WindowIndicatorOpacityTest", "Window Indicator Opacity Test")
 	{
-		modes_.push_back(ELM_WIN_INDICATOR_OPAQUE);
-		modes_.push_back(ELM_WIN_INDICATOR_TRANSLUCENT);
-		modes_.push_back(ELM_WIN_INDICATOR_TRANSPARENT);
+		return;
 	}
 
 	void setup()
 	{
 		window_.show();
-
-		typedef vector<Elm_Win_Indicator_Opacity_Mode>::const_iterator CIterator;
-		const CIterator endIt(modes_.end());
-		for (CIterator it(modes_.begin()); it != endIt; ++it) {
-			queueStep(boost::bind(elm_win_indicator_opacity_set, boost::ref(window_), *it));
-			queueStep(boost::bind(&WindowIndicatorOpacityTest::checkOpacity, boost::ref(*this), *it));
-			queueStep(boost::bind(elm_win_indicator_opacity_set, boost::ref(window_), ELM_WIN_INDICATOR_OPAQUE));
-			queueStep(boost::bind(&WindowIndicatorOpacityTest::checkOpacity, boost::ref(*this), ELM_WIN_INDICATOR_OPAQUE));
-		}
 	}
 
-	void checkOpacity(const Elm_Win_Indicator_Opacity_Mode expected)
+	void test()
 	{
-		FAIL_UNLESS_EQUAL(elm_win_indicator_opacity_get(window_), expected);
+		testIndicatorOpacity(ELM_WIN_INDICATOR_OPAQUE);
+		testIndicatorOpacity(ELM_WIN_INDICATOR_TRANSLUCENT);
+		testIndicatorOpacity(ELM_WIN_INDICATOR_OPAQUE);
+	}
+
+	void testIndicatorOpacity(Elm_Win_Indicator_Opacity_Mode opacity)
+	{
+		TEST_LOG("setting window indicator opacity = " << toString(opacity));
+		synchronized(
+			[this, &opacity]() {
+				elm_win_indicator_opacity_set(window_, opacity);
+			}
+		);
+
+		TEST_LOG("checking window indicator opacity attribute == " << toString(opacity));
+		FAIL_UNLESS_EQUAL(
+			Application::synchronizedResult(
+				[this]()->Elm_Win_Indicator_Opacity_Mode {
+					return elm_win_indicator_opacity_get(window_);
+				}
+			), opacity
+		);
 	}
 
 private:
-	Window					window_;
-	vector<Elm_Win_Indicator_Opacity_Mode>	modes_;
+	Window window_;
 };
 
 class EcoreWlWindowTest : public ElmTestHarness
@@ -282,13 +366,18 @@ public:
 	void setup()
 	{
 		window_.show();
-
-		queueStep(boost::bind(&EcoreWlWindowTest::check, boost::ref(*this)));
 	}
 
-	void check()
+	void test()
 	{
-		ASSERT(elm_win_wl_window_get(window_) != NULL);
+		TEST_LOG("checking wl_window != NULL")
+		ASSERT(
+			Application::synchronizedResult(
+				[this]()->Ecore_Wl_Window* {
+					return elm_win_wl_window_get(window_);
+				}
+			) != NULL
+		);
 	}
 
 private:
@@ -298,46 +387,70 @@ private:
 class WindowOutputTest : public ElmTestHarness
 {
 public:
+	WindowOutputTest()
+		: ElmTestHarness::ElmTestHarness()
+		, window_(NULL)
+	{
+		return;
+	}
+
+	virtual ~WindowOutputTest()
+	{
+		if (window_ != NULL)
+		{
+			evas_object_del(window_);
+		}
+	}
+
 	void setup()
 	{
-		Evas *evas;
-
-		rendered_ = false;
 		window_ = elm_win_util_standard_add("WindowOutputTest", "Window Output Test");
-		evas = evas_object_evas_get(window_);
-
-		evas_event_callback_add(evas, EVAS_CALLBACK_RENDER_POST, onPostRender, this);
 
 		evas_object_resize(window_, 67, 39);
 		evas_object_show(window_);
-
-		queueStep(boost::bind(&WindowOutputTest::test, boost::ref(*this)));
 	}
 
 	void test()
 	{
-		YIELD_UNTIL(rendered_);
-
-		Evas *evas;
-		Ecore_Wl_Window *wlwin;
+		Evas		*evas;
+		Ecore_Wl_Window	*wlwin;
 		wl_surface	*surface;
-		Geometry server, window, viewport, framespace;
-		int width, height;
-		const int cwidth = 67;	// control width
-		const int cheight = 39;	// control height
+		Geometry	server, window, viewport, framespace;
+		int		width, height;
+		const int	cwidth = 67;	// control width
+		const int	cheight = 39;	// control height
 
-		evas = evas_object_evas_get(window_);
-		wlwin = elm_win_wl_window_get(window_);
-#if ECORE_VERSION_MAJOR == 1 && ECORE_VERSION_MINOR == 7
-		surface = wlwin->surface;
-#else
-		surface = ecore_wl_window_surface_get(wlwin);
-#endif
+		synchronized(
+			[this, &evas, &wlwin, &surface]() {
+				evas = evas_object_evas_get(window_);
+				wlwin = elm_win_wl_window_get(window_);
+				#if ECORE_VERSION_MAJOR == 1 && ECORE_VERSION_MINOR == 7
+				surface = wlwin->surface;
+				#else
+				surface = ecore_wl_window_surface_get(wlwin);
+				#endif
+			}
+		);
+
 		server = getSurfaceGeometry(surface);
-		evas_output_size_get(evas, &width, &height);
-		evas_output_viewport_get(evas, &viewport.x, &viewport.y, &viewport.width, &viewport.height);
-		evas_output_framespace_get(evas, &framespace.x, &framespace.y, &framespace.width, &framespace.height);
-		evas_object_geometry_get(window_, &window.x, &window.y, &window.width, &window.height);
+
+		synchronized(
+			[this, &evas, &width, &height, &window, &viewport, &framespace]() {
+				evas_output_size_get(evas, &width, &height);
+				evas_output_viewport_get(
+					evas, &viewport.x, &viewport.y,
+					&viewport.width, &viewport.height
+				);
+				evas_output_framespace_get(
+					evas, &framespace.x, &framespace.y,
+					&framespace.width, &framespace.height
+				);
+				evas_object_geometry_get(
+					window_, &window.x, &window.y,
+					&window.width, &window.height
+				);
+			}
+		);
 
 		FAIL_UNLESS_EQUAL(width, cwidth + framespace.width);
 		FAIL_UNLESS_EQUAL(height, cheight + framespace.height);
@@ -351,23 +464,8 @@ public:
 		FAIL_UNLESS_EQUAL(window.height + framespace.height, server.height);
 	}
 
-	void teardown()
-	{
-		evas_object_del(window_);
-	}
-
-	static void onPostRender(void *data, Evas *e, void *info)
-	{
-		evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, onPostRender);
-
-		WindowOutputTest *test = static_cast<WindowOutputTest*>(data);
-		test->rendered_ = true;
-		std::cout << "...got post render event" << std::endl;
-	}
-
 private:
 	Evas_Object	*window_;
-	bool		rendered_;
 };
 
 // NOTE: These tests are DISABLED for now since the wayland protocol
@@ -383,7 +481,7 @@ WFITS_EFL_HARNESS_TEST_CASE(WindowOutputTest)
 
 //TODO: These three below need work still
 WFITS_EFL_HARNESS_TEST_CASE(WindowAlphaTest)
-WFITS_EFL_HARNESS_TEST_CASE(WindowIndicatorTest)
+WFITS_EFL_HARNESS_TEST_CASE(WindowIndicatorModeTest)
 WFITS_EFL_HARNESS_TEST_CASE(WindowIndicatorOpacityTest)
 
 } // namespace efl

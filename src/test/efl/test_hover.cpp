@@ -20,18 +20,11 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <vector>
-#include <string>
-
-#include "background.h"
 #include "templates.h"
 
 namespace wfits {
 namespace test {
 namespace efl {
-
-using std::vector;
-using std::string;
 
 class Hover : public EvasObject
 {
@@ -52,20 +45,25 @@ public:
 		, control_(window_)
 		, button_(elm_button_add(window_))
 	{
-		button_.setPosition(200, 100);
-		button_.setSize(200, 100);
+		return;
 	}
 
 	void setup()
 	{
+		button_.setPosition(200, 100);
+		button_.setSize(200, 100);
+
 		window_.show();
 		button_.show();
+	}
 
-		queueStep(boost::bind(elm_hover_parent_set, boost::ref(control_), boost::ref(window_)));
-		queueStep(boost::bind(&HoverParentTargetTest::checkParent, boost::ref(*this), boost::ref(window_)));
+	void test()
+	{
+		synchronized(boost::bind(elm_hover_parent_set, boost::ref(control_), boost::ref(window_)));
+		synchronized(boost::bind(&HoverParentTargetTest::checkParent, boost::ref(*this), boost::ref(window_)));
 
-		queueStep(boost::bind(elm_hover_target_set, boost::ref(control_), boost::ref(button_)));
-		queueStep(boost::bind(&HoverParentTargetTest::checkTarget, boost::ref(*this), boost::ref(button_)));
+		synchronized(boost::bind(elm_hover_target_set, boost::ref(control_), boost::ref(button_)));
+		synchronized(boost::bind(&HoverParentTargetTest::checkTarget, boost::ref(*this), boost::ref(button_)));
 	}
 
 	void checkTarget(const Evas_Object *expected)

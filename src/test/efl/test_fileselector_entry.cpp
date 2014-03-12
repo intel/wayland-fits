@@ -58,9 +58,6 @@ public:
 		, window_("FileselectorEntryExpandableTest", "Fileselector Entry Expandable Test")
 		, control_(elm_fileselector_entry_add(window_))
 	{
-		control_.setSize(100, 100);
-		control_.setPosition(50, 10);
-
 		states_.push_back(EINA_TRUE);
 		states_.push_back(EINA_FALSE);
 		states_.push_back(EINA_TRUE);
@@ -68,12 +65,18 @@ public:
 
 	void setup()
 	{
+		control_.setSize(100, 100);
+		control_.setPosition(50, 10);
+
 		window_.show();
 		control_.show();
+	}
 
+	void test()
+	{
 		foreach (Eina_Bool state, states_) {
-			queueStep(boost::bind(elm_fileselector_entry_expandable_set, boost::ref(control_), state));
-			queueStep(boost::bind(&FileselectorEntryExpandableTest::checkExpandable, boost::ref(*this), state));
+			synchronized(boost::bind(elm_fileselector_entry_expandable_set, boost::ref(control_), state));
+			synchronized(boost::bind(&FileselectorEntryExpandableTest::checkExpandable, boost::ref(*this), state));
 		}
 	}
 
@@ -96,9 +99,6 @@ public:
 		, window_("FileselectorEntryFolderOnlyTest", "Fileselector Entry FolderOnly Test")
 		, control_(elm_fileselector_entry_add(window_))
 	{
-		control_.setSize(100, 100);
-		control_.setPosition(50, 10);
-
 		states_.push_back(EINA_TRUE);
 		states_.push_back(EINA_FALSE);
 		states_.push_back(EINA_TRUE);
@@ -106,12 +106,18 @@ public:
 
 	void setup()
 	{
+		control_.setSize(100, 100);
+		control_.setPosition(50, 10);
+
 		window_.show();
 		control_.show();
+	}
 
+	void test()
+	{
 		foreach (Eina_Bool state, states_) {
-			queueStep(boost::bind(elm_fileselector_entry_folder_only_set, boost::ref(control_), state));
-			queueStep(boost::bind(&FileselectorEntryFolderOnlyTest::checkFolderOnly, boost::ref(*this), state));
+			synchronized(boost::bind(elm_fileselector_entry_folder_only_set, boost::ref(control_), state));
+			synchronized(boost::bind(&FileselectorEntryFolderOnlyTest::checkFolderOnly, boost::ref(*this), state));
 		}
 	}
 
@@ -134,9 +140,6 @@ public:
 		, window_("FileselectorEntryIsSaveTest", "Fileselector Entry IsSave Test")
 		, control_(elm_fileselector_entry_add(window_))
 	{
-		control_.setSize(100, 100);
-		control_.setPosition(50, 10);
-
 		states_.push_back(EINA_TRUE);
 		states_.push_back(EINA_FALSE);
 		states_.push_back(EINA_TRUE);
@@ -144,12 +147,18 @@ public:
 
 	void setup()
 	{
+		control_.setSize(100, 100);
+		control_.setPosition(50, 10);
+
 		window_.show();
 		control_.show();
+	}
 
+	void test()
+	{
 		foreach (Eina_Bool state, states_) {
-			queueStep(boost::bind(elm_fileselector_entry_is_save_set, boost::ref(control_), state));
-			queueStep(boost::bind(&FileselectorEntryIsSaveTest::checkIsSave, boost::ref(*this), state));
+			synchronized(boost::bind(elm_fileselector_entry_is_save_set, boost::ref(control_), state));
+			synchronized(boost::bind(&FileselectorEntryIsSaveTest::checkIsSave, boost::ref(*this), state));
 		}
 	}
 
@@ -185,10 +194,13 @@ public:
 
 		window_.show();
 		control_.show();
+	}
 
+	void test()
+	{
 		foreach (Eina_Bool state, states_) {
-			queueStep(boost::bind(elm_fileselector_entry_inwin_mode_set, boost::ref(control_), state));
-			queueStep(boost::bind(&FileselectorEntryInwinTest::checkInwin, boost::ref(*this), state));
+			synchronized(boost::bind(elm_fileselector_entry_inwin_mode_set, boost::ref(control_), state));
+			synchronized(boost::bind(&FileselectorEntryInwinTest::checkInwin, boost::ref(*this), state));
 		}
 	}
 

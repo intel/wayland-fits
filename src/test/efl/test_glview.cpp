@@ -40,30 +40,38 @@ public:
 
 class GLViewResizePolicyTest : public ElmTestHarness
 {
+	typedef std::vector<Elm_GLView_Resize_Policy> Policies;
 public:
 	GLViewResizePolicyTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("GLViewResizePolicyTest", "GLView Resize Policy Test")
 		, control_(window_)
 		, set_(EINA_FALSE)
+		, policies_({
+			ELM_GLVIEW_RESIZE_POLICY_RECREATE
+			, ELM_GLVIEW_RESIZE_POLICY_SCALE
+			, ELM_GLVIEW_RESIZE_POLICY_RECREATE
+			, ELM_GLVIEW_RESIZE_POLICY_SCALE
+		  })
+		, nchecks_(0)
 	{
-		control_.setSize(200, 100);
-		control_.setPosition(50, 10);
-
-		policies_.push_back(ELM_GLVIEW_RESIZE_POLICY_RECREATE);
-		policies_.push_back(ELM_GLVIEW_RESIZE_POLICY_SCALE);
-		policies_.push_back(ELM_GLVIEW_RESIZE_POLICY_RECREATE);
-		policies_.push_back(ELM_GLVIEW_RESIZE_POLICY_SCALE);
+		return;
 	}
 
 	void setup()
 	{
+		control_.setSize(200, 100);
+		control_.setPosition(50, 10);
+
 		window_.show();
 		control_.show();
+	}
 
+	void test()
+	{
 		foreach (const Elm_GLView_Resize_Policy policy, policies_) {
-			queueStep(boost::bind(&GLViewResizePolicyTest::set, boost::ref(*this), policy));
-			queueStep(boost::bind(&GLViewResizePolicyTest::check, boost::ref(*this)));
+			synchronized(boost::bind(&GLViewResizePolicyTest::set, boost::ref(*this), policy));
+			synchronized(boost::bind(&GLViewResizePolicyTest::check, boost::ref(*this)));
 		}
 	}
 
@@ -74,42 +82,57 @@ public:
 
 	void check(void)
 	{
+		++nchecks_;
 		FAIL_UNLESS_EQUAL(set_, EINA_TRUE);
 	}
 
+	void teardown()
+	{
+		ASSERT(policies_.size() > 0);
+		ASSERT(nchecks_ == policies_.size());
+	}
+
 private:
-	Window					window_;
-	GLView					control_;
-	Eina_Bool				set_;
-	std::vector<Elm_GLView_Resize_Policy>	policies_;
+	Window		window_;
+	GLView		control_;
+	Eina_Bool	set_;
+	Policies	policies_;
+	unsigned	nchecks_;
 };
 
 class GLViewRenderPolicyTest : public ElmTestHarness
 {
+	typedef std::vector<Elm_GLView_Render_Policy> Policies;
 public:
 	GLViewRenderPolicyTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("GLViewRenderPolicyTest", "GLView Render Policy Test")
 		, control_(window_)
 		, set_(EINA_FALSE)
+		, policies_({
+			ELM_GLVIEW_RENDER_POLICY_ON_DEMAND
+			, ELM_GLVIEW_RENDER_POLICY_ALWAYS
+			, ELM_GLVIEW_RENDER_POLICY_ON_DEMAND
+			, ELM_GLVIEW_RENDER_POLICY_ALWAYS
+		  })
 	{
-		control_.setSize(200, 100);
-		control_.setPosition(50, 10);
-
-		policies_.push_back(ELM_GLVIEW_RENDER_POLICY_ON_DEMAND);
-		policies_.push_back(ELM_GLVIEW_RENDER_POLICY_ALWAYS);
-		policies_.push_back(ELM_GLVIEW_RENDER_POLICY_ON_DEMAND);
-		policies_.push_back(ELM_GLVIEW_RENDER_POLICY_ALWAYS);
+		return;
 	}
 
 	void setup()
 	{
+		control_.setSize(200, 100);
+		control_.setPosition(50, 10);
+
 		window_.show();
 		control_.show();
+	}
 
+	void test()
+	{
 		foreach (const Elm_GLView_Render_Policy policy, policies_) {
-			queueStep(boost::bind(&GLViewRenderPolicyTest::set, boost::ref(*this), policy));
-			queueStep(boost::bind(&GLViewRenderPolicyTest::check, boost::ref(*this)));
+			synchronized(boost::bind(&GLViewRenderPolicyTest::set, boost::ref(*this), policy));
+			synchronized(boost::bind(&GLViewRenderPolicyTest::check, boost::ref(*this)));
 		}
 	}
 
@@ -124,10 +147,10 @@ public:
 	}
 
 private:
-	Window					window_;
-	GLView					control_;
-	Eina_Bool				set_;
-	std::vector<Elm_GLView_Render_Policy>	policies_;
+	Window		window_;
+	GLView		control_;
+	Eina_Bool	set_;
+	Policies	policies_;
 };
 
 class GLViewModeTest : public ElmTestHarness
@@ -139,9 +162,6 @@ public:
 		, control_(window_)
 		, set_(EINA_FALSE)
 	{
-		control_.setSize(200, 100);
-		control_.setPosition(50, 10);
-
 		modes_.push_back(ELM_GLVIEW_ALPHA);
 		modes_.push_back(ELM_GLVIEW_DEPTH);
 		modes_.push_back(ELM_GLVIEW_ALPHA);
@@ -153,12 +173,18 @@ public:
 
 	void setup()
 	{
+		control_.setSize(200, 100);
+		control_.setPosition(50, 10);
+
 		window_.show();
 		control_.show();
+	}
 
+	void test()
+	{
 		foreach (const Elm_GLView_Mode mode, modes_) {
-			queueStep(boost::bind(&GLViewModeTest::set, boost::ref(*this), mode));
-			queueStep(boost::bind(&GLViewModeTest::check, boost::ref(*this)));
+			synchronized(boost::bind(&GLViewModeTest::set, boost::ref(*this), mode));
+			synchronized(boost::bind(&GLViewModeTest::check, boost::ref(*this)));
 		}
 	}
 
@@ -188,16 +214,21 @@ public:
 		, control_(window_)
 		, api_(NULL)
 	{
-		control_.setSize(200, 100);
-		control_.setPosition(50, 10);
+		return;
 	}
 
 	void setup()
 	{
+		control_.setSize(200, 100);
+		control_.setPosition(50, 10);
+
 		window_.show();
 		control_.show();
+	}
 
-		queueStep(boost::bind(&GLViewAPITest::check, boost::ref(*this)));
+	void test()
+	{
+		synchronized(boost::bind(&GLViewAPITest::check, boost::ref(*this)));
 	}
 
 	void check(void)

@@ -57,10 +57,6 @@ public:
 		, window_("DayselectorDayTest", "Dayselector Day Test")
 		, control_(elm_dayselector_add(window_))
 	{
-		window_.setSize(500, 400);
-		evas_object_size_hint_weight_set(control_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-		elm_win_resize_object_add(window_, control_);
-
 		days_.push_back(ELM_DAYSELECTOR_SUN);
 		days_.push_back(ELM_DAYSELECTOR_MON);
 		days_.push_back(ELM_DAYSELECTOR_TUE);
@@ -72,18 +68,25 @@ public:
 
 	void setup()
 	{
+		window_.setSize(500, 400);
+		evas_object_size_hint_weight_set(control_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+		elm_win_resize_object_add(window_, control_);
+
 		window_.show();
 		control_.show();
+	}
 
+	void test()
+	{
 		foreach (Elm_Dayselector_Day d, days_) {
-			queueStep(boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), d, EINA_TRUE));
-			queueStep(boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), d, EINA_TRUE));
+			synchronized(boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), d, EINA_TRUE));
+			synchronized(boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), d, EINA_TRUE));
 
-			queueStep(boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), d, EINA_FALSE));
-			queueStep(boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), d, EINA_FALSE));
+			synchronized(boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), d, EINA_FALSE));
+			synchronized(boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), d, EINA_FALSE));
 
-			queueStep(boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), d, EINA_TRUE));
-			queueStep(boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), d, EINA_TRUE));
+			synchronized(boost::bind(elm_dayselector_day_selected_set, boost::ref(control_), d, EINA_TRUE));
+			synchronized(boost::bind(&DayselectorDayTest::checkDay, boost::ref(*this), d, EINA_TRUE));
 		}
 	}
 
@@ -107,33 +110,46 @@ public:
 		, window_("DayselectorLocaleTest", "Dayselector Locale Test")
 		, control_(elm_dayselector_add(window_))
 	{
-		window_.setSize(500, 400);
-		evas_object_size_hint_weight_set(control_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-		elm_win_resize_object_add(window_, control_);
+		return;
 	}
 
 	void setup()
 	{
+		window_.setSize(500, 400);
+		evas_object_size_hint_weight_set(control_, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+		elm_win_resize_object_add(window_, control_);
+
 		window_.show();
 		control_.show();
+	}
 
+	void test()
+	{
 		// toggle the first day of the week
-		const Elm_Dayselector_Day weekstart = elm_dayselector_week_start_get(control_);
+		const Elm_Dayselector_Day weekstart = Application::synchronizedResult(
+			[this]()->Elm_Dayselector_Day {
+				return elm_dayselector_week_start_get(control_);
+			}
+		);
 
-		queueStep(boost::bind(elm_dayselector_week_start_set, boost::ref(control_), ELM_DAYSELECTOR_WED));
-		queueStep(boost::bind(&DayselectorLocaleTest::checkStart, boost::ref(*this), ELM_DAYSELECTOR_WED));
+		synchronized(boost::bind(elm_dayselector_week_start_set, boost::ref(control_), ELM_DAYSELECTOR_WED));
+		synchronized(boost::bind(&DayselectorLocaleTest::checkStart, boost::ref(*this), ELM_DAYSELECTOR_WED));
 
-		queueStep(boost::bind(elm_dayselector_week_start_set, boost::ref(control_), weekstart));
-		queueStep(boost::bind(&DayselectorLocaleTest::checkStart, boost::ref(*this), weekstart));
+		synchronized(boost::bind(elm_dayselector_week_start_set, boost::ref(control_), weekstart));
+		synchronized(boost::bind(&DayselectorLocaleTest::checkStart, boost::ref(*this), weekstart));
 
 		// Toggle the length of the weekend
-		const int len = elm_dayselector_weekend_length_get(control_);
+		const int len = Application::synchronizedResult(
+			[this]()->int {
+				return elm_dayselector_weekend_length_get(control_);
+			}
+		);
 
-		queueStep(boost::bind(elm_dayselector_weekend_length_set, boost::ref(control_), 7));
-		queueStep(boost::bind(&DayselectorLocaleTest::checkLength, boost::ref(*this), 7));
+		synchronized(boost::bind(elm_dayselector_weekend_length_set, boost::ref(control_), 7));
+		synchronized(boost::bind(&DayselectorLocaleTest::checkLength, boost::ref(*this), 7));
 
-		queueStep(boost::bind(elm_dayselector_weekend_length_set, boost::ref(control_), len));
-		queueStep(boost::bind(&DayselectorLocaleTest::checkLength, boost::ref(*this), len));
+		synchronized(boost::bind(elm_dayselector_weekend_length_set, boost::ref(control_), len));
+		synchronized(boost::bind(&DayselectorLocaleTest::checkLength, boost::ref(*this), len));
 	}
 
 	void checkStart(Elm_Dayselector_Day weekstart)
@@ -179,11 +195,10 @@ public:
 
 		window_.show();
 		dayselector_.show();
-
-		queueStep(boost::bind(&DayselectorUserTest::test, boost::ref(*this)));
 	}
 
-	void test(){
+	void test()
+	{
 		YIELD_UNTIL(rendered_);
 
 		for (unsigned i(0); i <= 6; ++i) {
@@ -194,10 +209,15 @@ public:
 			clickDay(dayStr);
 			YIELD_UNTIL(changed_);
 
-			const Eina_Bool result = elm_dayselector_day_selected_get(
-				dayselector_,
-				static_cast<Elm_Dayselector_Day>( (i + 1) % 7)
+			const Eina_Bool result = Application::synchronizedResult(
+				[this, &i]()->Eina_Bool {
+					return elm_dayselector_day_selected_get(
+						dayselector_,
+						static_cast<Elm_Dayselector_Day>( (i + 1) % 7)
+					);
+				}
 			);
+
 			FAIL_IF(result == EINA_FALSE);
 		}
 
@@ -212,10 +232,15 @@ public:
 			clickDay(dayStr);
 			YIELD_UNTIL(changed_);
 
-			const Eina_Bool result = elm_dayselector_day_selected_get(
-				dayselector_,
-				static_cast<Elm_Dayselector_Day>( (i + 1) % 7)
+			const Eina_Bool result = Application::synchronizedResult(
+				[this, &i]()->Eina_Bool {
+					return elm_dayselector_day_selected_get(
+						dayselector_,
+						static_cast<Elm_Dayselector_Day>( (i + 1) % 7)
+					);
+				}
 			);
+
 			FAIL_IF(result == EINA_TRUE);
 		}
 
@@ -225,7 +250,13 @@ public:
 
 	void clickDay(const std::string &str)
 	{
-		EvasObject currentDay(elm_layout_content_get(dayselector_, str.c_str()), false);
+		EvasObject currentDay(
+			Application::synchronizedResult(
+				[this, &str]()->Evas_Object* {
+					return elm_layout_content_get(dayselector_, str.c_str());
+				}
+			), false
+		);
 		Geometry gc(currentDay.getGeometry());
 		Geometry gw(getSurfaceGeometry(window_.get_wl_surface()));
 		Geometry gf(window_.getFramespaceGeometry());
@@ -246,8 +277,10 @@ public:
 			const Elm_Dayselector_Day day(
 				static_cast<Elm_Dayselector_Day>(i)
 			);
-			const Eina_Bool result(
-				elm_dayselector_day_selected_get(dayselector_, day)
+			const Eina_Bool result = Application::synchronizedResult(
+				[this, &day]()->Eina_Bool {
+					return elm_dayselector_day_selected_get(dayselector_, day);
+				}
 			);
 			FAIL_UNLESS_EQUAL(result, selected);
 		}
@@ -259,14 +292,14 @@ public:
 
 		 DayselectorUserTest *test = static_cast<DayselectorUserTest*>(data);
 		 test->rendered_ = true;
-		 std::cout << "...received post render event" << std::endl;
+		 TEST_LOG("received post render event");
 	}
 
 	static void onDayselectorChanged(void *data, Evas_Object *eo, void *info)
 	{
 		 DayselectorUserTest *test = static_cast<DayselectorUserTest*>(data);
 		 test->changed_ = true;
-		 std::cout << "...received changed event" << std::endl;
+		 TEST_LOG("received changed event");
 	}
 
 private:

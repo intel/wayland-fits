@@ -87,8 +87,6 @@ public:
 
 		button_.show();
 		window_.show();
-
-		queueStep(boost::bind(&ButtonUserMouseClickTest::test, boost::ref(*this)));
 	}
 
 	void test()
@@ -125,35 +123,35 @@ public:
 
 		ButtonUserMouseClickTest *test = static_cast<ButtonUserMouseClickTest*>(data);
 		test->rendered_ = true;
-		std::cout << "...received post render event" << std::endl;
+		TEST_LOG("received post render event");
 	}
 
 	static void onClick(void* data, Evas_Object*, void*)
 	{
 		ButtonUserMouseClickTest *test = static_cast<ButtonUserMouseClickTest*>(data);
 		test->clicked_ = true;
-		std::cout << "...received click event" << std::endl;
+		TEST_LOG("received click event");
 	}
 
 	static void onRepeated(void* data, Evas_Object*, void*)
 	{
 		ButtonUserMouseClickTest *test = static_cast<ButtonUserMouseClickTest*>(data);
 		test->repeated_ = true;
-		std::cout << "...received repeated event" << std::endl;
+		TEST_LOG("received repeated event");
 	}
 
 	static void onPressed(void* data, Evas_Object*, void*)
 	{
 		ButtonUserMouseClickTest *test = static_cast<ButtonUserMouseClickTest*>(data);
 		test->pressed_ = true;
-		std::cout << "...received pressed event" << std::endl;
+		TEST_LOG("received pressed event");
 	}
 
 	static void onUnpressed(void* data, Evas_Object*, void*)
 	{
 		ButtonUserMouseClickTest *test = static_cast<ButtonUserMouseClickTest*>(data);
 		test->unpressed_ = true;
-		std::cout << "...received unpressed event" << std::endl;
+		TEST_LOG("received unpressed event");
 	}
 
 private:
@@ -198,8 +196,6 @@ public:
 
 		button_.show();
 		window_.show();
-
-		queueStep(boost::bind(&ButtonUserMouseInOutTest::test, boost::ref(*this)));
 	}
 
 	void test()
@@ -297,16 +293,16 @@ public:
 		ASSERT(not mouseIn_);
 
 		//Place pointer inside widget
-		std::cout << "...moving mouse inside " << xInside << "," << yInside << std::endl;
+		TEST_LOG("moving mouse inside " << xInside << "," << yInside);
 		setGlobalPointerPosition(xInside, yInside);
 
-		std::cout << "...checking for mouse in" << std::endl;
+		TEST_LOG("checking for mouse in");
 		YIELD_UNTIL(mouseIn_);
 
-		std::cout << "...moving mouse outside " << xOutside << "," << yOutside << std::endl;
+		TEST_LOG("moving mouse outside " << xOutside << "," << yOutside);
 		setGlobalPointerPosition(xOutside, yOutside);
 
-		std::cout << "...checking for mouse out" << std::endl;
+		TEST_LOG("checking for mouse out");
 		YIELD_UNTIL(not mouseIn_);
 	}
 
@@ -316,21 +312,21 @@ public:
 
 		ButtonUserMouseInOutTest *test = static_cast<ButtonUserMouseInOutTest*>(data);
 		test->rendered_ = true;
-		std::cout << "...received post render event" << std::endl;
+		TEST_LOG("received post render event");
 	}
 
 	static void onMouseIn(void *data, Evas*, Evas_Object*, void*)
 	{
 		ButtonUserMouseInOutTest *test = static_cast<ButtonUserMouseInOutTest*>(data);
 		test->mouseIn_ = true;
-		std::cout << "...received mouse in event at " << test->getGlobalPointerPosition() << std::endl;
+		TEST_LOG("received mouse in event");
 	}
 
 	static void onMouseOut(void *data, Evas*, Evas_Object*, void*)
 	{
 		ButtonUserMouseInOutTest *test = static_cast<ButtonUserMouseInOutTest*>(data);
 		test->mouseIn_ = false;
-		std::cout << "...received mouse out event at " << test->getGlobalPointerPosition() << std::endl;
+		TEST_LOG("received mouse out event");
 	}
 
 private:

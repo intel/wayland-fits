@@ -23,9 +23,6 @@
 #ifndef __WFITS_EFL_ELMTESTHARNESS_H__
 #define __WFITS_EFL_ELMTESTHARNESS_H__
 
-#include <Ecore.h>
-#include <Ecore_Wayland.h>
-#include <Elementary.h>
 #include "test/harness.h"
 #include "application.h"
 
@@ -38,8 +35,6 @@ class ElmTestHarness : public test::Harness
 public:
 	typedef ::boost::function<bool (void)> Condition;
 
-	using test::Harness::queueStep;
-
 	/**
 	 * Construct the test harness.
 	 **/
@@ -47,24 +42,24 @@ public:
 
 	virtual ~ElmTestHarness();
 
-	void run();
+	/* *
+	 * This method is invoked in a new thread.
+	 * */
+	virtual void test() = 0;
 
-	void queueStep(TestStep, const std::string&);
-
-	/*virtual*/ void yield(const unsigned time = 0.01 * 1e6) const;
+	/*virtual*/ void run();
 	/*virtual*/ const test::Client& client() const;
 
-	void stepUntilCondition(Condition condition);
 	void assertCondition(Condition condition);
 	void assertCondition(Condition condition, const std::string&);
 
 private:
-	static Eina_Bool idleStep(void*);
-	static Eina_Bool doStep(void*, int, void*);
+	void testThreadRunner();
 
-	int			eventType_; /// custom event type
-	Ecore_Event_Handler*	handler_;
-	mutable test::Client*	client_;
+	/* *
+	 * Not Implemented
+	 * */
+	/*virtual*/ void queueStep(TestStep);
 };
 
 #define WFITS_EFL_HARNESS_EGL_TEST_CASE(Harness)		\

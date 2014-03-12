@@ -50,7 +50,13 @@ public:
 		, control_(window_)
 		, content_(elm_label_add(window_))
 		, timedout_(false)
-		, clock_(time(NULL))
+		, start_(time(NULL))
+		, end_(time(NULL))
+	{
+		return;
+	}
+
+	void setup()
 	{
 		elm_object_text_set(content_, "Notification");
 
@@ -58,60 +64,48 @@ public:
 		control_.setPosition(50, 10);
 		elm_object_content_set(control_, content_);
 
-		evas_object_smart_callback_add(control_, "timeout", timeoutReached, this);
-	}
-	
-	void setup()
-	{
+		evas_object_smart_callback_add(control_, "timeout", onTimeout, this);
+
 		window_.show();
 		content_.show();
 		control_.show();
-
-		// TODO: Using time(), so smallest units of measure are 'seconds'
-		// TODO: Use a monotonic mechanism instead of time() for better resolution
-		queueStep(boost::bind(elm_notify_timeout_set, boost::ref(control_), 1.0f));
-		queueStep(boost::bind(&NotifyTimeoutTest::checkTimeout, boost::ref(*this), 1.0f));
-
-		// If it takes more than 5 seconds for this event to fire, we have a bug
-		checkTimedOut(time(NULL) + 5);
 	}
 
-	void checkTimedOut(const time_t max)
+	void test()
 	{
-		// if taking too long, fail the test
-		FAIL_UNLESS(time(NULL) < max);
+		TEST_LOG("setting timeout = " << 1.0f << "s");
+		synchronized(
+			[this]() {
+				timedout_ = false;
+				start_ = time(NULL);
+				end_ = time(NULL);
+				elm_notify_timeout_set(control_, 1.0f);
+			}
+		);
 
-		if (not timedout_) {
-			// prevent a hot loop, sleep for 100ms
-			Application::yield(100);
+		TEST_LOG("checking timeout attribute == " << 1.0f << "s");
+		FAIL_UNLESS_EQUAL(
+			Application::synchronizedResult(
+				[this]()->double {
+					return elm_notify_timeout_get(control_);
+				}
+			), 1.0f
+		);
 
-			// awaiting the "timedout" signal
-			queueStep(boost::bind(&NotifyTimeoutTest::checkTimedOut, boost::ref(*this), max));
+		TEST_LOG("checking for timeout event");
+		YIELD_UNTIL(timedout_);
 
-			return;
-		}
-
-		// Supposedly captured the timeout signal-- check expected control state
-		FAIL_UNLESS_EQUAL(timedout_, true);
-		FAIL_UNLESS_EQUAL(control_.isVisible(), EINA_FALSE);
-
-		// And, check that at least a second has passed passed
-		FAIL_UNLESS_GE(time(NULL), clock_ + 1);
-	}	
-	
-	void checkTimeout(const double expected)
-	{
-		FAIL_UNLESS_EQUAL(elm_notify_timeout_get(control_), expected);
+		TEST_LOG("checking timeout occurred around " << 1.0f << "s and no longer than " << 5.0f << "s");
+		FAIL_UNLESS_GE(end_, start_ + 1);
+		FAIL_UNLESS_LE(end_, start_ + 5);
 	}
 
-	static void timeoutReached(void* data, Evas_Object *obj, void* event_info)
+	static void onTimeout(void* data, Evas_Object *obj, void* event_info)
 	{
-		NotifyTimeoutTest *ntt = static_cast<NotifyTimeoutTest*>(data);
-
-		ntt->timedout_ = true;
-		ntt->control_.hide();
-
-		Application::yield(10000);
+		NotifyTimeoutTest *t = static_cast<NotifyTimeoutTest*>(data);
+		t->end_ = time(NULL);
+		t->timedout_ = true;
+		TEST_LOG("got timeout event; it took " << (t->end_ - t->start_) << "s");
 	}
 
 private:
@@ -119,63 +113,101 @@ private:
 	Notify		control_;
 	EvasObject	content_;
 	bool		timedout_;
-	time_t		clock_;
+	time_t		start_;
+	time_t		end_;
 };
 
+static std::string toString(Elm_Notify_Orient orient)
+{
+	switch(orient)
+	{
+		case ELM_NOTIFY_ORIENT_TOP:
+			return "TOP";
+		case ELM_NOTIFY_ORIENT_CENTER:
+			return "CENTER";
+		case ELM_NOTIFY_ORIENT_BOTTOM:
+			return "BOTTOM";
+		case ELM_NOTIFY_ORIENT_LEFT:
+			return "LEFT";
+		case ELM_NOTIFY_ORIENT_RIGHT:
+			return "RIGHT";
+		case ELM_NOTIFY_ORIENT_TOP_LEFT:
+			return "TOP_LEFT";
+		case ELM_NOTIFY_ORIENT_TOP_RIGHT:
+			return "TOP_RIGHT";
+		case ELM_NOTIFY_ORIENT_BOTTOM_LEFT:
+			return "BOTTOM_LEFT";
+		case ELM_NOTIFY_ORIENT_BOTTOM_RIGHT:
+			return "BOTTOM_RIGHT";
+		default:
+			return "UNKNOWN";
+	}
+}
 
 // TODO: add smart callbacks for "timeout" events for each orientation
 class NotifyOrientTest : public ElmTestHarness
 {
+	typedef boost::shared_ptr<Notify> SharedNotify;
+	typedef std::vector<SharedNotify> Notifies;
 public:
 	NotifyOrientTest()
 		: ElmTestHarness::ElmTestHarness()
 		, window_("NotifyOrientTest", "Notify Orientation Test")
-		, control_(window_)
-		, content_(elm_label_add(window_))
+		, notifies_()
 	{
-		elm_object_text_set(content_, "Notification");
-		elm_object_content_set(control_, content_);
-
-		control_.setSize(200, 100);
-		control_.setPosition(50, 10);
-
-		orients_.push_back(ELM_NOTIFY_ORIENT_TOP);
-		orients_.push_back(ELM_NOTIFY_ORIENT_CENTER);
-		orients_.push_back(ELM_NOTIFY_ORIENT_BOTTOM);
-		orients_.push_back(ELM_NOTIFY_ORIENT_LEFT);
-		orients_.push_back(ELM_NOTIFY_ORIENT_RIGHT);
-		orients_.push_back(ELM_NOTIFY_ORIENT_TOP_LEFT);
-		orients_.push_back(ELM_NOTIFY_ORIENT_TOP_RIGHT);
-		orients_.push_back(ELM_NOTIFY_ORIENT_BOTTOM_LEFT);
-		orients_.push_back(ELM_NOTIFY_ORIENT_BOTTOM_RIGHT);
-		orients_.push_back(ELM_NOTIFY_ORIENT_TOP);
+		orients_ = {
+			ELM_NOTIFY_ORIENT_TOP,
+			ELM_NOTIFY_ORIENT_CENTER,
+			ELM_NOTIFY_ORIENT_BOTTOM,
+			ELM_NOTIFY_ORIENT_LEFT,
+			ELM_NOTIFY_ORIENT_RIGHT,
+			ELM_NOTIFY_ORIENT_TOP_LEFT,
+			ELM_NOTIFY_ORIENT_TOP_RIGHT,
+			ELM_NOTIFY_ORIENT_BOTTOM_LEFT,
+			ELM_NOTIFY_ORIENT_BOTTOM_RIGHT
+		};
 	}
 
 	void setup()
 	{
-		window_.show();
-		content_.show();
-		control_.show();
+		foreach (const Elm_Notify_Orient orient, orients_)
+		{
+			TEST_LOG("creating " << toString(orient) << " oriented notify");
 
-		foreach (const Elm_Notify_Orient orient, orients_) {
-			// FIXME: elm_notify_orient_set is deprecated
-			queueStep(boost::bind(elm_notify_orient_set, boost::ref(control_), orient));
-			queueStep(boost::bind(&NotifyOrientTest::checkOrient, boost::ref(*this), orient));
+			SharedNotify notify(new Notify(window_));
+			elm_notify_orient_set(*notify, orient);
+
+			Evas_Object* content(elm_label_add(window_));
+			elm_object_text_set(content, toString(orient).c_str());
+			elm_object_content_set(*notify, content);
+
+			notifies_.push_back(notify);
+			notify->show();
+			evas_object_show(content);
 		}
+		window_.show();
 	}
 
-	void checkOrient(const Elm_Notify_Orient expected)
+	void test()
 	{
-		control_.show();
-		// FIXME: elm_notify_orient_get is deprecated
-		FAIL_UNLESS_EQUAL(elm_notify_orient_get(control_), expected);
-		Application::yield();
+		unsigned i(0);
+		foreach (const Elm_Notify_Orient orient, orients_)
+		{
+			TEST_LOG("checking orient attribute == " << toString(orient));
+			SharedNotify notify = notifies_[i++];
+			FAIL_UNLESS_EQUAL(
+				Application::synchronizedResult(
+					[this, &notify]()->Elm_Notify_Orient {
+						return elm_notify_orient_get(*notify);
+					}
+				), orient
+			);
+		}
 	}
 
 private:
 	Window				window_;
-	Notify				control_;
-	EvasObject			content_;
+	Notifies			notifies_;
 	std::vector<Elm_Notify_Orient>	orients_;
 };
 
@@ -215,19 +247,17 @@ public:
 		window_.show();
 		notifyButton_.show();
 		notify_.show();
-
-		// This will flush out the notify sliding animation.
-		// However, this is highly dependent on the default animation
-		// and if that changes, then this may not work.  But currently
-		// 40 yields seems to do the trick. Same trick as in WindowResizeTest
-		for (unsigned i(0); i < 40; ++i)
-			queueStep(boost::bind(&Application::yield, 0.001*1e6));
-
-		queueStep(boost::bind(&NotifyUserClickTest::test, boost::ref(*this)));
 	}
 
 	void test(){
 		YIELD_UNTIL(rendered_);
+
+		// FIXME:
+		// This is highly dependent on the default sliding animation
+		// and if that changes, then this may not work.  That is, the
+		// animation needs to be finished prior to the following tests.
+		// Currently, we rely on the base's 0.5 second yield prior
+		// to this test method being called.
 
 		ASSERT(not buttonClicked_);
 		clickNotifyButton();
@@ -275,26 +305,21 @@ public:
 
 		NotifyUserClickTest *test = static_cast<NotifyUserClickTest*>(data);
 		test->rendered_ = true;
-		std::cout << "...received post render event" << std::endl;
+		TEST_LOG("received post render event");
 	}
 
 	static void onBlockClick(void* data, Evas_Object*, void*)
 	{
 		NotifyUserClickTest *test = static_cast<NotifyUserClickTest*>(data);
 		test->blockClicked_ = true;
-		std::cout << "...received block,clicked event" << std::endl;
+		TEST_LOG("received block,clicked event");
 	}
 
 	static void onButtonClick(void* data, Evas_Object*, void*)
 	{
 		NotifyUserClickTest *test = static_cast<NotifyUserClickTest*>(data);
 		test->buttonClicked_ = true;
-		std::cout << "...received clicked event on notifyButton_" << std::endl;
-	}
-
-	void testNotifyState(bool clicked)
-	{
-		FAIL_UNLESS_EQUAL(blockClicked_, clicked);
+		TEST_LOG("received clicked event");
 	}
 
 private:

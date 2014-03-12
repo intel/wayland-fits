@@ -23,11 +23,27 @@
 #ifndef __WFITS_EFL_APPLICATION_H__
 #define __WFITS_EFL_APPLICATION_H__
 
+#include <Ecore.h>
+#include <Ecore_Wayland.h>
+#include <Elementary.h>
+#include "common/util.h"
 #include "test/tools.h"
+#include "test/client.h"
 
 namespace wfits {
 namespace test {
 namespace efl {
+
+class Client : public test::Client
+{
+public:
+	Client(wl_display*);
+
+	/*virtual*/ void synchronized(std::function<void()>) const;
+
+protected:
+	/*virtual*/ void doYield(const unsigned time) const;
+};
 
 class Application
 {
@@ -46,6 +62,11 @@ public:
 
 	virtual ~Application();
 
+	static const Client& client();
+
+	static void run();
+	static void exit();
+
 	/**
 	 * This will have an effect on objects created after
 	 * calling this.
@@ -53,10 +74,56 @@ public:
 	static void setEngine(const Engine&);
 
 	/**
-	 * Process pending events and sleep for specified
-	 * microseconds.
+	 * sleep for specified microseconds.
 	 **/
-	static void yield(const unsigned time = 0.01 * 1e6);
+	static void yield(const unsigned time = 0.001 * 1e6, bool strict = false);
+
+	template <typename F>
+	static inline typename std::result_of<F()>::type
+	synchronizedResult(F&& f)
+	{
+		if (boost::this_thread::get_id() != mainThreadId_) {
+			yield();
+			ecore_thread_main_loop_begin();
+		}
+
+		typename std::result_of<F()>::type result = f();
+
+		if (boost::this_thread::get_id() != mainThreadId_) {
+			ecore_thread_main_loop_end();
+		}
+
+		return result;
+	}
+
+	static inline void synchronized(std::function<void()> f)
+	{
+		if (boost::this_thread::get_id() != mainThreadId_)
+		{
+			yield();
+			ecore_main_loop_thread_safe_call_sync(
+				&synchronizedMain, &f
+			);
+		}
+		else
+		{
+			f();
+		}
+	}
+
+private:
+	static inline void* synchronizedMain(void *data)
+	{
+		ASSERT(boost::this_thread::get_id() == mainThreadId_);
+
+		typedef std::function<void()> Func;
+		Func* f = static_cast<Func*>(data);
+		(*f)();
+		return NULL;
+	}
+
+	static boost::thread::id	mainThreadId_;
+	static Client*			client_;
 };
 
 } // namespace efl

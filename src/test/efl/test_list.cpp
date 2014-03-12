@@ -23,7 +23,6 @@
 #include <string>
 #include <linux/input.h>
 #include <boost/lexical_cast.hpp>
-#include <boost/concept_check.hpp>
 
 #include "window.h"
 #include "elmtestharness.h"
@@ -63,6 +62,11 @@ public:
 		, longPressed_(false)
 		, rendered_(false)
 	{
+		return;
+	}
+
+	void setup()
+	{
 		for (unsigned i(0); i <= 13; ++i) {
 			const std::string si = boost::lexical_cast<std::string>(i);
 			elm_list_item_append(list_, si.c_str(), NULL, NULL, onSelected, this);
@@ -80,19 +84,18 @@ public:
 		evas_object_smart_callback_add(list_, "clicked,double", onDoubleClick, this);
 		evas_object_smart_callback_add(list_, "activated", onActivated, this);
 		evas_object_smart_callback_add(list_, "longpressed", onLongpressed, this);
-	}
 
-	void setup()
-	{
 		list_.setPosition(0, 0);
 		elm_list_go(list_);
 
-		evas_event_callback_add(evas_object_evas_get(window_), EVAS_CALLBACK_RENDER_POST, onPostRender, this);
+		evas_event_callback_add(
+			evas_object_evas_get(window_),
+			EVAS_CALLBACK_RENDER_POST,
+			onPostRender, this
+		);
 
 		list_.show();
 		window_.show();
-
-		queueStep(boost::bind(&ListTestHarness::test, boost::ref(*this)));
 	}
 
 	void test()
@@ -100,12 +103,21 @@ public:
 		YIELD_UNTIL(rendered_);
 
 		Geometry geo = getSurfaceGeometry(window_.get_wl_surface());
-		Geometry geoListItem;
 		Geometry geoFS = window_.getFramespaceGeometry();
+		Geometry geoListItem;
+		Elm_Object_Item *it;
+		Evas_Object *eo;
 
-		Elm_Object_Item *it = elm_list_first_item_get(list_);
-		Evas_Object *eo = elm_list_item_object_get(it);
-		evas_object_geometry_get(eo, &geoListItem.x, &geoListItem.y, &geoListItem.width, &geoListItem.height);
+		synchronized(
+			[this, &it, &eo, &geoListItem]() {
+				it = elm_list_first_item_get(list_);
+				eo = elm_list_item_object_get(it);
+				evas_object_geometry_get(
+					eo, &geoListItem.x, &geoListItem.y,
+					&geoListItem.width, &geoListItem.height
+				);
+			}
+		);
 
 		//Place pointer at center of top item of list
 		setGlobalPointerPosition(
@@ -124,7 +136,7 @@ public:
 
 		ListTestHarness *test = static_cast<ListTestHarness*>(data);
 		test->rendered_ = true;
-		std::cout << "...got post render event" << std::endl;
+		TEST_LOG("got post render event");
 	}
 
 	static void onSelected(void* data, Evas_Object* li, void*)
@@ -133,7 +145,7 @@ public:
 		Elm_Object_Item *lit = elm_list_selected_item_get(li);
 		const std::string strItem(elm_object_item_text_get(lit));
 
-		std::cout << "...received selected event: " << strItem << std::endl;
+		TEST_LOG("received selected event: " << strItem);
 
 		if (strItem == "0") {
 			test->firstItemSelected_ = true;
@@ -146,56 +158,56 @@ public:
 	{
 		ListTestHarness *test = static_cast<ListTestHarness*>(data);
 		test->unselected_ = true;
-		std::cout << "...received unselected event" << std::endl;
+		TEST_LOG("received unselected event");
 	}
 
 	static void onEdgeTop(void* data, Evas_Object*, void*)
 	{
 		ListTestHarness *test = static_cast<ListTestHarness*>(data);
 		test->edgeTop_ = true;
-		std::cout << "...received edge,top event" << std::endl;
+		TEST_LOG("received edge,top event");
 	}
 
 	static void onEdgeBottom(void* data, Evas_Object*, void*)
 	{
 		ListTestHarness *test = static_cast<ListTestHarness*>(data);
 		test->edgeBottom_ = true;
-		std::cout << "...received edge,bottom event" << std::endl;
+		TEST_LOG("received edge,bottom event");
 	}
 
 	static void onEdgeLeft(void* data, Evas_Object*, void*)
 	{
 		ListTestHarness *test = static_cast<ListTestHarness*>(data);
 		test->edgeLeft_ = true;
-		std::cout << "...received edge,left event" << std::endl;
+		TEST_LOG("received edge,left event");
 	}
 
 	static void onEdgeRight(void* data, Evas_Object*, void*)
 	{
 		ListTestHarness *test = static_cast<ListTestHarness*>(data);
 		test->edgeRight_ = true;
-		std::cout << "...received edge,right event" << std::endl;
+		TEST_LOG("received edge,right event");
 	}
 
 	static void onDoubleClick(void* data, Evas_Object*, void*)
 	{
 		ListTestHarness *test = static_cast<ListTestHarness*>(data);
 		test->doubleClicked_ = true;
-		std::cout << "...received clicked,double event" << std::endl;
+		TEST_LOG("received clicked,double event");
 	}
 
 	static void onActivated(void* data, Evas_Object*, void*)
 	{
 		ListTestHarness *test = static_cast<ListTestHarness*>(data);
 		test->activated_ = true;
-		std::cout << "...received activated event" << std::endl;
+		TEST_LOG("received activated event");
 	}
 
 	static void onLongpressed(void* data, Evas_Object*, void*)
 	{
 		ListTestHarness *test = static_cast<ListTestHarness*>(data);
 		test->longPressed_= true;
-		std::cout << "...received longpressed event" << std::endl;
+		TEST_LOG("received longpressed event");
 	}
 
 protected:
@@ -225,16 +237,15 @@ public:
 		inputKeySend(BTN_LEFT, 1);
 		inputKeySend(BTN_LEFT, 0);
 
-		std::cout << "...checking for firstSelected callback" << std::endl;
+		TEST_LOG("checking for firstSelected callback");
 		YIELD_UNTIL(firstItemSelected_);
 
-		std::cout << "...checking for unselected and secondSelected callback" << std::endl;
+		TEST_LOG("checking for unselected and secondSelected callback");
 		ASSERT(not unselected_);
 		ASSERT(not secondItemSelected_);
 		while (not unselected_ and not secondItemSelected_) {
 			inputKeySend(KEY_DOWN, 1);
 			inputKeySend(KEY_DOWN, 0);
-			Application::yield();
 		}
 	}
 };
@@ -247,7 +258,7 @@ public:
 		ASSERT(longPressed_ == false);
 		inputKeySend(BTN_LEFT, 1);
 
-		std::cout << "...checking for longpressed callback" << std::endl;
+		TEST_LOG("checking for longpressed callback");
 		YIELD_UNTIL(longPressed_);
 		inputKeySend(BTN_LEFT, 0);
 	}
@@ -264,7 +275,7 @@ public:
 		inputKeySend(KEY_ENTER, 1);
 		inputKeySend(KEY_ENTER, 0);
 
-		std::cout << "...checking for activated callback" << std::endl;
+		TEST_LOG("checking for activated callback");
 		YIELD_UNTIL(activated_);
 	}
 };
@@ -280,7 +291,7 @@ public:
 		inputKeySend(BTN_LEFT, 1);
 		inputKeySend(BTN_LEFT, 0);
 
-		std::cout << "...checking for clicked,double callback" << std::endl;
+		TEST_LOG("checking for clicked,double callback");
 		YIELD_UNTIL(doubleClicked_);
 	}
 };
@@ -290,48 +301,54 @@ class ListUserKeyScrollTest : public ListTestHarness
 public:
 	void runTest()
 	{
+
+		ASSERT(not firstItemSelected_);
+
 		inputKeySend(BTN_LEFT, 1);
 		inputKeySend(BTN_LEFT, 0);
 
-		std::cout << "...checking for firstSelected callback" << std::endl;
-		ASSERT(not firstItemSelected_);
+		TEST_LOG("checking for firstSelected callback");
 		YIELD_UNTIL(firstItemSelected_);
 
-		std::cout << "...checking for edge,bottom callback" << std::endl;
+		TEST_LOG("checking for edge,bottom callback");
 		ASSERT(not edgeBottom_);
 		while (not edgeBottom_) {
 			inputKeySend(KEY_DOWN, 1);
 			inputKeySend(KEY_DOWN, 0);
-			Application::yield();
 		}
 
-		std::cout << "...checking for edge,top callback" << std::endl;
+		TEST_LOG("checking for edge,top callback");
 		ASSERT(not edgeTop_);
 		while (not edgeTop_) {
 			inputKeySend(KEY_UP, 1);
 			inputKeySend(KEY_UP, 0);
-			Application::yield();
 		}
 
-		elm_list_horizontal_set(list_, EINA_TRUE);
+		synchronized(
+			[this]() {
+				elm_list_horizontal_set(list_, EINA_TRUE);
+			}
+		);
 
-		std::cout << "...checking for edge,right callback" << std::endl;
+		TEST_LOG("checking for edge,right callback");
 		ASSERT(not edgeRight_);
 		while (not edgeRight_) {
 			inputKeySend(KEY_RIGHT, 1);
 			inputKeySend(KEY_RIGHT, 0);
-			Application::yield();
 		}
 
-		std::cout << "...checking for edge,left callback" << std::endl;
+		TEST_LOG("checking for edge,left callback");
 		ASSERT(not edgeLeft_);
 		while (not edgeLeft_) {
 			inputKeySend(KEY_LEFT, 1);
 			inputKeySend(KEY_LEFT, 0);
-			Application::yield();
 		}
 
-		elm_list_horizontal_set(list_, EINA_FALSE);
+		synchronized(
+			[this]() {
+				elm_list_horizontal_set(list_, EINA_FALSE);
+			}
+		);
 	}
 };
 
@@ -347,20 +364,23 @@ public:
 		center.x = geo.x + window_.getWidth() / 2;
 		center.y = geo.y + window_.getHeight() / 2;
 
-		elm_config_scroll_thumbscroll_enabled_set(EINA_TRUE);
+		synchronized(
+			[this]() {
+				elm_config_scroll_thumbscroll_enabled_set(EINA_TRUE);
+			}
+		);
 
 		setGlobalPointerPosition(center);
-		std::cout << "...checking for edge,bottom callback" << std::endl;
+		TEST_LOG("checking for edge,bottom callback");
 		ASSERT(not edgeBottom_);
 		while (not edgeBottom_) {
 			inputKeySend(BTN_LEFT, 1);
 			setGlobalPointerPosition(center.x, center.y - delta);
 			inputKeySend(BTN_LEFT, 0);
 			setGlobalPointerPosition(center);
-			Application::yield(500000);
 		}
 
-		std::cout << "...checking for edge,top callback" << std::endl;
+		TEST_LOG("checking for edge,top callback");
 		setGlobalPointerPosition(center);
 		ASSERT(not edgeTop_);
 		while (not edgeTop_) {
@@ -368,31 +388,37 @@ public:
 			setGlobalPointerPosition(center.x, center.y + delta);
 			inputKeySend(BTN_LEFT, 0);
 			setGlobalPointerPosition(center);
-			Application::yield(500000); //animation has to be displayed before callback is made :-/
 		}
 
-		elm_list_horizontal_set(list_, EINA_TRUE);
+		synchronized(
+			[this]() {
+				elm_list_horizontal_set(list_, EINA_TRUE);
+			}
+		);
 
-		std::cout << "...checking for edge,right callback" << std::endl;
+		TEST_LOG("checking for edge,right callback");
 		ASSERT(not edgeRight_);
 		while (not edgeRight_) {
 			inputKeySend(BTN_LEFT, 1);
 			setGlobalPointerPosition(center.x - delta, center.y);
 			inputKeySend(BTN_LEFT, 0);
 			setGlobalPointerPosition(center);
-			Application::yield(500000);
 		}
 
-		std::cout << "...checking for edge,left callback" << std::endl;
+		TEST_LOG("checking for edge,left callback");
 		ASSERT(not edgeLeft_);
 		while (not edgeLeft_) {
 			inputKeySend(BTN_LEFT, 1);
 			setGlobalPointerPosition(center.x + delta, center.y);
 			inputKeySend(BTN_LEFT, 0);
 			setGlobalPointerPosition(center);
-			Application::yield(500000);
 		}
-		elm_list_horizontal_set(list_, EINA_FALSE);
+
+		synchronized(
+			[this]() {
+				elm_list_horizontal_set(list_, EINA_FALSE);
+			}
+		);
 	}
 };
 
