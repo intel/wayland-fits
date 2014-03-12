@@ -44,7 +44,9 @@ Harness::Harness()
 	, display_()
 	, client_(display_)
 {
-	return;
+	queueStep(
+		boost::bind(&Harness::setGlobalPointerPosition, boost::ref(*this), 0, 0)
+	);
 }
 
 Harness::~Harness()

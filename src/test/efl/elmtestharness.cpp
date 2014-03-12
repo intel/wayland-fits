@@ -55,6 +55,8 @@ void ElmTestHarness::testThreadRunner()
 	// flush out all the widget and window animations
 	yield(0.5*1e6, true);
 
+	setGlobalPointerPosition(0, 0);
+
 	test();
 
 	Application::exit();
