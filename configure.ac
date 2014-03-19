@@ -124,25 +124,12 @@ if test "x$want_efl_tests" != "xno"; then
 		],
 		[
 			AC_DEFINE(HAVE_EFL, 1, [Support for EFL/ELM Testing])
-			have_efl="yes"
-			PKG_CHECK_MODULES([EFL_1_7],
-				[
-					elementary >= 1.7.0
-					ecore-wayland >= 1.7.0
-					evas-wayland-egl >= 1.7.0
-					evas-wayland-shm >= 1.7.0
-
-					elementary < 1.7.99
-					ecore-wayland < 1.7.99
-					evas-wayland-egl < 1.7.99
-					evas-wayland-shm < 1.7.99
-				],
-				[
-					AC_DEFINE(HAVE_EFL_1_7, 1, [Support for EFL/ELM 1.7.x])
-					have_efl_1_7="yes"
-				],
-				[have_efl_1_7="no"]
+			AC_DEFINE_UNQUOTED(
+				[EFL_VERSION_MICRO],
+				[$(pkg-config --modversion eina | cut -d. -f3)],
+				[EFL does not define this; so we will]
 			)
+			have_efl="yes"
 		],
 		[have_efl="no"]
 	)

@@ -56,21 +56,30 @@ public:
 
 	Geometry getButtonGeometry() const
 	{
-		Elm_Actionslider_Smart_Data *sd(NULL);
-		Evas_Object *o;
+		Evas_Object *o(NULL);
 
 		Application::synchronized(
-			[this, &sd, &o]() {
-				#if defined(HAVE_EFL_1_7)
-				sd = static_cast<Elm_Actionslider_Smart_Data*>(
-					evas_object_smart_data_get(*this));
-				#else
-				sd = static_cast<Elm_Actionslider_Smart_Data*>(
-					eo_data_scope_get(*this, ELM_OBJ_ACTIONSLIDER_CLASS));
+			[this, &o]() {
+				#if EFL_VERSION_AT_LEAST(1, 9, 99)
+				Elm_Actionslider_Data *data =
+					static_cast<Elm_Actionslider_Data*>(
+						eo_data_scope_get(*this, ELM_OBJ_ACTIONSLIDER_CLASS)
+				);
+				#elif EFL_VERSION_AT_LEAST(1, 8, 0)
+				Elm_Actionslider_Smart_Data *data =
+					static_cast<Elm_Actionslider_Smart_Data*>(
+						eo_data_scope_get(*this, ELM_OBJ_ACTIONSLIDER_CLASS)
+					);
+				#else // assume 1.7
+				Elm_Actionslider_Smart_Data *data =
+					static_cast<Elm_Actionslider_Smart_Data*>(
+						evas_object_smart_data_get(*this)
+					);
 				#endif
-				o = sd->drag_button_base;
+				o = data->drag_button_base;
 			}
 		);
+		ASSERT(o != NULL);
 		return EvasObject(o, false).getGeometry();
 	}
 };

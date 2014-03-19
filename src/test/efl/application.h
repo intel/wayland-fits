@@ -130,4 +130,11 @@ private:
 } // namespace test
 } // namespace wfits
 
+#define EFL_VERSION_AT_LEAST(major, minor, micro)	\
+	((EFL_VERSION_MAJOR != major) ?			\
+	 (EFL_VERSION_MAJOR > major) :			\
+	 ((EFL_VERSION_MINOR != minor) ?		\
+	   (EFL_VERSION_MINOR > minor) :		\
+	   (EFL_VERSION_MICRO >= micro)))
+
 #endif
