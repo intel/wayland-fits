@@ -50,8 +50,7 @@ Application::Application()
 {
 	mainThreadId_ = boost::this_thread::get_id();
 
-#if defined(HAVE_EFL_1_7)
-#else // Assuming EFL/ELM >= 1.8
+#if EFL_VERSION_AT_LEAST(1, 8, 0)
 	ecore_app_no_system_modules();
 #endif
 	elm_init(
