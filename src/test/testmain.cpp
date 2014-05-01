@@ -42,6 +42,7 @@ po::variables_map parseArgs(int argc, char** argv)
 		("help", "display this help message")
 		("list", "list test names")
 		("xml", po::value<std::string>(), "send results to XML file")
+		("xml-wrap-results", po::value<std::string>()->default_value(""), "for XML, additionally wrap test results in specified suite (e.g. my/custom/suite)")
 		("filter", po::value<std::string>()->default_value(".*"), "egrep style regular expression to match tests to run")
 	;
 
@@ -159,11 +160,14 @@ private:
 	}
 };
 
-class TestSuite : public Test
+class TestSuite
+	: public Test
+	, public boost::enable_shared_from_this<TestSuite>
 {
 	// name, type
 	typedef std::pair<const std::string, const std::string> Key;
 	typedef std::map<Key, Test::Shared> Tests;
+	typedef Tests::iterator Iterator;
 public:
 	typedef boost::shared_ptr<TestSuite> Shared;
 
@@ -185,6 +189,37 @@ public:
 		test->file = std::string(tr_lfile(result));
 		path.pop_back();
 		add(Key(test->name, "case"), test, path);
+	}
+
+	Shared getOrCreateSuite(std::deque<std::string>& path)
+	{
+		if (path.size() == 0)
+		{
+			return shared_from_this();
+		}
+
+		std::string name(path.front());
+		boost::trim(name);
+		path.pop_front();
+
+		if (name.size() == 0)
+		{
+			return getOrCreateSuite(path);
+		}
+
+		Shared suite;
+		const Iterator match(tests_.find(Key(name, "suite")));
+		if (match != tests_.end())
+		{
+			suite = boost::static_pointer_cast<TestSuite>(match->second);
+		}
+		else
+		{
+			suite = create(name);
+			add(Key(suite->name, "suite"), suite);
+		}
+
+		return suite->getOrCreateSuite(path);
 	}
 
 	void toXML(std::ostream& os) const
@@ -211,27 +246,8 @@ private:
 
 	void add(const Key& key, const Test::Shared test, std::deque<std::string>& path)
 	{
-		if (path.size() == 0)
-		{
-			add(key, test);
-		}
-		else
-		{
-			typedef Tests::iterator Iterator;
-			const Iterator match(tests_.find(Key(path.front(), "suite")));
-			Shared suite;
-			if (match != tests_.end())
-			{
-				suite = boost::static_pointer_cast<TestSuite>(match->second);
-			}
-			else
-			{
-				suite = create(path.front());
-				add(Key(suite->name, "suite"), suite);
-			}
-			path.pop_front();
-			suite->add(key, test, path);
-		}
+		Shared suite = getOrCreateSuite(path);
+		suite->add(key, test);
 	}
 
 	Tests tests_;
@@ -245,26 +261,30 @@ private:
  * with CDATA.  Thus, we'll handle it correctly... also,
  * we use the boost.test xml schema.
  **/
-void toXML(SRunner* sr, const std::string& filename)
+void toXML(SRunner* sr, const std::string& filename, const std::string& suitePath)
 {
 	TestResult **results(srunner_results(sr));
 	const int nresults(srunner_ntests_run(sr));
 
-	wfits::TestSuite::Shared master(
+	wfits::TestSuite::Shared root(
 		wfits::TestSuite::create(
 			wfits::test::TheGlobalSuite::instance().name
 		)
 	);
-	
+
+	std::deque<std::string> path;
+	boost::split(path, suitePath, boost::is_any_of("/"));
+	wfits::TestSuite::Shared suite(root->getOrCreateSuite(path));
+
 	for (int i(0); i < nresults; ++i)
 	{
-		master->add(results[i]);
+		suite->add(results[i]);
 	}
 
 	std::ofstream fs;
 	fs.open(filename);
 	fs << "<TestLog>";
-	master->toXML(fs);
+	root->toXML(fs);
 	fs << "</TestLog>" << std::endl;
 	fs.close();
 	free(results);
@@ -291,7 +311,7 @@ int main(int argc, char** argv)
 
 	if (args.count("xml"))
 	{
-		toXML(sr, args["xml"].as<std::string>());
+		toXML(sr, args["xml"].as<std::string>(), args["xml-wrap-results"].as<std::string>());
 	}
 
 	int n = srunner_ntests_failed(sr);
