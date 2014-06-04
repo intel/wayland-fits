@@ -60,12 +60,23 @@ public:
 
 		Application::synchronized(
 			[this, &o]() {
-				#if EFL_VERSION_AT_LEAST(1, 9, 99)
+				/*
+				 * NOTE: We can't use the ELM_ACTIONSLIDER_DATA_GET
+				 * macro from elementary because it does not explicitly
+				 * cast the underlying void* return value... our
+				 * compiler flags will not allow that.
+				 */
+				#if EFL_VERSION_AT_LEAST(1, 10, 99) // version 1.11
+				Elm_Actionslider_Data *data =
+					static_cast<Elm_Actionslider_Data*>(
+						eo_data_scope_get(*this, ELM_ACTIONSLIDER_CLASS)
+				);
+				#elif EFL_VERSION_AT_LEAST(1, 10, 0) // version 1.10
 				Elm_Actionslider_Data *data =
 					static_cast<Elm_Actionslider_Data*>(
 						eo_data_scope_get(*this, ELM_OBJ_ACTIONSLIDER_CLASS)
 				);
-				#elif EFL_VERSION_AT_LEAST(1, 8, 0)
+				#elif EFL_VERSION_AT_LEAST(1, 8, 0) // version 1.8 and 1.9
 				Elm_Actionslider_Smart_Data *data =
 					static_cast<Elm_Actionslider_Smart_Data*>(
 						eo_data_scope_get(*this, ELM_OBJ_ACTIONSLIDER_CLASS)
