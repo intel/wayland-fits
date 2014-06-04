@@ -81,6 +81,17 @@ void InputInterface::bind(struct wl_client *client, void *data, uint32_t version
 	wl_resource_set_implementation(
 		resource, &InputInterface::implementation, keys, &InputInterface::unbind
 	);
+
+	/*
+	 * Sync our input pointer with Weston every time a client
+	 * binds to us. This works around the issue reported in
+	 * http://github.com/01org/wayland-fits/issues/7 for the
+	 * uinput emulator.  This is essentially a noop for the notify
+	 * emulator.
+	 */
+	wl_fixed_t cx, cy;
+	Globals::pointerXY(&cx, &cy);
+	movePointer(wl_fixed_to_int(cx), wl_fixed_to_int(cy));
 }
 
 /*static*/

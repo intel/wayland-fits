@@ -279,11 +279,6 @@ InputEmulatorUInput::InputEmulatorUInput()
 	if (ioctl(fd_, UI_DEV_CREATE) < 0) {
 		exit(EXIT_FAILURE);
 	}
-
-	/* sync our input pointer device with weston */
-	wl_fixed_t cx, cy;
-	Globals::pointerXY(&cx, &cy);
-	movePointer(wl_fixed_to_int(cx), wl_fixed_to_int(cy));
 }
 
 /*virtual*/
