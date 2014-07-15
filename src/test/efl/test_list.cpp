@@ -367,6 +367,7 @@ public:
 		synchronized(
 			[this]() {
 				elm_config_scroll_thumbscroll_enabled_set(EINA_TRUE);
+				elm_scroller_bounce_set(list_, EINA_FALSE, EINA_FALSE);
 			}
 		);
 
@@ -393,6 +394,7 @@ public:
 		synchronized(
 			[this]() {
 				elm_list_horizontal_set(list_, EINA_TRUE);
+				elm_scroller_bounce_set(list_, EINA_FALSE, EINA_FALSE);
 			}
 		);
 
