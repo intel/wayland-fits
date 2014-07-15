@@ -357,8 +357,6 @@ class ListUserMouseScrollTest : public ListTestHarness
 public:
 	void runTest()
 	{
-		int delta(40);
-
 		Position center;
 		Geometry geo = getSurfaceGeometry(window_.get_wl_surface());
 		center.x = geo.x + window_.getWidth() / 2;
@@ -372,21 +370,21 @@ public:
 		);
 
 		setGlobalPointerPosition(center);
+
 		TEST_LOG("checking for edge,bottom callback");
 		ASSERT(not edgeBottom_);
 		while (not edgeBottom_) {
 			inputKeySend(BTN_LEFT, 1);
-			setGlobalPointerPosition(center.x, center.y - delta);
+			setGlobalPointerPosition(center.x, geo.y);
 			inputKeySend(BTN_LEFT, 0);
 			setGlobalPointerPosition(center);
 		}
 
 		TEST_LOG("checking for edge,top callback");
-		setGlobalPointerPosition(center);
 		ASSERT(not edgeTop_);
 		while (not edgeTop_) {
 			inputKeySend(BTN_LEFT, 1);
-			setGlobalPointerPosition(center.x, center.y + delta);
+			setGlobalPointerPosition(center.x, geo.y + geo.height);
 			inputKeySend(BTN_LEFT, 0);
 			setGlobalPointerPosition(center);
 		}
@@ -402,7 +400,7 @@ public:
 		ASSERT(not edgeRight_);
 		while (not edgeRight_) {
 			inputKeySend(BTN_LEFT, 1);
-			setGlobalPointerPosition(center.x - delta, center.y);
+			setGlobalPointerPosition(geo.x, center.y);
 			inputKeySend(BTN_LEFT, 0);
 			setGlobalPointerPosition(center);
 		}
@@ -411,7 +409,7 @@ public:
 		ASSERT(not edgeLeft_);
 		while (not edgeLeft_) {
 			inputKeySend(BTN_LEFT, 1);
-			setGlobalPointerPosition(center.x + delta, center.y);
+			setGlobalPointerPosition(geo.x + geo.width, center.y);
 			inputKeySend(BTN_LEFT, 0);
 			setGlobalPointerPosition(center);
 		}
