@@ -86,7 +86,13 @@ protected:
 	WFITS_CORE_HARNESS_TEST_CASE(data_ ## name)
 
 DATA_TEST(wl_compositor)
-DATA_TEST(wl_display)
+
+/**
+ * wl_display is no longer exposed as a global since v1.6 so disable it.
+ * http://cgit.freedesktop.org/wayland/wayland/commit/?id=78d80474073b6145f6f03dd4928c3a4daf9c6b9c
+ */
+/* DATA_TEST(wl_display) */
+
 DATA_TEST(wl_shm)
 DATA_TEST(wl_output)
 DATA_TEST(wl_seat)

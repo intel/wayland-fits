@@ -58,7 +58,13 @@ private:
 namespace bind_interface {
 
 BIND_TEST(wl_compositor)
-BIND_TEST(wl_display)
+
+/**
+ * wl_display is no longer exposed as a global since v1.6 so disable it.
+ * http://cgit.freedesktop.org/wayland/wayland/commit/?id=78d80474073b6145f6f03dd4928c3a4daf9c6b9c
+ */
+/* BIND_TEST(wl_display) */
+
 BIND_TEST(wl_shm)
 BIND_TEST(wl_output)
 BIND_TEST(wl_seat)
