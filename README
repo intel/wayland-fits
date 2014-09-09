@@ -115,8 +115,7 @@ BUGS
 CONTRIBUTING
 --------------------------------------------------------------------------------
 
- Send patches to "wayland-devel@lists.freedesktop.org" with the subject prefix
- of "[PATCH wfits]".  Git example:
-
-   git format-patch --subject-prefix="PATCH wfits" ...
+ Send patches via github pull requests:
+ 
+  https://github.com/01org/wayland-fits/pulls
 
