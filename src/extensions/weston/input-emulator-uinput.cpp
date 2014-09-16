@@ -124,7 +124,8 @@ static void screenSize(int32_t *width, int32_t *height)
 {
 	struct weston_output *output(Globals::output());
 
-	if (std::string(output->make) == "xwayland") {
+	std::string make(output->make);
+	if (make == "xwayland" or make == "weston-X11") {
 #if defined(HAVE_X11_SUPPORT)
 		struct x11_compositor *x11_compositor = (struct x11_compositor*) Globals::compositor();
 		*width = x11_compositor->screen->width_in_pixels;
@@ -165,7 +166,8 @@ static void toScreen(int32_t *x, int32_t *y)
 
 	toDevice(x, y);
 
-	if (std::string(output->make) == "xwayland") {
+	std::string make(output->make);
+	if (make == "xwayland" or make == "weston-X11") {
 #if defined(HAVE_X11_SUPPORT)
 		struct x11_compositor *x11_compositor = (struct x11_compositor*)Globals::compositor();
 		struct x11_output *x11_output = (struct x11_output*) output;
@@ -211,7 +213,8 @@ InputEmulatorUInput::InputEmulatorUInput()
 	weston_log("weston-wfits: %s\n", BOOST_CURRENT_FUNCTION);
 
 #ifndef HAVE_X11_SUPPORT
-	assert(std::string(Globals::output()->make) != "xwayland");
+	std::string make(Globals::output()->make);
+	assert(make != "xwayland" and make != "weston-X11");
 #endif
 	assert(not Globals::isHeadless());
 
