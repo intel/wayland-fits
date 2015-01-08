@@ -29,6 +29,7 @@
 #include <check.h> // Check unit testing framework... see http://check.sourceforge.net
 #include <boost/test/utils/wrap_stringstream.hpp>
 #include <boost/units/detail/utility.hpp>
+#include <boost/algorithm/string/replace.hpp>
 
 #include "common/singleton.h"
 
