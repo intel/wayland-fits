@@ -40,7 +40,9 @@ public:
 
 	void run();
 
-	/*virtual*/ void yield(const unsigned time = 0.01 * 1e6) const;
+	/*virtual*/ void yield(const unsigned time = 0.01 * 1e6,
+			       bool strict = false) const;
+
 	/*virtual*/ const Client& client() const;
 
 private:
