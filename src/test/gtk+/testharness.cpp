@@ -62,7 +62,7 @@ const test::Client& GtkTestHarness::client() const
 	return c;
 }
 
-void GtkTestHarness::yield(const unsigned time) const
+void GtkTestHarness::yield(const unsigned time, bool strict) const
 {
 	gtk_main_iteration_do(gtk_false());
 	usleep(time);
