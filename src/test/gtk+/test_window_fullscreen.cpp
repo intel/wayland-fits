@@ -97,9 +97,7 @@ public:
 		YIELD_UNTIL(isConfigured_);
 
 		std::cout << "...checking client size == fullscreen size" << std::endl;
-		gtk_window_get_size(*this, &width, &height);
-		FAIL_UNLESS_EQUAL(width, fullscreen.width);
-		FAIL_UNLESS_EQUAL(height, fullscreen.height);
+		YIELD_UNTIL(clientHasSize(fullscreen.width, fullscreen.height));
 
 		std::cout << "...checking server geometry == fullscreen geometry" << std::endl;
 		YIELD_UNTIL(isServerGeometry(fullscreen));
@@ -117,11 +115,21 @@ public:
 		gtk_window_get_size(*this, &width, &height);
 
 		std::cout << "...checking client size == initial size" << std::endl;
-		FAIL_UNLESS_EQUAL(width, initial.width);
-		FAIL_UNLESS_EQUAL(height, initial.height);
+		YIELD_UNTIL(clientHasSize(initial.width, initial.height));
 
 		std::cout << "...checking server geometry == initial geometry" << std::endl;
 		YIELD_UNTIL(isServerGeometry(initial));
+	}
+
+	bool clientHasSize(int width, int height)
+	{
+		int w, h;
+		gtk_window_get_size(*this, &w, &h);
+
+		if (w == width && h == height)
+			return true;
+
+		return false;
 	}
 
 	bool isServerGeometry(const Geometry what)
