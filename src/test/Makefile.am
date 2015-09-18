@@ -9,7 +9,7 @@ wfits_SOURCES =				\
 	harness.cpp			\
 	client.cpp			\
 	testmain.cpp			\
-	$(top_srcdir)/src/extensions/protocol/wayland-fits-protocol.c
+	$(top_builddir)/src/extensions/protocol/wayland-fits-protocol.c
 
 wfits_LDADD =				\
 	core/libwfits-core.la		\
@@ -23,6 +23,7 @@ wfits_LDFLAGS =				\
 
 wfits_CPPFLAGS =			\
 	-I$(top_srcdir)/src		\
+	-I$(top_builddir)/src		\
 	$(CHECK_CFLAGS)			\
 	$(XKBCOMMON_CFLAGS)		\
 	$(WAYLAND_CFLAGS)		\

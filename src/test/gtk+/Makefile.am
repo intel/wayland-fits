@@ -16,6 +16,7 @@ libwfits_gtk_la_LIBADD =		\
 
 libwfits_gtk_la_CPPFLAGS =		\
 	-I$(top_srcdir)/src		\
+	-I$(top_builddir)/src		\
 	$(WAYLAND_CFLAGS)		\
 	$(XKBCOMMON_CFLAGS)		\
 	$(GTK_CFLAGS)			\
