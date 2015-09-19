@@ -53,6 +53,7 @@ libwfits_efl_la_LIBADD =		\
 
 libwfits_efl_la_CPPFLAGS =		\
 	-I$(top_srcdir)/src		\
+	-I$(top_builddir)/src		\
 	-DMEDIA_PATH=$(MEDIA)		\
 	$(XKBCOMMON_CFLAGS)		\
 	$(WAYLAND_CFLAGS)		\

@@ -31,6 +31,7 @@ libwfits_core_la_LIBADD =		\
 
 libwfits_core_la_CPPFLAGS =		\
 	-I$(top_srcdir)/src		\
+	-I$(top_builddir)/src		\
 	$(WAYLAND_CFLAGS)		\
 	$(XKBCOMMON_CFLAGS)		\
 	$(CHECK_CFLAGS)

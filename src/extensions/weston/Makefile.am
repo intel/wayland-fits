@@ -15,7 +15,7 @@ weston_wfits_la_SOURCES =		\
 	input-emulator.cpp		\
 	input-emulator-uinput.cpp	\
 	input-emulator-notify.cpp	\
-	$(top_srcdir)/src/extensions/protocol/wayland-fits-protocol.c
+	$(top_builddir)/src/extensions/protocol/wayland-fits-protocol.c
 
 weston_wfits_la_LDFLAGS =		\
 	-module -avoid-version
@@ -27,6 +27,7 @@ weston_wfits_la_LIBADD =		\
 
 weston_wfits_la_CPPFLAGS =		\
 	-I$(top_srcdir)/src		\
+	-I$(top_builddir)/src		\
 	$(GCC_CFLAGS)			\
 	$(WAYLAND_SERVER_CFLAGS)	\
 	$(WESTON_CFLAGS)		\
