@@ -58,11 +58,21 @@ void InputEmulatorNotify::movePointer(const int32_t x, const int32_t y) const
 
 	Globals::pointerXY(&cx, &cy);
 
+#if WESTON_SDK_AT_LEAST(1, 9, 91)
+	struct weston_pointer_motion_event motion_event = {0};
+
+	motion_event.mask = WESTON_POINTER_MOTION_REL;
+	motion_event.dx = wl_fixed_to_double(wl_fixed_from_int(x) - cx);
+	motion_event.dy = wl_fixed_to_double(wl_fixed_from_int(y) - cy);
+
+	notify_motion(seat, weston_compositor_get_time(), &motion_event);
+#else
 	notify_motion(
 		seat, weston_compositor_get_time(),
 		wl_fixed_from_int(x) - cx,
 		wl_fixed_from_int(y) - cy
 	);
+#endif
 }
 
 /*virtual*/
