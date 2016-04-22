@@ -40,6 +40,12 @@ boost::lambda::placeholder3_type _3_;
 #define foreach BOOST_FOREACH
 #define foreach_reverse BOOST_REVERSE_FOREACH
 
+#ifndef container_of
+#define container_of(ptr, type, member) ({                              \
+        const __typeof__( ((type *)0)->member ) *__mptr = (ptr);        \
+        (type *)( (char *)__mptr - offsetof(type,member) );})
+#endif
+
 struct Geometry
 {
 	Geometry(
