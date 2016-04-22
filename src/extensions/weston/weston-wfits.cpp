@@ -94,9 +94,15 @@ struct weston_seat * Globals::seat()
 void Globals::pointerXY(wl_fixed_t *x, wl_fixed_t *y)
 {
 	struct weston_seat *seat(Globals::seat());
+#if WESTON_SDK_AT_LEAST(1, 8, 91)
+	struct weston_pointer *pointer = weston_seat_get_pointer(seat);
 
+	*x = pointer->x;
+	*y = pointer->y;
+#else
 	*x = seat->pointer->x;
 	*y = seat->pointer->y;
+#endif
 }
 
 bool Globals::isHeadless()
